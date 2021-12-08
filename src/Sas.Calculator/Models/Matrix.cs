@@ -8,55 +8,39 @@ namespace Sas.Calculator.Models
 {
     public class Matrix
     {
-        /// <summary>
-        /// Elements of the matrix
-        /// </summary>
         private double[] _elements;
-
+        private int _dim;
+        
+        public double[] GetElements() => _elements;
+        public int GetDimension() => _dim;
 
         /// <summary>
-        /// Dimension of the matrix
+        /// Get element of matrix at position (row, col)
         /// </summary>
-        private int _dimension;
-        public int Dimension
-        {
-            get => _dimension;
-        }
+        /// <param name="row">number of row</param>
+        /// <param name="col">number of column</param>
+        /// <returns>value</returns>
+        public double GetElementAtPosition(int row, int col) => _elements[--row * _dim + --col];
 
         /// <summary>
         ///  Determinant of the matrix
         /// </summary>
-        public double Determinant
-        {
-            get => CalculateDeterminant(this);
-        }
+        public double Determinant => CalculateDeterminant();
 
-        /// <summary>
-        /// Constructor of the matrix
-        /// </summary>
-        /// <param name="elements">elements of the matrix</param>
-        /// <exception cref="ArgumentException"></exception>
         public Matrix(params double[] elements)
         {
-            if(IselementsValid(elements))
+            if (elements == null) throw new ArgumentNullException(nameof(elements));
+            if (!IsMatrixSquare(elements))
             {
-                _dimension = (int)Math.Sqrt(elements.Length);
-                _elements = elements;
+                throw new Exception("Matrix is not square");
             }
             else
             {
-                throw new ArgumentException("Matrix is not square");
+                _elements = elements;
+                _dim = (int)Math.Sqrt(elements.Length);
             }
         }
 
-        /// <summary>
-        /// Get the mathematical element at position row,col where 1<=row<=dim 1<=col<=dim
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <returns>Element of the matrix</returns>
-        public double GetElementAtPosition(int row, int col) => _elements[--row * Dimension + --col];
-        
         /// <summary>
         /// Define the indexer to allow client to use [] notation
         /// </summary>
@@ -73,6 +57,130 @@ namespace Sas.Calculator.Models
             set => _elements[i] = value;
         }
 
+        
+
+        /// <summary>
+        /// Transpose of the matrix 
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public Matrix Transpose()
+        {
+            for (int row = 0; row < _dim; row++)
+            {
+                for (int col = 0; col < _dim; col++)
+                {
+                    double tmp = this[row * _dim + col];
+                    this[row * _dim + col] = this[col * _dim + row];
+                    this[col * _dim + row] = tmp;
+                }
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Invert matrix
+        /// </summary>
+        public Matrix Invert()
+        {
+            double det = this.Determinant;
+            if (det == 0)
+            {
+                throw new Exception("Irreversible matrix");
+            }
+
+            int dim = _dim;
+            double[] tmpElements = new double[dim * dim];
+            for (int row = 0; row < dim; row++)
+            {
+                for (int col = 0; col < dim; col++)
+                {
+                    var minor = CreateMinor(this, row, col);
+                    tmpElements[row * dim + col] = Math.Pow(-1, row + col) * minor.Determinant;
+                }
+            }
+            Matrix cofactor = new Matrix(tmpElements);
+            Matrix adjugate = cofactor.Transpose();
+            Matrix invertedMatrix =  1 / det * adjugate;
+            _elements = invertedMatrix.GetElements();
+            return this;
+        }
+
+        /// <summary>
+        /// Calculate a determinant of the matrix
+        /// </summary>
+        /// <returns>determinant as a double</returns>
+        private double CalculateDeterminant()
+        {
+            int dim = this.GetDimension();
+
+            if (dim == 1) return _elements[0];
+            else if (dim == 2) return _elements[0] * _elements[3] - _elements[1] * _elements[2];
+            else
+            {
+                double det = 0.0;
+                for (int i = 0; i < dim; i++)
+                {
+                    Matrix minor = CreateMinor(this, dim-1, i);
+                    det += Math.Pow(-1, dim + i + 1) * this[ (int)((dim - 1) * dim + i)] * minor.Determinant;
+                }
+                return det;
+            }
+        }
+
+        /// <summary>
+        /// Create a minor of matrix by remove row and column
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="i">index of row to remove</param>
+        /// <param name="j">index of col to remove</param>
+        /// <returns></returns>
+        private Matrix CreateMinor(Matrix matrix, int i, int j)
+        {
+            double[] minorelements = CreateMinorelements(matrix, i, j).ToArray();
+            return new Matrix(minorelements);
+        }
+        
+        private IEnumerable<double> CreateMinorelements(Matrix matrix, int i, int j)
+        {
+            int dim = matrix.GetDimension();
+            for (int row = 0; row < dim; row++) 
+            {
+                if (row == i) continue;
+                for (int col = 0; col < dim; col++)
+                {
+                    if (col == j) continue;
+                    yield return matrix[row * dim + col];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check if matrix is square
+        /// </summary>
+        /// <param name="elements"></param>
+        /// <returns></returns>
+        private static bool IsMatrixSquare(double[] elements)
+        {
+            int dim = (int)Math.Sqrt(elements.Length);
+            return dim * dim == elements.Length;
+        }
+
+        public override string? ToString()
+        {
+            int dim = this.GetDimension();
+            string result = string.Empty;
+            for (int row = 0; row < dim; row++)
+            {
+                for (int col = 0; col < dim; col++)
+                {
+                    result += _elements[row * dim + col] + ", ";
+                }
+                result += "\n";
+            }
+            return result;
+        }
+
         /// <summary>
         /// Overloaded multiplication operator scalar and matrix
         /// </summary>
@@ -81,129 +189,34 @@ namespace Sas.Calculator.Models
         /// <returns></returns>
         public static Matrix operator *(double s, Matrix matrix)
         {
-            double[] tmpMatrixelements = new double[matrix.Dimension*matrix.Dimension];
-            for (int i = 0; i < matrix.Dimension*matrix.Dimension; i++)
+            int dim = matrix.GetDimension();
+            double[] tmpMatrixElements = new double[dim];
+            for (int i = 0; i < dim; i++)
             {
-                tmpMatrixelements[i] = s * matrix[i];
+                tmpMatrixElements[i] = s * matrix[i];
             }
-            return new Matrix(tmpMatrixelements);
+
+            return new Matrix(tmpMatrixElements);
         }
 
-        /// <summary>
-        /// Transpose of the matrix 
-        /// </summary>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static Matrix Transpose(Matrix matrix)
+        public static bool operator ==(Matrix? left, Matrix? right)
         {
-            for (int row = 0; row < matrix.Dimension; row++)
+            if (left.GetDimension() != right.GetDimension())
             {
-                for (int col = 0; col < row; col++)
-                {
-                    double tmp = matrix[row * matrix.Dimension + col];
-                    matrix[row * matrix.Dimension + col] = matrix[col * matrix.Dimension + row];
-                    matrix[col * matrix.Dimension + row] = tmp;
-                }
+                return false;
             }
-            return matrix;
-        }
 
-        /// <summary>
-        /// Invert matrix
-        /// </summary>
-        public void Invert()
-        {
-            double[] tmpElements = new double[_dimension * _dimension];
-            for (int row = 0; row < _dimension; row++)
+            bool result = true;
+            for (int i = 0; i < left.GetDimension(); i++)
             {
-                for (int col = 0; col < _dimension; col++)
-                {
-                    var minor = CreateMinor(this, row, col);
-                    tmpElements[row * _dimension + col] = Math.Pow(-1, row + col) * minor.Determinant;
-                }
-            }
-            Matrix cofactor = new Matrix(tmpElements);
-            Matrix adjugate = Transpose(cofactor);
-            Console.WriteLine(adjugate);
-            Matrix invertedMatrix =  1 / Determinant * adjugate;
-            _elements = GetElements(invertedMatrix).ToArray();
-        }
-
-        public override string? ToString()
-        {
-            string result = string.Empty;
-            for (int row = 0; row < Dimension; row++)
-            {
-                for (int col = 0; col < Dimension; col++)
-                {
-                    result += _elements[row * Dimension + col] + ", ";
-                }
-                result += "\n";
+                result &= left[i] == right[i];
             }
             return result;
         }
-        private double CalculateDeterminant(Matrix matrix)
-        {
-            if (matrix.Dimension == 1) return matrix[0];
-            else if (matrix.Dimension == 2) return matrix[0] * matrix[3] - matrix[1] * matrix[2];
-            else
-            {
-                double det = 0.0;
-                for (int i = 0; i < matrix.Dimension; i++)
-                {
-                    Matrix minor = CreateMinor(matrix, matrix.Dimension-1, i);
-                    det += Math.Pow(-1, matrix.Dimension + i + 1) * matrix[ (int)((matrix.Dimension - 1) * matrix.Dimension + i)] * CalculateDeterminant(minor);
-                }
-                return det;
-            }
-        }
 
-        private Matrix CreateMinor(Matrix matrix, int i, int j)
+        public static bool operator !=(Matrix? left, Matrix? right)
         {
-            double[] minorelements = CreateMinorelements(matrix, i, j).ToArray();
-            return new Matrix(minorelements);
-        }
-
-        private IEnumerable<double> CreateMinorelements(Matrix matrix, int i, int j)
-        {
-            for (int row = 0; row < matrix.Dimension; row++) 
-            {
-                if (row == i) continue;
-                for (int col = 0; col < matrix.Dimension; col++)
-                {
-                    if (col == j) continue;
-                    yield return matrix[row * matrix.Dimension + col];
-                }
-            }
-        }
-
-        /// <summary>
-        /// Get all elements of the matrix 
-        /// </summary>
-        /// <param name="matrix"></param>
-        /// <returns>elements as enumerable collection</returns>
-        private IEnumerable<double> GetElements(Matrix matrix)
-        {
-            for (int row = 0; row < matrix.Dimension; row++)
-            {
-                for (int col = 0; col < matrix.Dimension; col++)
-                {
-                    yield return matrix[row * matrix.Dimension + col];
-                }
-            }
-        }
-
-        /// <summary>
-        /// Check if matrix has at least one element and is square matrix
-        /// </summary>
-        /// <param name="elements"></param>
-        /// <returns></returns>
-        private bool IselementsValid(double[] elements)
-        {
-            double dim = Math.Sqrt(elements.Length);
-            return elements != null
-                && dim * dim == (int)(elements.Length)
-                && dim > 1;
+            return !(left == right);
         }
     }
 }

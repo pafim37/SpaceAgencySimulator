@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Calculator
+namespace Sas.Calculator.Models
 {
     public class Matrix
     {

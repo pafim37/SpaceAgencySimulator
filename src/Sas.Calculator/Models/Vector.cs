@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Calculator.Models
+namespace Sas.Mathematica.Models
 {
     /// <summary>
     /// Class <c>Vector</c> models a vector in a three-dimensional space
@@ -15,7 +15,7 @@ namespace Sas.Calculator.Models
         /// <summary>
         /// Component x of the vector
         /// </summary>
-        public double X { get ; set; } 
+        public double X { get; set; }
 
         /// <summary>
         /// Component y of the vector
@@ -46,7 +46,15 @@ namespace Sas.Calculator.Models
         /// <param name="v1"></param>
         /// <param name="v2"></param>
         /// <returns>Sum of two vectors</returns>
-        public static Vector operator +(Vector v1, Vector v2) => new Vector(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
+        public static Vector operator +(Vector v1, Vector v2) => new(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
+
+        /// <summary>
+        /// Overloaded subtraction operator 
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns>Difference of two vectora</returns>
+        public static Vector operator -(Vector v1, Vector v2) => new(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
 
         /// <summary>
         /// Overloaded multiplication operator (dot product)
@@ -60,9 +68,9 @@ namespace Sas.Calculator.Models
         /// Overloaded multiplication operator by scalar
         /// </summary>
         /// <param name="v">vector</param>
-        /// <param name="a">scalar</param>
+        /// <param name="s">scalar</param>
         /// <returns></returns>
-        public static Vector operator *(Vector v, double s) => new Vector(s * v.X, s * v.Y, s * v.Z);
+        public static Vector operator *(Vector v, double s) => new(s * v.X, s * v.Y, s * v.Z);
 
         /// <summary>
         /// Overloaded multiplication operator by scalar
@@ -70,7 +78,7 @@ namespace Sas.Calculator.Models
         /// <param name="s">scalar</param>
         /// <param name="v">vector</param>
         /// <returns></returns>
-        public static Vector operator *(double s, Vector v) => new Vector(s * v.X, s * v.Y, s * v.Z);
+        public static Vector operator *(double s, Vector v) => new(s * v.X, s * v.Y, s * v.Z);
 
         /// <summary>
         /// Cross product of two vectors
@@ -78,14 +86,14 @@ namespace Sas.Calculator.Models
         /// <param name="v1"></param>
         /// <param name="v2"></param>
         /// <returns></returns>
-        public static Vector CrossProduct(Vector v1, Vector v2) => new Vector(v1.Y* v2.Z - v1.Z* v2.Y, v1.Z* v2.X - v1.X* v2.Z, v1.X* v2.Y - v1.Y* v2.X);
+        public static Vector CrossProduct(Vector v1, Vector v2) => new(v1.Y * v2.Z - v1.Z * v2.Y, v1.Z * v2.X - v1.X * v2.Z, v1.X * v2.Y - v1.Y * v2.X);
 
         /// <summary>
         /// Cross product of current vector
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        public Vector CrossProduct(Vector v) => new Vector(v.Y * this.Z - v.Z * this.Y, v.Z * this.X - v.X * this.Z, v.X * this.Y - v.Y * this.X);
+        public Vector CrossProduct(Vector v) => new(v.Y * Z - v.Z * Y, v.Z * X - v.X * Z, v.X * Y - v.Y * X);
 
         /// <summary>
         /// Dot product of two vector
@@ -99,7 +107,7 @@ namespace Sas.Calculator.Models
         /// Magnitude of the vector
         /// </summary>
         /// <returns>Magnitude</returns>
-        public double Magnitude() => Math.Sqrt( X*X + Y*Y + Z*Z );
+        public double Magnitude() => Math.Sqrt(X * X + Y * Y + Z * Z);
 
         public override string ToString()
         {

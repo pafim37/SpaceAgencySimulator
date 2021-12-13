@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sas.Calculator\Sas.Calculator.csproj" />
+    <ProjectReference Include="..\Sas.Calculator\Sas.Mathematica.csproj" />
   </ItemGroup>
 
 </Project>

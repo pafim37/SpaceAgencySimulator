@@ -1,4 +1,4 @@
-﻿namespace Sas.Orbits
+﻿namespace Sas.Sandbox.Orbits
 {
     public class Ellipse
     {

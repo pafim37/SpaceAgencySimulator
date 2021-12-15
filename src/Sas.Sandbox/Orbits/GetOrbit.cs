@@ -1,7 +1,7 @@
 ﻿using Sas.Mathematica;
-using Sas.Orbit.Bodies;
+using Sas.Sandbox.Models;
 
-namespace Sas.Orbits
+namespace Sas.Sandbox.Orbits
 {
     public class GetOrbit
     {

@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica", "Sas.Calculator\Sas.Mathematica.csproj", "{4D9FDB17-BDAA-49D6-85CA-1C33AB5564D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica", "Sas.Marthematica\Sas.Mathematica.csproj", "{1365FFBF-B444-4DDC-A522-04587FC5C46E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica.Tests", "Sas.Calculator.Tests\Sas.Mathematica.Tests.csproj", "{BFCF6CE0-9344-465E-8D4B-FECB3C37046C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Orbits", "Sas.Orbit\Sas.Orbits.csproj", "{E7B34571-6BA2-4661-A2C3-CD303230F46E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Bodies", "Sas.Bodies\Sas.Bodies.csproj", "{6A3D2D35-9515-43BD-9EC3-5517ACBFCC22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Sandbox", "Sas.Sandbox\Sas.Sandbox.csproj", "{820D5D95-9B9D-443E-B52C-5CAE36C29844}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,22 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4D9FDB17-BDAA-49D6-85CA-1C33AB5564D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D9FDB17-BDAA-49D6-85CA-1C33AB5564D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D9FDB17-BDAA-49D6-85CA-1C33AB5564D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D9FDB17-BDAA-49D6-85CA-1C33AB5564D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BFCF6CE0-9344-465E-8D4B-FECB3C37046C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BFCF6CE0-9344-465E-8D4B-FECB3C37046C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BFCF6CE0-9344-465E-8D4B-FECB3C37046C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BFCF6CE0-9344-465E-8D4B-FECB3C37046C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7B34571-6BA2-4661-A2C3-CD303230F46E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7B34571-6BA2-4661-A2C3-CD303230F46E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7B34571-6BA2-4661-A2C3-CD303230F46E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7B34571-6BA2-4661-A2C3-CD303230F46E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6A3D2D35-9515-43BD-9EC3-5517ACBFCC22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A3D2D35-9515-43BD-9EC3-5517ACBFCC22}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6A3D2D35-9515-43BD-9EC3-5517ACBFCC22}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6A3D2D35-9515-43BD-9EC3-5517ACBFCC22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1365FFBF-B444-4DDC-A522-04587FC5C46E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1365FFBF-B444-4DDC-A522-04587FC5C46E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1365FFBF-B444-4DDC-A522-04587FC5C46E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1365FFBF-B444-4DDC-A522-04587FC5C46E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{820D5D95-9B9D-443E-B52C-5CAE36C29844}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{820D5D95-9B9D-443E-B52C-5CAE36C29844}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{820D5D95-9B9D-443E-B52C-5CAE36C29844}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{820D5D95-9B9D-443E-B52C-5CAE36C29844}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

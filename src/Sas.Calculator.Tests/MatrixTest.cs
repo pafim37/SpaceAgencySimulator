@@ -1,4 +1,3 @@
-using Sas.Mathematica.Models;
 using System.Collections.Generic;
 using Xunit;
 

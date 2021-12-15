@@ -1,26 +1,28 @@
-﻿using Sas.Mathematica.Models;
-using Sas.Orbit.Frames;
-using Sas.Orbit.Orbits;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sas.Mathematica;
 
 namespace Sas.Orbit.Bodies
 {
     public class Body
     {
+        public string Name { get; init; }
         public double Mass { get; init; }
-        public Vector? AbsolutePosition { get; set; }
-        public Vector? AbsoluteVelocity { get; set; }
+        public Vector AbsolutePosition { get; set; }
+        public Vector AbsoluteVelocity { get; set; }
+
+        public Body( string name, double mass, Vector absolutePosition, Vector absoluteVelocity )
+        {
+            Name = name;
+            Mass = mass;
+            AbsolutePosition = absolutePosition;
+            AbsoluteVelocity = absoluteVelocity;
+        }
 
         /// <summary>
         /// Position in relation to the body 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>The relative position</returns>
-        public Vector GetPosition(Body body)
+        public Vector GetPositionRelatedTo(Body body)
         {
             if (body == null || AbsolutePosition == null)
             {
@@ -41,6 +43,11 @@ namespace Sas.Orbit.Bodies
         public Vector GetVelocity(Body body)
         {
             return body.AbsoluteVelocity -AbsoluteVelocity;
+        }
+
+        public override string? ToString()
+        {
+            return $"Name: {Name}, Mass: {Mass}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}";
         }
     }
 }

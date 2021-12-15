@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Orbit.Frames
+namespace Sas.Orbits.Frames
 {
     public class CenterMassFrame
     {
-        public double X { get; set; } 
+        public double X { get; set; }
         public double Y { get; set; }
         public double Z { get; set; }
 
@@ -24,19 +24,19 @@ namespace Sas.Orbit.Frames
 
         private double CalculateRo()
         {
-            if ( X > 0 && Y == 0 )  
+            if (X > 0 && Y == 0)
             {
                 return 0;
             }
-            else if ( X == 0 && Y > 0 )
+            else if (X == 0 && Y > 0)
             {
                 return Math.PI / 2;
             }
-            else if ( X < 0 && Y == 0)
+            else if (X < 0 && Y == 0)
             {
                 return Math.PI;
             }
-            else if ( X == 0 && Y < 0)
+            else if (X == 0 && Y < 0)
             {
                 return 3 / 2 * Math.PI;
             }

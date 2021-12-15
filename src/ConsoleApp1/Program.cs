@@ -1,14 +1,18 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Sas.Mathematica.Models;
-using Sas.Orbit.Bodies;
-using Sas.Orbit.Orbits;
+//using Sas.Mathematica;
+//using Sas.Orbit.Bodies;
 
-Body sun = new()
-{
-    Mass = Sas.Physics.Constants.SolarMass,
-    AbsolutePosition = new Vector(0, 0, 0),
-    AbsoluteVelocity = new Vector(0, 0, 0)
-};
+//Body sun = new(
+//    "Sun",
+//    Constants.SolarMass,
+//    new Vector(0, 0, 0),
+//    new Vector(0, 0, 0)
+//    );
+
+using System;
+Console.WriteLine("sun");
+
+/*
 
 Body earth = new()
 {
@@ -26,7 +30,7 @@ Body earth2 = new()
 {
     Mass = Sas.Physics.Constants.EarthMass,
     AbsolutePosition = new Vector(Math.Cos(th) * 1.52098233 * Math.Pow(10, 11), Math.Sin(th) * 1.52098233 * Math.Pow(10, 11), 0),
-    AbsoluteVelocity = new Vector(Math.Cos(th + Math.PI / 2 ) * 29291, Math.Sin(th + Math.PI / 2 ) * 29291, 0)
+    AbsoluteVelocity = new Vector(Math.Cos(th + Math.PI / 2) * 29291, Math.Sin(th + Math.PI / 2) * 29291, 0)
 };
 
 Body earth3 = new()
@@ -51,6 +55,7 @@ var orbit = getOrbit.GetOribt(sun, earth3);
 if (orbit.GetType() == typeof(Ellipse))
 {
     Ellipse ellipse = (Ellipse)orbit;
-    Console.WriteLine( ellipse.RotationalParameter );
+    Console.WriteLine(ellipse.ArgumentOfPeriapsis);
 }
 
+*/

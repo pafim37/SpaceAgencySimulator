@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Mathematica.Models
+namespace Sas.Mathematica
 {
     public class Matrix
     {
@@ -181,6 +181,19 @@ namespace Sas.Mathematica.Models
             return result;
         }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is Matrix matrix &&
+                   EqualityComparer<double[]>.Default.Equals(_elements, matrix._elements) &&
+                   _dim == matrix._dim &&
+                   Determinant == matrix.Determinant;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_elements, _dim, Determinant);
+        }
+
         /// <summary>
         /// Overloaded multiplication operator scalar and matrix
         /// </summary>
@@ -201,6 +214,7 @@ namespace Sas.Mathematica.Models
 
         public static bool operator ==(Matrix? left, Matrix? right)
         {
+            if (left == null || right == null) return false;
             if (left.GetDimension() != right.GetDimension())
             {
                 return false;
@@ -218,5 +232,7 @@ namespace Sas.Mathematica.Models
         {
             return !(left == right);
         }
+
+
     }
 }

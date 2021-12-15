@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Mathematica.Models
+namespace Sas.Mathematica
 {
     /// <summary>
     /// Class <c>Vector</c> models a vector in a three-dimensional space
@@ -39,6 +39,12 @@ namespace Sas.Mathematica.Models
             Y = y;
             Z = z;
         }
+
+        /// <summary>
+        /// Magnitude of the vector
+        /// </summary>
+        /// <returns>Magnitude</returns>
+        public double Magnitude() => Math.Sqrt(X * X + Y * Y + Z * Z);
 
         /// <summary>
         /// Overloaded addition operator 
@@ -102,12 +108,6 @@ namespace Sas.Mathematica.Models
         /// <param name="v2"></param>
         /// <returns>Dot Product</returns>
         public static double DotProduct(Vector v1, Vector v2) => v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
-
-        /// <summary>
-        /// Magnitude of the vector
-        /// </summary>
-        /// <returns>Magnitude</returns>
-        public double Magnitude() => Math.Sqrt(X * X + Y * Y + Z * Z);
 
         public override string ToString()
         {

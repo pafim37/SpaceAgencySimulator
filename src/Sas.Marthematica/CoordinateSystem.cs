@@ -8,15 +8,15 @@ namespace Sas.Mathematica
 {
     public class CoordinateSystem
     {
-        private double _xO;
-        private double _yO;
-        private double _zO;
-        private double _x;
-        private double _y;
-        private double _z;
-        private double _r;
-        private double _phi;
-        private double _th;
+        private double _xO; // x origin
+        private double _yO; // y origin
+        private double _zO; // z origin
+        private double _x; // x point
+        private double _y; // y point
+        private double _z; // z point
+        private double _r; // distance from origin to point
+        private double _phi; // angle in x & y plane
+        private double _th; // angle in x & z plane
         public double X { get => _x; private set => _x = value; }
         public double Y { get => _y; private set => _y = value; }
         public double Z { get => _z; private set => _z = value; }

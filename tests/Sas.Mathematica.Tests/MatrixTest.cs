@@ -1,8 +1,7 @@
-using Sas.Calculator.Models;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Sas.Calculator.Tests
+namespace Sas.Mathematica.Tests
 {
     public class MatrixTest
     {
@@ -21,18 +20,18 @@ namespace Sas.Calculator.Tests
         public static IEnumerable<object[]> DetData =>
             new List<object[]> {
                 new object[] { new Matrix(13), 13.0},
-                new object[] { new Matrix(-2, 3, 1, -4), 5.0 }, 
-                new object[] { new Matrix(1, 0, 3, -2, -1, 2, 4, 2, 3), -7.0}, 
-                new object[] { new Matrix(1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6) ,0.0}, 
+                new object[] { new Matrix(-2, 3, 1, -4), 5.0 },
+                new object[] { new Matrix(1, 0, 3, -2, -1, 2, 4, 2, 3), -7.0},
+                new object[] { new Matrix(1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6) ,0.0},
             };
 
         [Theory, MemberData(nameof(DetData))]
-        public void Determinant_ReturnMatrixDeterminant(Matrix matrix, double det) 
+        public void Determinant_ReturnMatrixDeterminant(Matrix matrix, double det)
         {
             var result = matrix.Determinant;
             Assert.Equal(result, det);
         }
-        
+
         [Theory, MemberData(nameof(DimData))]
         public void Dimension_ReturnMatrixDimension(Matrix matrix, int dim)
         {

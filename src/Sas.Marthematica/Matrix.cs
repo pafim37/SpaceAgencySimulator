@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Calculator.Models
+namespace Sas.Mathematica
 {
     public class Matrix
     {
         private double[] _elements;
         private int _dim;
-        
+
         public double[] GetElements() => _elements;
         public int GetDimension() => _dim;
 
@@ -57,7 +57,7 @@ namespace Sas.Calculator.Models
             set => _elements[i] = value;
         }
 
-        
+
 
         /// <summary>
         /// Transpose of the matrix 
@@ -83,7 +83,7 @@ namespace Sas.Calculator.Models
         /// </summary>
         public Matrix Invert()
         {
-            double det = this.Determinant;
+            double det = Determinant;
             if (det == 0)
             {
                 throw new Exception("Irreversible matrix");
@@ -101,7 +101,7 @@ namespace Sas.Calculator.Models
             }
             Matrix cofactor = new Matrix(tmpElements);
             Matrix adjugate = cofactor.Transpose();
-            Matrix invertedMatrix =  1 / det * adjugate;
+            Matrix invertedMatrix = 1 / det * adjugate;
             _elements = invertedMatrix.GetElements();
             return this;
         }
@@ -112,7 +112,7 @@ namespace Sas.Calculator.Models
         /// <returns>determinant as a double</returns>
         private double CalculateDeterminant()
         {
-            int dim = this.GetDimension();
+            int dim = GetDimension();
 
             if (dim == 1) return _elements[0];
             else if (dim == 2) return _elements[0] * _elements[3] - _elements[1] * _elements[2];
@@ -121,8 +121,8 @@ namespace Sas.Calculator.Models
                 double det = 0.0;
                 for (int i = 0; i < dim; i++)
                 {
-                    Matrix minor = CreateMinor(this, dim-1, i);
-                    det += Math.Pow(-1, dim + i + 1) * this[ (int)((dim - 1) * dim + i)] * minor.Determinant;
+                    Matrix minor = CreateMinor(this, dim - 1, i);
+                    det += Math.Pow(-1, dim + i + 1) * this[(dim - 1) * dim + i] * minor.Determinant;
                 }
                 return det;
             }
@@ -140,11 +140,11 @@ namespace Sas.Calculator.Models
             double[] minorelements = CreateMinorelements(matrix, i, j).ToArray();
             return new Matrix(minorelements);
         }
-        
+
         private IEnumerable<double> CreateMinorelements(Matrix matrix, int i, int j)
         {
             int dim = matrix.GetDimension();
-            for (int row = 0; row < dim; row++) 
+            for (int row = 0; row < dim; row++)
             {
                 if (row == i) continue;
                 for (int col = 0; col < dim; col++)
@@ -168,7 +168,7 @@ namespace Sas.Calculator.Models
 
         public override string? ToString()
         {
-            int dim = this.GetDimension();
+            int dim = GetDimension();
             string result = string.Empty;
             for (int row = 0; row < dim; row++)
             {
@@ -179,6 +179,19 @@ namespace Sas.Calculator.Models
                 result += "\n";
             }
             return result;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Matrix matrix &&
+                   EqualityComparer<double[]>.Default.Equals(_elements, matrix._elements) &&
+                   _dim == matrix._dim &&
+                   Determinant == matrix.Determinant;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_elements, _dim, Determinant);
         }
 
         /// <summary>
@@ -201,6 +214,7 @@ namespace Sas.Calculator.Models
 
         public static bool operator ==(Matrix? left, Matrix? right)
         {
+            if (left == null || right == null) return false;
             if (left.GetDimension() != right.GetDimension())
             {
                 return false;
@@ -218,5 +232,7 @@ namespace Sas.Calculator.Models
         {
             return !(left == right);
         }
+
+
     }
 }

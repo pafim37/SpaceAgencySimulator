@@ -12,7 +12,6 @@ namespace Sas.SolarSystem.Orbits
         Ellipse,
         Parabola,
         Hyperbola,
-        // TODO (pafim37): Remove non-existing orbit
         Rest
     }
 }

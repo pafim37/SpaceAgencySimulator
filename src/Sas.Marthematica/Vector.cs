@@ -47,6 +47,11 @@ namespace Sas.Mathematica
         public double Magnitude() => Math.Sqrt(X * X + Y * Y + Z * Z);
 
         /// <summary>
+        /// Vector zero 
+        /// </summary>
+        public static Vector Zero => new(0, 0, 0);
+
+        /// <summary>
         /// Overloaded addition operator 
         /// </summary>
         /// <param name="v1"></param>

@@ -105,7 +105,6 @@ namespace Sas.Mathematica
                 return Math.Sign(X) * Math.Atan(Z / X);
             }
             else return 0.0;
-
         }
     }
 }

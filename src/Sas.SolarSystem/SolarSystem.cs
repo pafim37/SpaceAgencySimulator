@@ -7,15 +7,21 @@ namespace Sas.SolarSystem
     public class SolarSystem
     {
         private IList<Body> _solarSystem;
+        public IList<Body> GetBodies() => _solarSystem;
 
         public SolarSystem()
         {
             _solarSystem = new List<Body>();
         }
 
-        public IList<Body> GetBodies() => _solarSystem;
-        
-        public void CreateDefaultSolarSystem()
+        public void Init()
+        {
+            CreateBodies();
+            FindAndAssignAttracted();
+            AssignOribits();
+        }
+
+        private void CreateBodies()
         {
             Body Sun = new Body.Builder()
                 .Name("Sun")
@@ -54,57 +60,40 @@ namespace Sas.SolarSystem
             _solarSystem.Add(Moon);
             _solarSystem.Add(Probe);
         }
-        public void FindAndAssignAttracted()
+
+        private void FindAndAssignAttracted()
         {
             foreach (var body in _solarSystem)
             {
-                // find closest body
-                var closestList = _solarSystem.OrderBy(x => (body.AbsolutePosition - x.AbsolutePosition).Magnitude()).ToList();
-                for (int i = 1; i < closestList.Count; i++) // last is itself (distance = 0)
+                // find closest bodies
+                var closeBodiesList = _solarSystem.OrderBy(x => body.GetPositionRelatedTo(x).Magnitude() ).ToList();
+                for (int i = 1; i < closeBodiesList.Count; i++) // first is itself (distance = 0)
                 {
-                    var closest = closestList[i];
+                    Body closest = closeBodiesList[i];
+
+                    if (closest.AbsolutePosition == null || body.AbsolutePosition == null ) throw new Exception();
                     CoordinateSystem cs = new CoordinateSystem(closest.AbsolutePosition);
                     cs.Cartesian(body.AbsolutePosition);
-                    if (closest.GetSphereOfInfluence(body) >= (body.AbsolutePosition - closest.AbsolutePosition).Magnitude())
+
+                    if (closest.GetSphereOfInfluence(body) >= body.GetPositionRelatedTo(closest).Magnitude())
                     {
-                        body.Attracted = closest;
+                        body.SurroundedBody = closest;
                         break;
                     }
                     else
                     {
-                        body.Attracted = closestList[0];
+                        body.SurroundedBody = closeBodiesList[0];
                     }
                 }
             }
         }
 
-        public void AssignOribit()
+        private void AssignOribits()
         {
             foreach (var body in _solarSystem)
             {
-                Vector r = body.AbsolutePosition - body.Attracted.AbsolutePosition;
-                Vector v = body.AbsoluteVelocity - body.Attracted.AbsoluteVelocity;
-                double u = body.U;
-                body.Orbit = Orbit.CreateOrbit(r, v, u);
+                body.Orbit = Orbit.CreateOrbit(body.GetPositionRelatedToSurroundedBody(), body.GetVelocityRelatedToSurroundedBody(), body.U);
             }
         }
-
-        private void ValidateSolarSystem()
-        {
-            foreach (var body in _solarSystem)
-            {
-                if (body.Type == null)
-                {
-                    throw new Exception($"Body: {body.Name} has no type");
-                }
-            }
-            // only one star
-            if (_solarSystem.Where(x => x.Type == BodyType.Star).Count() != 1) throw new Exception("More than one star in Solar System");
-
-            // star isn't attracted by other bodies
-            if (_solarSystem.Where(x => x.Type == BodyType.Star).FirstOrDefault().Attracted.Type != BodyType.Star) throw new Exception("Star has no valid attracted body");
-
-        }
-
     }
 }

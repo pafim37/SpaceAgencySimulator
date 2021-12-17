@@ -1,21 +1,15 @@
 ﻿using Sas.SolarSystem;
+using Sas.SolarSystem.Orbits;
 using Spectre.Console;
 
 SolarSystem solarSystem = new SolarSystem();
-solarSystem.CreateDefaultSolarSystem();
-solarSystem.FindAndAssignAttracted();
-solarSystem.AssignOribit();
+solarSystem.Init();
 
 foreach (var body in solarSystem.GetBodies())
 {
-    Console.WriteLine(body.Orbit);
 }
 
-
-var earth = solarSystem.GetBodies().Where(b => b.Name.Equals("Earth")).FirstOrDefault();
-Console.WriteLine(earth);
-Console.WriteLine($"eo: {earth.Orbit.Eccentricity}");
-
+/*
 var table = new Table();
 
 // add columns
@@ -49,3 +43,4 @@ for (int row = 0; row < solarSystem.GetBodies().Count; row++)
 //}
 
 AnsiConsole.Write(table);
+*/

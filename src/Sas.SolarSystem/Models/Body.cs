@@ -18,7 +18,7 @@ namespace Sas.SolarSystem.Models
         /// <summary>
         /// Body type: star, earth, moon etc...
         /// </summary>
-        public BodyType? Type { get; private set; }
+        public BodyType? BodyType { get; private set; }
 
         /// <summary>
         /// Position related to center of the solar system. Should be used for drawing on board
@@ -37,8 +37,8 @@ namespace Sas.SolarSystem.Models
         {
             get
             {
-                if (this.Attracted == null) throw new Exception("Cannot get U because there is no attracted body");
-                return Constants.G * (Mass + this.Attracted.Mass);
+                if (this.SurroundedBody == null) throw new Exception("Cannot get U because there is no SurroundedBody body");
+                return Constants.G * (Mass + this.SurroundedBody.Mass);
             }
         }
 
@@ -46,7 +46,7 @@ namespace Sas.SolarSystem.Models
         /// <summary>
         /// Surrounding body
         /// </summary>
-        public Body? Attracted { get; set; }
+        public Body? SurroundedBody { get; set; }
 
         /// <summary>
         /// Orbit of the body
@@ -58,15 +58,12 @@ namespace Sas.SolarSystem.Models
         /// </summary>
         /// <param name="body"></param>
         /// <returns>The relative position</returns>
-        public Vector GetPositionRelatedTo(Body body)
+        public Vector GetPositionRelatedTo(Body? body)
         {
-            if (body == null || AbsolutePosition == null)
-            {
-                return new Vector(0, 0, 0);
-            }
+            if (body?.AbsolutePosition == null || AbsolutePosition == null) throw new ArgumentException();
             else
             {
-                return body.AbsolutePosition - AbsolutePosition;
+                return body.AbsolutePosition - this.AbsolutePosition;
             }
         }
 
@@ -75,15 +72,15 @@ namespace Sas.SolarSystem.Models
         /// </summary>
         /// <param name="body"></param>
         /// <returns>The relative position</returns>
-        public Vector GetPositionRelatedToAttracted()
+        public Vector GetPositionRelatedToSurroundedBody()
         {
-            if (Attracted == null || AbsolutePosition == null)
+            if (SurroundedBody?.AbsolutePosition == null || this.AbsolutePosition == null)
             {
                 return new Vector(0, 0, 0);
             }
             else
             {
-                return Attracted.AbsolutePosition - AbsolutePosition;
+                return SurroundedBody.AbsolutePosition - AbsolutePosition;
             }
         }
 
@@ -92,9 +89,10 @@ namespace Sas.SolarSystem.Models
         /// </summary>
         /// <param name="body"></param>
         /// <returns>The relative velocity</returns>
-        public Vector GetVelocityRelatedTo(Body body)
+        public Vector GetVelocityRelatedTo(Body? body)
         {
-            return body.AbsoluteVelocity - AbsoluteVelocity;
+            if (body?.AbsoluteVelocity == null || this.AbsoluteVelocity == null) throw new ArgumentException();
+            return body.AbsoluteVelocity - this.AbsoluteVelocity;
         }
 
         /// <summary>
@@ -102,13 +100,15 @@ namespace Sas.SolarSystem.Models
         /// </summary>
         /// <param name="body"></param>
         /// <returns>The relative velocity</returns>
-        public Vector GetVelocityRelatedToAtrracted()
+        public Vector GetVelocityRelatedToSurroundedBody()
         {
-            return Attracted.AbsoluteVelocity - AbsoluteVelocity;
+            if(SurroundedBody?.AbsoluteVelocity == null || this.AbsoluteVelocity == null) throw new Exception($"Surrounded body for {Name} doesn't exist");
+            return SurroundedBody.AbsoluteVelocity - this.AbsoluteVelocity;
         }
 
         public double GetSphereOfInfluence(Body body)
         {
+            if(AbsoluteVelocity == null || AbsolutePosition == null || body.AbsolutePosition == null) throw new Exception();
             CoordinateSystem cs = new();
             cs.Cartesian(AbsoluteVelocity);
             double distance = (AbsolutePosition - body.AbsolutePosition).Magnitude();
@@ -118,13 +118,14 @@ namespace Sas.SolarSystem.Models
 
         public override string? ToString()
         {
-            return $"Name: {Name}, Type: {Type}, Mass: {Mass}, Attracted: {Attracted.Name}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}, ";
+            return $"Name: {Name}, Type: {BodyType}, Mass: {Mass}, SurroundedBody: {SurroundedBody}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}, ";
         }
 
         public class Builder
         {
             private string? _name;
             private double _mass;
+            private Body? _surrounded;
             private Vector? _absolutePosition;
             private Vector? _absoluteVelocity;
             private BodyType _type;
@@ -156,13 +157,17 @@ namespace Sas.SolarSystem.Models
                 return this;
             }
 
+            public Builder SurroundedBody(Body value)
+            {
+                _surrounded = value;
+                return this;
+            }
+
             public Body Build()
             {
-                if (_name == null) throw new ArgumentNullException("No name of the body");
-                if (_mass == null) throw new ArgumentNullException("No name of the body");
                 if (_absolutePosition == null) throw new ArgumentNullException("No absolute position");
                 if (_absoluteVelocity == null) throw new ArgumentNullException("No absolute velocity");
-                return new Body { Name = _name, Mass = _mass, AbsolutePosition = _absolutePosition, AbsoluteVelocity = _absoluteVelocity, Type = _type };
+                return new Body { Name = _name, Mass = _mass, AbsolutePosition = _absolutePosition, AbsoluteVelocity = _absoluteVelocity, BodyType = _type, SurroundedBody = _surrounded };
             }
 
         }

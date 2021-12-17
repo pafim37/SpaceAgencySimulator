@@ -118,7 +118,7 @@ namespace Sas.SolarSystem.Models
 
         public override string? ToString()
         {
-            return $"Name: {Name}, Type: {BodyType}, Mass: {Mass}, SurroundedBody: {SurroundedBody}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}, ";
+            return $"Name: {Name}, Type: {BodyType}, Mass: {Mass}, SurroundedBody: {SurroundedBody.Name}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}, ";
         }
 
         public class Builder

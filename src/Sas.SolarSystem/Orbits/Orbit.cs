@@ -18,7 +18,6 @@ namespace Sas.SolarSystem.Orbits
         protected double _i;  // inclination 
         protected double _om; // ascending node
 
-
         /// <summary>
         /// Semi major axis
         /// </summary>

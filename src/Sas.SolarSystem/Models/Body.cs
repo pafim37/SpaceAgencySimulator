@@ -5,53 +5,66 @@ namespace Sas.SolarSystem.Models
 {
     public class Body
     {
+        private string _name;
+        private double _mass;
+        private Vector _position;
+        private Vector _velocity;
+
         /// <summary>
         /// Name of the body. Should be unique
         /// </summary>
-        public string? Name { get; private set; }
+        public string Name => _name;
 
         /// <summary>
         /// Mass of the body
         /// </summary>
-        public double Mass { get; private set; }
-
-        /// <summary>
-        /// Body type: star, earth, moon etc...
-        /// </summary>
-        public BodyType? BodyType { get; private set; }
+        public double Mass => _mass;
 
         /// <summary>
         /// Position related to center of the solar system. Should be used for drawing on board
         /// </summary>
-        public Vector? AbsolutePosition { get; set; }
+        public Vector AbsolutePosition => _position;
 
         /// <summary>
         /// Velocity related to center of the solar system. Should be used for drawing on board
         /// </summary>
-        public Vector? AbsoluteVelocity { get; set; }
+        public Vector AbsoluteVelocity => _velocity;
+
+        public Body(string name, double mass, Vector position, Vector velocity)
+        {
+            _name = name;
+            _mass = mass;
+            _position = position;
+            _velocity = velocity;
+        }
 
         /// <summary>
         /// G * (M + m)
         /// </summary>
-        public double U
-        {
-            get
+        public double U 
+        { 
+            get 
             {
-                if (this.SurroundedBody == null) throw new Exception("Cannot get U because there is no SurroundedBody body");
-                return Constants.G * (Mass + this.SurroundedBody.Mass);
+                if (SurroundedBody != null)
+                {
+                    return (_mass + SurroundedBody.Mass) * Constants.G;
+                }
+                else
+                {
+                    throw new ArgumentNullException($"Surrounded body for {Name} doesn't exist");
+                }
             }
         }
-
 
         /// <summary>
         /// Surrounding body
         /// </summary>
-        public Body? SurroundedBody { get; set; }
+        public Body SurroundedBody { get; set; }
 
         /// <summary>
         /// Orbit of the body
         /// </summary>
-        public Orbit? Orbit { get; set; }
+        public Orbit Orbit { get; set; }
 
         /// <summary>
         /// Position in relation to the body 
@@ -60,11 +73,12 @@ namespace Sas.SolarSystem.Models
         /// <returns>The relative position</returns>
         public Vector GetPositionRelatedTo(Body? body)
         {
-            if (body?.AbsolutePosition == null || AbsolutePosition == null) throw new ArgumentException();
-            else
+            if (body != null)
             {
-                return body.AbsolutePosition - this.AbsolutePosition;
+                return body.AbsolutePosition - _position;
             }
+            else
+                throw new ArgumentNullException();
         }
 
         /// <summary>
@@ -74,14 +88,12 @@ namespace Sas.SolarSystem.Models
         /// <returns>The relative position</returns>
         public Vector GetPositionRelatedToSurroundedBody()
         {
-            if (SurroundedBody?.AbsolutePosition == null || this.AbsolutePosition == null)
+            if (SurroundedBody != null)
             {
-                return new Vector(0, 0, 0);
+                return SurroundedBody.AbsolutePosition - _position;
             }
             else
-            {
-                return SurroundedBody.AbsolutePosition - AbsolutePosition;
-            }
+                throw new ArgumentNullException();
         }
 
         /// <summary>
@@ -91,8 +103,12 @@ namespace Sas.SolarSystem.Models
         /// <returns>The relative velocity</returns>
         public Vector GetVelocityRelatedTo(Body? body)
         {
-            if (body?.AbsoluteVelocity == null || this.AbsoluteVelocity == null) throw new ArgumentException();
-            return body.AbsoluteVelocity - this.AbsoluteVelocity;
+            if (body != null)
+            {
+                return body.AbsoluteVelocity - _velocity;
+            }
+            else
+                throw new ArgumentNullException();
         }
 
         /// <summary>
@@ -102,74 +118,29 @@ namespace Sas.SolarSystem.Models
         /// <returns>The relative velocity</returns>
         public Vector GetVelocityRelatedToSurroundedBody()
         {
-            if(SurroundedBody?.AbsoluteVelocity == null || this.AbsoluteVelocity == null) throw new Exception($"Surrounded body for {Name} doesn't exist");
-            return SurroundedBody.AbsoluteVelocity - this.AbsoluteVelocity;
+            if (SurroundedBody != null)
+            {
+                return SurroundedBody.AbsoluteVelocity - _velocity;
+            }
+            else
+                throw new ArgumentNullException($"Surrounded body for {Name} doesn't exist");
         }
 
         public double GetSphereOfInfluence(Body body)
         {
-            if(AbsoluteVelocity == null || AbsolutePosition == null || body.AbsolutePosition == null) throw new Exception();
-            CoordinateSystem cs = new();
-            cs.Cartesian(AbsoluteVelocity);
-            double distance = (AbsolutePosition - body.AbsolutePosition).Magnitude();
-            double massRatio = Math.Pow(Mass / body.Mass, 0.4);
-            return distance * massRatio;
+            if (body != null)
+            {
+                double distance = (_position - body.AbsolutePosition).Magnitude();
+                double massRatio = Math.Pow(Mass / body.Mass, 0.4);
+                return distance * massRatio;
+            }
+            else
+                throw new ArgumentNullException();
         }
 
         public override string? ToString()
         {
-            return $"Name: {Name}, Type: {BodyType}, Mass: {Mass}, SurroundedBody: {SurroundedBody.Name}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}, ";
-        }
-
-        public class Builder
-        {
-            private string? _name;
-            private double _mass;
-            private Body? _surrounded;
-            private Vector? _absolutePosition;
-            private Vector? _absoluteVelocity;
-            private BodyType _type;
-
-            public Builder Name(string value)
-            {
-                _name = value;
-                return this;
-            }
-            public Builder Mass(double value)
-            {
-                _mass = value;
-                return this;
-            }
-            public Builder AbsolutePosition(Vector value)
-            {
-                _absolutePosition = value;
-                return this;
-            }
-            public Builder AbsoluteVelocity(Vector value)
-            {
-                _absoluteVelocity = value;
-                return this;
-            }
-
-            public Builder Type(BodyType value)
-            {
-                _type = value;
-                return this;
-            }
-
-            public Builder SurroundedBody(Body value)
-            {
-                _surrounded = value;
-                return this;
-            }
-
-            public Body Build()
-            {
-                if (_absolutePosition == null) throw new ArgumentNullException("No absolute position");
-                if (_absoluteVelocity == null) throw new ArgumentNullException("No absolute velocity");
-                return new Body { Name = _name, Mass = _mass, AbsolutePosition = _absolutePosition, AbsoluteVelocity = _absoluteVelocity, BodyType = _type, SurroundedBody = _surrounded };
-            }
-
+            return $"Name: {Name}, Mass: {Mass}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}, SurroundedBody: {SurroundedBody.Name}";
         }
     }
 }

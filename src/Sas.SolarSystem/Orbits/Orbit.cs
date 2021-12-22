@@ -124,6 +124,8 @@ namespace Sas.SolarSystem.Orbits
         /// <returns></returns>
         public double GetV(double th) => _h / Math.Pow(GetR(th), 2);
 
+        // public abstract double TimeBetweenTwoPoints(Vector initial, Vector final);
+
         public override string? ToString()
         {
             return $"e: {_e}, type: {_type}";

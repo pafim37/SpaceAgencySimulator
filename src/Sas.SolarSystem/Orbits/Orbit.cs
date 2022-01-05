@@ -1,6 +1,6 @@
 ﻿using Sas.Mathematica;
 
-namespace Sas.SolarSystem.Orbits
+namespace Sas.BodySystem.Orbits
 {
     public class Orbit
     {
@@ -22,7 +22,7 @@ namespace Sas.SolarSystem.Orbits
         /// Semi major axis
         /// </summary>
         public double SemiMajorAxis => _a;
-        
+
         /// <summary>
         /// Semi minor axis
         /// </summary>
@@ -32,7 +32,7 @@ namespace Sas.SolarSystem.Orbits
         /// Distance from focus
         /// </summary>
         public double DistanceFromFocus => _r;
-        
+
         /// <summary>
         /// Velocity on the orbit
         /// </summary>
@@ -42,7 +42,7 @@ namespace Sas.SolarSystem.Orbits
         /// Angular momentum per unit mass
         /// </summary>
         public double AngularMomentumPerUnitMass => _h;
-        
+
         /// <summary>
         /// Semi latus rectum
         /// </summary>
@@ -97,17 +97,17 @@ namespace Sas.SolarSystem.Orbits
             Vector eVector = 1 / u * Vector.CrossProduct(velocityRelated, hVector) - r * positionRelated;
             double h = hVector.Magnitude();
             double e = Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
-            
+
             _r = r;
             _v = v;
             _u = u;
             _h = h;
             _e = e;
-            _p = h * h / u; 
+            _p = h * h / u;
             _a = 1 / (2 / r - v * v / u);
             _b = _p / Math.Sqrt(1 - e * e);
             _type = GetOrbitType(e);
-            _w = Math.Acos(Vector.DotProduct(velocityRelated, eVector) / (e * r)); 
+            _w = Math.Acos(Vector.DotProduct(velocityRelated, eVector) / (e * r));
         }
 
         /// <summary>
@@ -124,6 +124,8 @@ namespace Sas.SolarSystem.Orbits
         /// <returns></returns>
         public double GetV(double th) => _h / Math.Pow(GetR(th), 2);
 
+        // public abstract double TimeBetweenTwoPoints(Vector initial, Vector final);
+
         public override string? ToString()
         {
             return $"e: {_e}, type: {_type}";
@@ -136,7 +138,7 @@ namespace Sas.SolarSystem.Orbits
             double h = Vector.CrossProduct(pos, vel).Magnitude();
             double e2 = 1 + v * v * h * h / (u * u) - 2 * h * h / (u * r);
             double e = Math.Sqrt(e2);
-            return Orbit.GetOrbitType(e);
+            return GetOrbitType(e);
         }
 
         private static OrbitType GetOrbitType(double e)
@@ -151,7 +153,7 @@ namespace Sas.SolarSystem.Orbits
         {
             var r = positionVector;
             var v = velocityVector;
-            
+
             OrbitType type = GetOrbitType(r, v, u);
 
             if (type == OrbitType.Circle) return new Circle(r, v, u);

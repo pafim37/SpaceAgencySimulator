@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.SolarSystem.Orbits
+namespace Sas.BodySystem.Orbits
 {
     internal class Parabola : Orbit
     {

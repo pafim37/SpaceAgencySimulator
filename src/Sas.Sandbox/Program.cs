@@ -3,7 +3,7 @@
 //using Microsoft.Extensions.Hosting;
 //using Sas.BodySystem;
 //using Sas.BodyDatabase.Database;
-
+Console.WriteLine("HW");
 ////var host = CreateHostBuilder(args).Build();
 
 ////IHostBuilder CreateHostBuilder(string[] args)

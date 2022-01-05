@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.BodySystem", "Sas.Solar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.GraphicRepresentation", "Sas.GraphicRepresentation\Sas.GraphicRepresentation.csproj", "{7112F398-4993-4B9E-AA07-7CFA329C9D68}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.BodyDatabase", "Sas.Database\Sas.BodyDatabase.csproj", "{9136DAAD-0216-4601-91D2-0F25856E6996}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Web", "Sas.Web\Sas.Web.csproj", "{D5E41C80-2135-45A8-A4CC-43180478E3CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Db.BodyDatabase", "Sas.Db.BodyDatabase\Sas.Db.BodyDatabase.csproj", "{ECD5A169-8A9A-4F1F-AE8B-2A32108CC707}"
@@ -41,10 +39,6 @@ Global
 		{7112F398-4993-4B9E-AA07-7CFA329C9D68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7112F398-4993-4B9E-AA07-7CFA329C9D68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7112F398-4993-4B9E-AA07-7CFA329C9D68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9136DAAD-0216-4601-91D2-0F25856E6996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9136DAAD-0216-4601-91D2-0F25856E6996}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9136DAAD-0216-4601-91D2-0F25856E6996}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9136DAAD-0216-4601-91D2-0F25856E6996}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D5E41C80-2135-45A8-A4CC-43180478E3CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D5E41C80-2135-45A8-A4CC-43180478E3CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5E41C80-2135-45A8-A4CC-43180478E3CA}.Release|Any CPU.ActiveCfg = Release|Any CPU

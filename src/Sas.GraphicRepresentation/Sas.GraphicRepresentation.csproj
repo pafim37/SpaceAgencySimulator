@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sas.SolarSystem\Sas.SolarSystem.csproj" />
+    <ProjectReference Include="..\Sas.SolarSystem\Sas.BodySystem.csproj" />
   </ItemGroup>
 
 </Project>

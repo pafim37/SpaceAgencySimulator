@@ -1,6 +1,6 @@
 ﻿using Sas.Mathematica;
 
-namespace Sas.SolarSystem.Orbits
+namespace Sas.BodySystem.Orbits
 {
     internal class Circle : Orbit
     {

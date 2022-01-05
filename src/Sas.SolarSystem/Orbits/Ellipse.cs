@@ -1,6 +1,6 @@
 ﻿using Sas.Mathematica;
 
-namespace Sas.SolarSystem.Orbits
+namespace Sas.BodySystem.Orbits
 {
     public class Ellipse : Orbit
     {
@@ -19,9 +19,9 @@ namespace Sas.SolarSystem.Orbits
 
         public Ellipse(Vector positionRelated, Vector velocityRelated, double u) : base(positionRelated, velocityRelated, u)
         {
-            double CosM = ( _e + Math.Cos(_th) ) / (1 + _e * Math.Cos(_th));
-            _M = Math.Acos( CosM );
-            _AE = 2 * Math.Atan( Math.Tan(_th / 2) * Math.Sqrt( (1 - _e) / ( 1 + _e) ) );
+            double CosM = (_e + Math.Cos(_th)) / (1 + _e * Math.Cos(_th));
+            _M = Math.Acos(CosM);
+            _AE = 2 * Math.Atan(Math.Tan(_th / 2) * Math.Sqrt((1 - _e) / (1 + _e)));
         }
     }
 }

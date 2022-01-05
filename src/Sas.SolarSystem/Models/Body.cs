@@ -1,12 +1,13 @@
-﻿using Sas.Mathematica;
-using Sas.SolarSystem.Orbits;
+﻿using Sas.BodySystem.Orbits;
+using Sas.Mathematica;
 
-namespace Sas.SolarSystem.Models
+namespace Sas.BodySystem.Models
 {
     public class Body
     {
-        private string _name;
+        private readonly string _name;
         private double _mass;
+        private readonly double _radius;
         private Vector _position;
         private Vector _velocity;
 
@@ -18,17 +19,46 @@ namespace Sas.SolarSystem.Models
         /// <summary>
         /// Mass of the body
         /// </summary>
-        public double Mass => _mass;
+        public double Mass
+        {
+            get { return _mass; }
+            set { _mass = value; }
+        }
 
         /// <summary>
         /// Position related to center of the solar system. Should be used for drawing on board
         /// </summary>
-        public Vector AbsolutePosition => _position;
+        public Vector AbsolutePosition
+        {
+            get { return _position; }
+            set { _position = value; }
+        }
 
         /// <summary>
         /// Velocity related to center of the solar system. Should be used for drawing on board
         /// </summary>
-        public Vector AbsoluteVelocity => _velocity;
+        public Vector AbsoluteVelocity
+        {
+            get { return _velocity; }
+            set { _velocity = value; }
+        }
+
+        /// <summary>
+        /// Size of body
+        /// </summary>
+        public double Radius => _radius;
+
+        /// <summary>
+        /// Orbit of the body
+        /// </summary>
+        public Orbit? Orbit { get; set; }
+
+        /// <summary>
+        /// Surrounding body
+        /// </summary>
+        public Body? SurroundedBody { get; set; }
+
+
 
         public Body(string name, double mass, Vector position, Vector velocity)
         {
@@ -38,109 +68,18 @@ namespace Sas.SolarSystem.Models
             _velocity = velocity;
         }
 
-        /// <summary>
-        /// G * (M + m)
-        /// </summary>
-        public double U 
-        { 
-            get 
-            {
-                if (SurroundedBody != null)
-                {
-                    return (_mass + SurroundedBody.Mass) * Constants.G;
-                }
-                else
-                {
-                    throw new ArgumentNullException($"Surrounded body for {Name} doesn't exist");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Surrounding body
-        /// </summary>
-        public Body SurroundedBody { get; set; }
-
-        /// <summary>
-        /// Orbit of the body
-        /// </summary>
-        public Orbit Orbit { get; set; }
-
-        /// <summary>
-        /// Position in relation to the body 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>The relative position</returns>
-        public Vector GetPositionRelatedTo(Body? body)
+        public Body(string name, double mass, Vector position, Vector velocity, double radius)
         {
-            if (body != null)
-            {
-                return body.AbsolutePosition - _position;
-            }
-            else
-                throw new ArgumentNullException();
-        }
-
-        /// <summary>
-        /// Position in relation to the body 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>The relative position</returns>
-        public Vector GetPositionRelatedToSurroundedBody()
-        {
-            if (SurroundedBody != null)
-            {
-                return SurroundedBody.AbsolutePosition - _position;
-            }
-            else
-                throw new ArgumentNullException();
-        }
-
-        /// <summary>
-        /// Velocity in relation to the body 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>The relative velocity</returns>
-        public Vector GetVelocityRelatedTo(Body? body)
-        {
-            if (body != null)
-            {
-                return body.AbsoluteVelocity - _velocity;
-            }
-            else
-                throw new ArgumentNullException();
-        }
-
-        /// <summary>
-        /// Velocity in relation to the body 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>The relative velocity</returns>
-        public Vector GetVelocityRelatedToSurroundedBody()
-        {
-            if (SurroundedBody != null)
-            {
-                return SurroundedBody.AbsoluteVelocity - _velocity;
-            }
-            else
-                throw new ArgumentNullException($"Surrounded body for {Name} doesn't exist");
-        }
-
-        public double GetSphereOfInfluence(Body body)
-        {
-            if (body != null)
-            {
-                double distance = (_position - body.AbsolutePosition).Magnitude();
-                double massRatio = Math.Pow(Mass / body.Mass, 0.4);
-                return distance * massRatio;
-            }
-            else
-                throw new ArgumentNullException();
+            _name = name;
+            _mass = mass;
+            _position = position;
+            _velocity = velocity;
+            _radius = radius;
         }
 
         public override string? ToString()
         {
-            return $"Name: {Name}, Mass: {Mass}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}, SurroundedBody: {SurroundedBody.Name}";
+            return $"Name: {Name}, Mass: {Mass}, AbsolutePosition: {AbsolutePosition}, AbsoluteVelocity: {AbsoluteVelocity}, SurroundedBody: <{SurroundedBody?.Name}>";
         }
     }
 }

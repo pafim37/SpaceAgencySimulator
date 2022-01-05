@@ -12,8 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sas.DataAccessLayer\Sas.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\Sas.Database\Sas.BodyDatabase.csproj" />
     <ProjectReference Include="..\Sas.Marthematica\Sas.Mathematica.csproj" />
-    <ProjectReference Include="..\Sas.SolarSystem\Sas.SolarSystem.csproj" />
+    <ProjectReference Include="..\Sas.SolarSystem\Sas.BodySystem.csproj" />
   </ItemGroup>
 
 </Project>

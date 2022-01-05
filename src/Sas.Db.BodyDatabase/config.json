@@ -1,0 +1,27 @@
+{
+  "DatabaseSettings": {
+    "CollectionName": "BodyCollection",
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "BodyDatabase"
+  }
+}
+/*
+[
+  {
+    "Name": "Sun",
+    "Mass": "10000",
+    "Radius": "10",
+    "Position": [
+        "X": "10",
+        "Y": "10",
+        "Z": "10"
+    ],
+    "Velocity": [
+        "X": "10",
+        "Y": "10",
+        "Z": "10"
+    ]
+  }
+]
+
+*/

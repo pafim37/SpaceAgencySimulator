@@ -3,8 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Sas.Dal.BodyDataAccessLayer.Repositories;
 using Sas.Db.BodyDatabase.Data;
-using Sas.Db.BodyDatabase.Repositories;
 using Sas.Db.BodyDatabase.Settings;
 
 var host = CreateHostBuilder(args).Build();
@@ -34,7 +34,7 @@ var rep1 = host.Services.GetRequiredService<BodyRepository>();
 // rep.Create(bd);
 
 var o = await rep1.GetAsync("Point");
-Console.WriteLine(o.Position.Y);
+Console.WriteLine(o.AbsolutePosition.Y);
 //foreach (var item in o)
 //{
 //    Console.WriteLine(item.Name);

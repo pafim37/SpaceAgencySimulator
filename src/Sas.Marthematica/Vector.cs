@@ -92,6 +92,21 @@ namespace Sas.Mathematica
         public static Vector operator *(double s, Vector v) => new(s * v.X, s * v.Y, s * v.Z);
 
         /// <summary>
+        /// Overloaded operator for matrix operation
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static Vector operator *(Matrix m, Vector v)
+        {
+            if (m.GetDimension() != 3) throw new ArgumentException();
+            double x = m[0] * v.X + m[1] * v.Y + m[2] * v.Z;
+            double y = m[3] * v.X + m[4] * v.Y + m[5] * v.Z;
+            double z = m[6] * v.X + m[7] * v.Y + m[8] * v.Z;
+            return new Vector(x, y, z);
+        }
+
+        /// <summary>
         /// Cross product of two vectors
         /// </summary>
         /// <param name="v1"></param>

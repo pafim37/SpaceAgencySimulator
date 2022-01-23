@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using Sas.Dal.BodyDataAccessLayer.Repositories;
 using Sas.Db.BodyDatabase.Data;
 using Sas.Db.BodyDatabase.Settings;
+using Sas.Mathematica;
+using Sas.OrbitDetermination;
 
 //using Microsoft.Extensions.DependencyInjection;
 //using Microsoft.Extensions.Hosting;
@@ -124,3 +126,9 @@ foreach (var item in o)
 //var res = await rep.GetBodyByNameAsync("One");
 
 //Console.WriteLine(res.Name);
+
+//Matrix matrix = new Matrix(new double[9] {1, 1, 1, 1, 1, 1, 1, 1, 1 });
+//Vector vector = new Vector(2, 3, 1);
+//Console.WriteLine(matrix * vector);
+
+

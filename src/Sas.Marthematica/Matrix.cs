@@ -30,15 +30,15 @@ namespace Sas.Mathematica
         public Matrix(params double[] elements)
         {
             if (elements == null) throw new ArgumentNullException(nameof(elements));
-            if (!IsMatrixSquare(elements))
-            {
-                throw new Exception("Matrix is not square");
-            }
-            else
-            {
+            //if (!IsMatrixSquare(elements))
+            //{
+            //    throw new Exception("Matrix is not square");
+            //}
+            //else
+            //{
                 _elements = elements;
                 _dim = (int)Math.Sqrt(elements.Length);
-            }
+            //}
         }
 
         /// <summary>
@@ -56,8 +56,6 @@ namespace Sas.Mathematica
             }
             set => _elements[i] = value;
         }
-
-
 
         /// <summary>
         /// Transpose of the matrix 
@@ -101,7 +99,7 @@ namespace Sas.Mathematica
             }
             Matrix cofactor = new Matrix(tmpElements);
             Matrix adjugate = cofactor.Transpose();
-            Matrix invertedMatrix = 1 / det * adjugate;
+            Matrix invertedMatrix = (1 / det) * adjugate;
             _elements = invertedMatrix.GetElements();
             return this;
         }
@@ -203,8 +201,8 @@ namespace Sas.Mathematica
         public static Matrix operator *(double s, Matrix matrix)
         {
             int dim = matrix.GetDimension();
-            double[] tmpMatrixElements = new double[dim];
-            for (int i = 0; i < dim; i++)
+            double[] tmpMatrixElements = new double[dim*dim];
+            for (int i = 0; i < dim*dim; i++)
             {
                 tmpMatrixElements[i] = s * matrix[i];
             }
@@ -232,6 +230,7 @@ namespace Sas.Mathematica
         {
             return !(left == right);
         }
+
 
 
     }

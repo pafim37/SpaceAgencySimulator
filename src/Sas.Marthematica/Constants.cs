@@ -11,6 +11,9 @@
         public static readonly double EarthMaxVelocity = 30290; // m
         public static readonly double EarthMinVelocity = 29290; // m
 
+        public static readonly double EarthFlatness = 0.08181919;
+        public static readonly double EarthRadius = 6378137; // m
+
 
         public static double MoonMass = 7.347673 * Math.Pow(10, 22); // kg
         public static readonly double MoonPeriapsis = 363104000; // m

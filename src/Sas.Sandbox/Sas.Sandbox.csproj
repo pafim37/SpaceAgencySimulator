@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Sas.Dal.BodyDataAccessLayer\Sas.Dal.BodyDataAccessLayer.csproj" />
     <ProjectReference Include="..\Sas.Db.BodyDatabase\Sas.Db.BodyDatabase.csproj" />
     <ProjectReference Include="..\Sas.Marthematica\Sas.Mathematica.csproj" />
+    <ProjectReference Include="..\Sas.OrbitDetermination\Sas.OrbitDetermination.csproj" />
     <ProjectReference Include="..\Sas.SolarSystem\Sas.BodySystem.csproj" />
   </ItemGroup>
 

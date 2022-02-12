@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Db.BodyDatabase", "Sas.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Dal.BodyDataAccessLayer", "Sas.Dal.BodyDataAccessLayer\Sas.Dal.BodyDataAccessLayer.csproj", "{29758A95-8EDF-4E9F-942E-0967A1B2C1D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.OrbitDetermination", "Sas.OrbitDetermination\Sas.OrbitDetermination.csproj", "{EB942511-6844-41C7-80AB-5B1DB49CB411}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Domain", "Sas.OrbitDetermination\Sas.Domain.csproj", "{EB942511-6844-41C7-80AB-5B1DB49CB411}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica", "Common\Sas.Marthematica\Sas.Mathematica.csproj", "{EB8CC19D-DAF8-4306-83CB-663A9BDF8578}"
 EndProject

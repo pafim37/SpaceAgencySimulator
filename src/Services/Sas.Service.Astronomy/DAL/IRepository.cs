@@ -8,7 +8,7 @@ namespace Sas.Service.Astronomy.DAL
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> GetAsync(string name);
         Task<IEnumerable<T>> GetAsync();
+        Task<T> GetAsync(int id);
     }
 }

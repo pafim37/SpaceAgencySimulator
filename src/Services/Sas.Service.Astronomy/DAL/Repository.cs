@@ -12,16 +12,16 @@ namespace Sas.Service.Astronomy.DAL
             _context = context;
         }
 
-        // Read 
-        public async Task<T> GetAsync(string name)
-        {
-            return _context.Set<T>().Where(x => x.Name.Equals(name)).FirstOrDefault();
-        }
-
         // Read all
         public async Task<IEnumerable<T>> GetAsync()
         {
             return await _context.Set<T>().ToListAsync();
+        }
+        
+        // Read
+        public async Task<T> GetAsync(int id)
+        {
+            return await _context.Set<T>().Where(x => x.Id == id).FirstOrDefaultAsync();
         }
     }
 }

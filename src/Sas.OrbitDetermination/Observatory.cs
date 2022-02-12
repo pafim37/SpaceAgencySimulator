@@ -1,4 +1,4 @@
-﻿namespace Sas.OrbitDetermination
+﻿namespace Sas.Domain
 {
     public class Observatory
     {
@@ -53,7 +53,7 @@
         {
             return _time.GetLocalSiderealTime(LongitudeRad);
         }
-        
+
         // TODO (pafim37): This method should be removed - created for tests
         public void SetLocalTime(DateTime localtime, int timeZone)
         {
@@ -68,9 +68,9 @@
         /// <param name="altitude"></param>
         /// <param name="distance"></param>
         /// <returns></returns>
-        public Observation CreateObservation(string objectName, double azimuth, double altitude, double distance)
+        public RadarObservation CreateObservation(string objectName, double azimuth, double altitude, double distance)
         {
-            return new Observation(this, objectName, _time.GetLocalTime(), azimuth, altitude, distance);
+            return new RadarObservation(this, objectName, _time.GetLocalTime(), azimuth, altitude, distance);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@
 
         private bool IsValidate(double param)
         {
-            return param < Math.PI / 2 && param > - Math.PI / 2;
+            return param < Math.PI / 2 && param > -Math.PI / 2;
         }
     }
 }

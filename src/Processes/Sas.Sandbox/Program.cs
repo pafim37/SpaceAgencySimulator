@@ -20,6 +20,11 @@ builder.Services.AddScoped<ObservatoryRepository>();
 builder.Services.AddScoped<ObservationRepository>();
 builder.Services.AddControllers();
 
+/// <summary>
+/// Add auto mapper dependancy injection
+/// </summary>
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 var app = builder.Build();
 
 app.UseRouting();

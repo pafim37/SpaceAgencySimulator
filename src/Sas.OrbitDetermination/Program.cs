@@ -1,5 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Sas.OrbitDetermination;
+using Sas.Domain;
 
 Console.WriteLine("Hello, World!");
 
@@ -23,7 +23,7 @@ Console.WriteLine(glst);
 Console.WriteLine(clst);
 Console.WriteLine(nyst);
 
-Observation MoonObserv = Cracow.CreateObservation("Moon", ChangeDegToRad(102.15467), ChangeDegToRad(3.343), 367273905); // [deg, deg, m]
+RadarObservation MoonObserv = Cracow.CreateObservation("Moon", ChangeDegToRad(102.15467), ChangeDegToRad(3.343), 367273905); // [deg, deg, m]
 
 // DateTime LocalCracowDateTime2 = new DateTime(2013, 8, 22, 4, 00, 00); // In Cracow
 Cracow.SetLocalTime(LocalCracowDateTime, 1);

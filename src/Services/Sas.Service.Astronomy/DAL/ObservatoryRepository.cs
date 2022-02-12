@@ -10,5 +10,11 @@ namespace Sas.Service.Astronomy.DAL
         {
             _context = context;
         }
+
+        // Read 
+        public async Task<ObservatoryEntity> GetAsync(string name)
+        {
+            return _context.Set<ObservatoryEntity>().Where(x => x.Name.Equals(name)).FirstOrDefault();
+        }
     }
 }

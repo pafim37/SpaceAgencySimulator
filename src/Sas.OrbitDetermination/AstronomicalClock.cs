@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.OrbitDetermination
+namespace Sas.Domain
 {
     public class AstronomicalClock
     {
@@ -17,7 +17,7 @@ namespace Sas.OrbitDetermination
         /// Time zone -12 <= t <= 12
         /// </summary>
         private readonly int _timeZone;
-        
+
         /// <summary>
         /// Constructor of the astronomical clock
         /// </summary>
@@ -72,8 +72,8 @@ namespace Sas.OrbitDetermination
                 m += 12;
             }
             int d = _universaltime.Day;
-            int a = (int)(y / 100);
-            int b = (int)(a / 4);
+            int a = y / 100;
+            int b = a / 4;
             int c = 2 - a + b;
             int e = (int)(365.25 * (y + 4716));
             int f = (int)(30.6001 * (m + 1));

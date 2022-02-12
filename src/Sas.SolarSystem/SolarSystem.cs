@@ -74,7 +74,7 @@ namespace Sas.BodySystem
                     BodyOld closest = closeBodiesList[i];
 
                     if (closest.AbsolutePosition == null || body.AbsolutePosition == null) throw new Exception();
-                    CoordinateSystem cs = new CoordinateSystem(closest.AbsolutePosition);
+                    ReferenceSystem cs = new ReferenceSystem(closest.AbsolutePosition);
                     cs.Cartesian(body.AbsolutePosition);
 
                     if (closest.GetSphereOfInfluence(body) >= body.GetPositionRelatedTo(closest).Magnitude())

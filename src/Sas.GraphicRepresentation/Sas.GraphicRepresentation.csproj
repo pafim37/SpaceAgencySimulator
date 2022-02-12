@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Sas.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Sas.SolarSystem\Sas.BodySystem.csproj" />
   </ItemGroup>
 

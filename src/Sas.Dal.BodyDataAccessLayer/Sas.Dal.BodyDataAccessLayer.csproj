@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Sas.Sandbox.Process.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Sas.Db.BodyDatabase\Sas.Db.BodyDatabase.csproj" />
     <ProjectReference Include="..\Sas.SolarSystem\Sas.BodySystem.csproj" />
   </ItemGroup>

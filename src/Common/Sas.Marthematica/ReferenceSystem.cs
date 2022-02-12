@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sas.Mathematica
 {
-    public class CoordinateSystem
+    public class ReferenceSystem
     {
         private double _xO; // x origin
         private double _yO; // y origin
@@ -24,14 +24,14 @@ namespace Sas.Mathematica
         public double Phi { get => _phi; private set => _phi = value; }
         public double Th { get => _th; private set => _th = value; }
 
-        public CoordinateSystem(Vector origin)
+        public ReferenceSystem(Vector origin)
         {
             _xO = origin.X;
             _yO = origin.Y;
             _zO = origin.Z;
         }
 
-        public CoordinateSystem()
+        public ReferenceSystem()
         {
             _xO = 0;
             _yO = 0;

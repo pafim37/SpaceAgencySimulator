@@ -7,14 +7,27 @@ using Microsoft.Extensions.Options;
 using Sas.Dal.BodyDataAccessLayer.Repositories;
 using Sas.Db.BodyDatabase.Data;
 using Sas.Db.BodyDatabase.Settings;
-using Sas.Mathematica;
-using Sas.OrbitDetermination;
+using Sas.Sandbox;
+using Sas.Service.Astronomy.Controllers;
+using Sas.Service.Astronomy.DAL;
+using Sas.Service.Astronomy.Data;
 
-//using Microsoft.Extensions.DependencyInjection;
-//using Microsoft.Extensions.Hosting;
-//using Sas.BodySystem;
-//using Sas.BodyDatabase.Database;
-Console.WriteLine("HW");
+var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddScoped<Context>();
+builder.Services.AddScoped<ObservatoryRepository>();
+builder.Services.AddScoped<ObservationRepository>();
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+app.UseRouting();
+app.MapControllers();
+app.MapGet("/", () => "Hello World");
+
+app.Run();
+
 ////var host = CreateHostBuilder(args).Build();
 
 ////IHostBuilder CreateHostBuilder(string[] args)
@@ -89,40 +102,48 @@ Console.WriteLine("HW");
 //Console.WriteLine(b2);
 
 
+// var host = CreateHostBuilder(args).Build();
 
-var host = CreateHostBuilder(args).Build();
 
-IHostBuilder CreateHostBuilder(string[] args)
-{
-    return Host.CreateDefaultBuilder(args)
-        .ConfigureAppConfiguration(app =>
-        {
-            app.AddJsonFile("config.json");
-        })
-        .ConfigureServices((context, services) => {
-            services.Configure<BodyDatabaseSettings>(context.Configuration.GetSection("DatabaseSettings"));
-            services.AddScoped<IBodyDatabaseSettings, BodyDatabaseSettings>();
-            services.AddSingleton<IBodyDatabaseSettings>(sp => sp.GetRequiredService<IOptions<BodyDatabaseSettings>>().Value);
-            services.AddScoped<IBodyDatabase, BodyDatabase>();
-            services.AddSingleton<BodyRepository>();
 
-        });
+//static IHostBuilder CreateHostBuilder(string[] args)
+//{
+//    return Host.CreateDefaultBuilder(args)
+//        //.ConfigureWebHostDefaults(webBuilder =>
+//        //{
+//        //    webBuilder.UseStartup<Startup>();
+//        //})
+//        .ConfigureAppConfiguration(app =>
+//        {
+//            app.AddJsonFile("config.json");
+//        });
+//        //.ConfigureServices((context, services) => {
+//        //    services.Configure<BodyDatabaseSettings>(context.Configuration.GetSection("DatabaseSettings"));
+//        //    services.AddScoped<IBodyDatabaseSettings, BodyDatabaseSettings>();
+//        //    services.AddSingleton<IBodyDatabaseSettings>(sp => sp.GetRequiredService<IOptions<BodyDatabaseSettings>>().Value);
+//        //    services.AddScoped<IBodyDatabase, BodyDatabase>();
+//        //    services.AddSingleton<BodyRepository>();
 
-}
+//        //    services.AddSingleton<ObservatoryRepository>();
+
+//        //});
+
+//}
+//host.Run();
 
 //var rep = host.Services.GetRequiredService<BodyDatabase>();
 
 // BodyDocument bd = new BodyDocument() { Name = "Point", Mass = 1, Radius = 1, Position = new() { X = 1, Y = 1, Z = 1 }, Velocity = new() { X = 1, Y = 1, Z = 1 } };
 // rep.Create(bd);
 
-var rep1 = host.Services.GetRequiredService<BodyRepository>();
-var o = await rep1.GetAsync();
-// Console.WriteLine(o.AbsolutePosition.Y);
+//var rep1 = host.Services.GetRequiredService<BodyRepository>();
+//var o = await rep1.GetAsync();
+//// Console.WriteLine(o.AbsolutePosition.Y);
 
-foreach (var item in o)
-{
-    Console.WriteLine(item.Name);
-}
+//foreach (var item in o)
+//{
+//    Console.WriteLine(item.Name);
+//}
 //var res = await rep.GetBodyByNameAsync("One");
 
 //Console.WriteLine(res.Name);
@@ -130,5 +151,3 @@ foreach (var item in o)
 //Matrix matrix = new Matrix(new double[9] {1, 1, 1, 1, 1, 1, 1, 1, 1 });
 //Vector vector = new Vector(2, 3, 1);
 //Console.WriteLine(matrix * vector);
-
-

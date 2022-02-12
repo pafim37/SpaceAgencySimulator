@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Sas.Db.ObservationDatabase.Models
+namespace Sas.Service.Astronomy.Models
 {
-    public class Observation
+    public class ObservationEntity : Entity
     {
         public int Id { get; set; }
 
-        public string ObjectName { get; set; }
+        public string Name { get; set; }
 
         public DateTime CreatedOn { get; set; }
 
@@ -18,6 +18,6 @@ namespace Sas.Db.ObservationDatabase.Models
 
         [ForeignKey("Observatory")]
         public int ObservatoryId { get; set; }
-        public Observatory Observatory { get; set; }
+        public ObservatoryEntity Observatory { get; set; }
     }
 }

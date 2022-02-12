@@ -1,11 +1,4 @@
-﻿using Sas.Mathematica;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sas.OrbitDetermination
+﻿namespace Sas.OrbitDetermination
 {
     public class Observation
     {

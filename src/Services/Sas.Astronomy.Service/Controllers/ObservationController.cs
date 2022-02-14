@@ -29,8 +29,8 @@ namespace Sas.Astronomy.Service.Controllers
         public async Task<IActionResult> Get()
         {
             var observations = await _repository.GetAsync();
-
-            return Ok(observations);
+            var result = _mapper.Map<List<ObservationDTO>>(observations);
+            return result != null ? Ok(result) : NoContent();
         }
 
         /// <summary>
@@ -42,50 +42,27 @@ namespace Sas.Astronomy.Service.Controllers
         public async Task<IActionResult> Get(string name)
         {
             var observations = await _repository.GetAsync(name);
-            List<ObservationDTO> result = new List<ObservationDTO>();
-
-            HttpClient client = new HttpClient();
-            foreach (var observation in observations)
-            {
-                var observatoryId = observation.Id;
-                var endpoint = $"https://localhost:5001/observatories/{observatoryId}";
-                var response = await client.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                ObservatoryEntity observatory = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservatoryEntity>(responseBody);
-                observation.Observatory = observatory;
-
-                var observationDto = _mapper.Map<ObservationDTO>(observation);
-                result.Add(observationDto);
-
-            }
-            return Ok(result);
+            var result = _mapper.Map<List<ObservationDTO>>(observations);
+            return result != null ? Ok(result) : NoContent();
         }
 
         [HttpGet("extend/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var observationEntity = await _repository.GetAsync(id);
+            var observation = await _repository.GetAsync(id);
 
-            HttpClient client = new HttpClient();
-            var observatoryId = observationEntity.ObservatoryId;
-            var endpoint = $"https://localhost:5001/observatories/{observatoryId}";
-            var response = await client.GetAsync(endpoint);
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-            ObservatoryEntity observatoryEntity = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservatoryEntity>(responseBody);
+            Observatory observatory = new Observatory(observation.Observatory.Name, observation.Observatory.LatitudeRad, observation.Observatory.LongitudeRad, observation.Observatory.Height);
 
-            Observatory observatory = new Observatory(observatoryEntity.Name, observatoryEntity.Latitude, observatoryEntity.Longitude);
-
-            RadarObservation observation = new RadarObservation(
-                observatory, observationEntity.ObjectName,
-                observationEntity.CreatedOn,
-                observationEntity.Azimuth,
-                observationEntity.Altitude,
-                observationEntity.Distance
+            RadarObservation radarObservation = new RadarObservation(
+                observatory,
+                observation.ObjectName,
+                observation.CreatedOn,
+                observation.AzimuthRad,
+                observation.AltitudeRad,
+                observation.Distance
                 );
 
-            return Ok(observation);
+            return Ok(radarObservation);
         }
     }
 }

@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Sas.Domain\Sas.Domain.csproj" />
-    <ProjectReference Include="..\..\Sas.Dal.BodyDataAccessLayer\Sas.Dal.BodyDataAccessLayer.csproj" />
-    <ProjectReference Include="..\..\Sas.Db.BodyDatabase\Sas.Db.BodyDatabase.csproj" />
-    <ProjectReference Include="..\..\Sas.SolarSystem\Sas.BodySystem.csproj" />
     <ProjectReference Include="..\..\Services\Sas.Astronomy.Service\Sas.Astronomy.Service.csproj" />
   </ItemGroup>
 

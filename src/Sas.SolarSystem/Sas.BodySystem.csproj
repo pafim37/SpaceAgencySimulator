@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Sas.Marthematica\Sas.Mathematica.csproj" />
+    <ProjectReference Include="..\Common\Sas.Mathematica\Sas.Mathematica.csproj" />
   </ItemGroup>
 
 </Project>

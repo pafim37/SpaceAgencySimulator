@@ -1,11 +1,6 @@
 ﻿using Sas.BodySystem.Models;
 using Sas.Db.BodyDatabase.Documents;
 using Sas.Mathematica;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sas.Dal.BodyDataAccessLayer.Mapping
 {

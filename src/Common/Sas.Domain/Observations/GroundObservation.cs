@@ -9,29 +9,29 @@ namespace Sas.Domain.Observations
     public class GroundObservation : ObservationBase
     {
         /// <summary>
-        /// Azimuth expressed in radians
+        /// Azimuth expressed in radians. Counted from North toward Easts
         /// </summary>
-        public double AzimuthRad { get; set; }
+        public double AzimuthRad { get; }
 
         /// <summary>
         /// Altitude (height) expressed in radians
         /// </summary>
-        public double AltitudeRad { get; set; }
+        public double AltitudeRad { get; }
 
         /// <summary>
-        /// Hour angle expressed in radis calculated from South
+        /// Hour angle expressed in radis. Counted from South towards West
         /// </summary>
-        public double HourAngleRad => GetHourAngleRad();
+        public double HourAngleRad { get; }
 
         /// <summary>
         /// Declination expressed in radians
         /// </summary>
-        public double DeclinationRad => GetDeclinationRad();
+        public double DeclinationRad { get; }
 
         /// <summary>
         /// Right Ascension expressed in radians
         /// </summary>
-        public double RightAscensionRad => GetRightAscensionRad();
+        public double RightAscensionRad { get; }
 
 
         /// <summary>
@@ -53,43 +53,37 @@ namespace Sas.Domain.Observations
         {
             AzimuthRad = azimuth;
             AltitudeRad = altitude;
+            HourAngleRad = GetHourAngleRad();
+            DeclinationRad = GetDeclinationRad();
+            RightAscensionRad = GetRightAscensionRad();
         }
 
         #region private methods
 
         private double GetHourAngleRad()
         {
-            double sinT = Math.Sin(AzimuthRad + Math.PI) * Math.Cos(AltitudeRad) / Math.Cos(DeclinationRad);
+            double a = AzimuthRad;
+            double h = AltitudeRad;
+            double dec = DeclinationRad;
+            double sinT = -Math.Sin(a) * Math.Cos(h) / Math.Cos(dec);
             double t = Math.Asin(sinT);
-            if (t < 0) t += 2 * Math.PI;
-            return t;
+            return t < 0 ? t += 2 * Math.PI : t;
         }
 
         private double GetDeclinationRad()
         {
-            double azRad = AzimuthRad + Math.PI;
-            double hRad = AltitudeRad;
-            double fiRad = Observatory.LatitudeRad;
-            double sinDec = Math.Sin(hRad) * Math.Sin(fiRad) - Math.Cos(hRad) * Math.Cos(fiRad) * Math.Cos(azRad);
+            double a = AzimuthRad;
+            double h = AltitudeRad;
+            double fi = Observatory.LatitudeRad;
+            double sinDec = Math.Sin(h) * Math.Sin(fi) + Math.Cos(h) * Math.Cos(fi) * Math.Cos(a);
             double dec = Math.Asin(sinDec);
             return dec;
         }
 
         private double GetRightAscensionRad()
         {
-            double ra = Observatory.GetLocalSiderealTime() - HourAngleRad;
-            if (ra > 2 * Math.PI)
-            {
-                return ra - 2 * Math.PI;
-            }
-            else if (ra < 0)
-            {
-                return ra + 2 * Math.PI;
-            }
-            else
-            {
-                return ra;
-            }
+            double ra = Time.SiderealTime - HourAngleRad;
+            return ra > 0 ? ra : ra + 2 * Math.PI;
         }
 
         #endregion

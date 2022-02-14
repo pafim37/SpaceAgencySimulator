@@ -5,15 +5,17 @@ namespace Sas.Astronomy.Service.Models
 {
     public class ObservationEntity : Entity
     {
+        [Required]
         public string ObjectName { get; set; }
-
+        [Required]
         public DateTime CreatedOn { get; set; }
-
-        public double Azimuth { get; set; }
-
-        public double Altitude { get; set; }
+        [Required]
+        public double AzimuthRad { get; set; }
+        [Required]
+        public double AltitudeRad { get; set; }
+        [Required]
         public double Distance { get; set; }
-
+        [Required]
         [ForeignKey("Observatory")]
         public int ObservatoryId { get; set; }
         public ObservatoryEntity Observatory { get; set; }

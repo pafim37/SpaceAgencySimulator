@@ -9,9 +9,9 @@ namespace Sas.Astronomy.Service.Models
 
         public DateTime CreatedOn { get; set; }
 
-        public double Azimuth { get; set; }
+        public double AzimuthRad { get; set; }
 
-        public double Altitude { get; set; }
+        public double AltitudeRad { get; set; }
         public double Distance { get; set; }
 
         [ForeignKey("Observatory")]

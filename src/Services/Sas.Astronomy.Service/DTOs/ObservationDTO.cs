@@ -10,8 +10,8 @@ namespace Sas.Astronomy.Service.DTOs
     {
         public string ObjectName { get; set; }
         public DateTime CreatedOn { get; set; }
-        public double Azimuth { get; set; }
-        public double Altitude { get; set; }
+        public double AzimuthRad { get; set; }
+        public double AltitudeRad { get; set; }
         public double Distance { get; set; }
         public string ObservatoryName { get; set; }
     }

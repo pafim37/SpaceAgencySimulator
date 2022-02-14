@@ -9,19 +9,19 @@ namespace Sas.Domain.Observations
     public class ObservationBase
     {
         /// <summary>
-        /// Gets observatory that create the observation
-        /// </summary>
-        public Observatory Observatory { get; set; }
-
-        /// <summary>
         /// Gets name of the observed object
         /// </summary>
-        public string ObjectName { get; set; }
+        public string ObjectName { get; }
 
         /// <summary>
-        /// Local date of creation
+        /// Gets observatory that create the observation
         /// </summary>
-        public DateTime CreatedOn { get; set; }
+        public Observatory Observatory { get; }
+
+        /// <summary>
+        /// Time of the creation
+        /// </summary>
+        public AstronomicalClock Time { get; }
 
         /// <summary>
         /// Constructor of the ObservationBase
@@ -34,7 +34,8 @@ namespace Sas.Domain.Observations
         {
             Observatory = observatory;
             ObjectName = objectName;
-            CreatedOn = createdOn;
+            Time = new AstronomicalClock(createdOn, observatory.LongitudeRad);
         }
+
     }
 }

@@ -75,17 +75,19 @@ namespace Sas.Astronomy.Service.Controllers
             string responseBody = await response.Content.ReadAsStringAsync();
             ObservatoryEntity observatoryEntity = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservatoryEntity>(responseBody);
 
-            Observatory observatory = new Observatory(observatoryEntity.Name, observatoryEntity.Latitude, observatoryEntity.Longitude);
+            observationEntity.Observatory = observatoryEntity;
 
-            RadarObservation observation = new RadarObservation(
+            Observatory observatory = new Observatory(observatoryEntity.Name, observatoryEntity.LatitudeRad, observatoryEntity.LongitudeRad, observatoryEntity.Height);
+
+            RadarObservation radarObservation = new RadarObservation(
                 observatory, observationEntity.ObjectName,
                 observationEntity.CreatedOn,
-                observationEntity.Azimuth,
-                observationEntity.Altitude,
+                observationEntity.AzimuthRad,
+                observationEntity.AltitudeRad,
                 observationEntity.Distance
                 );
 
-            return Ok(observation);
+            return Ok(radarObservation);
         }
     }
 }

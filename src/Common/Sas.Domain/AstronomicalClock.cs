@@ -9,69 +9,72 @@ namespace Sas.Domain
     public class AstronomicalClock
     {
         /// <summary>
-        /// Mean solar time of the Greenwich
-        /// </summary>
-        private readonly DateTime _universaltime;
-
-        /// <summary>
-        /// Time zone -12 <= t <= 12
-        /// </summary>
-        private readonly int _timeZone;
-
-        /// <summary>
-        /// Constructor of the astronomical clock
-        /// </summary>
-        /// <param name="localtime"></param>
-        /// <param name="timeZone"></param>
-        public AstronomicalClock(DateTime localtime, int timeZone)
-        {
-            if (timeZone < 12 && timeZone > -12)
-            {
-                _timeZone = timeZone;
-                _universaltime = localtime.AddHours(-timeZone);
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("Time zone out of the range");
-            }
-        }
-
-        /// <summary>
         /// Gets local time
         /// </summary>
         /// <returns></returns>
-        public DateTime GetLocalTime() => _universaltime.AddHours(_timeZone);
+        public DateTime LocalTime { get; }
 
         /// <summary>
         /// Gets universal time
         /// </summary>
         /// <returns></returns>
-        public DateTime GetUniversalTime() => _universaltime;
+        public DateTime UniversalTime { get; }
 
         /// <summary>
         /// Gets local sidereal time expressed in radians
         /// </summary>
         /// <param name="lambda">Longitude of the observator in radians</param>
         /// <returns></returns>
-        public double GetLocalSiderealTime(double lambda)
+        public double SiderealTime { get; }
+
+        /// <summary>
+        /// Constructor of the astronomical clock
+        /// </summary>
+        /// <param name="localtime"></param>
+        /// <param name="timeZone"></param>
+        public AstronomicalClock(DateTime localtime, double longitude)
         {
-            return SiderealTimeRad(lambda);
+            _longitude = longitude;
+            LocalTime = localtime;
+            int timeZone = FindTimeZone(longitude);
+            UniversalTime = localtime.AddHours(timeZone);
+            SiderealTime = GetSiderealTimeRad();
+        }
+
+        #region provate methods
+        private double GetSiderealTimeRad()
+        {
+            double lambda = 180 * _longitude / Math.PI; // convert to deg
+            double J0 = GetJulianDate();
+            double T0 = (J0 - 2451545.0) / 36525;
+            double thG0 = AokisFormula(T0);
+            thG0 -= 360 * (int)(thG0 / 360);
+            double UT1 = UniversalTime.Hour + UniversalTime.Minute / 60.0 + UniversalTime.Second / 3600.0;
+            double thGdeg = thG0 + 360.985647366 * UT1 / 24;
+            thGdeg = thGdeg + lambda > 360 ? thGdeg + lambda - 360 : thGdeg + lambda;
+            double thGrad = Math.PI * thGdeg / 180;
+            return thGrad;
+        }
+
+        private double AokisFormula(double T0)
+        {
+            return 100.460618375 + 36000.7700536 * T0 + 0.000387933 * T0 * T0 - 2.5875 * Math.Pow(10, -8) * T0 * T0 * T0;
         }
 
         /// <summary>
         /// Gets Jefferys W. H. Julian Date Number
         /// </summary>
         /// <returns></returns>
-        public double GetJulianDate()
+        private double GetJulianDate()
         {
-            int y = _universaltime.Year;
-            int m = _universaltime.Month;
+            int y = UniversalTime.Year;
+            int m = UniversalTime.Month;
             if (m < 3)
             {
                 y--;
                 m += 12;
             }
-            int d = _universaltime.Day;
+            int d = UniversalTime.Day;
             int a = y / 100;
             int b = a / 4;
             int c = 2 - a + b;
@@ -81,22 +84,23 @@ namespace Sas.Domain
         }
 
         /// <summary>
-        /// Return sidereal time as deg 
+        /// Find time zone using 15 degrees intervals. Can be inaccurate.
         /// </summary>
-        /// <param name="lambda"></param>
+        /// <param name="longitude"></param>
         /// <returns></returns>
-        private double SiderealTimeRad(double lambda)
+        private int FindTimeZone(double longitude)
         {
-            lambda = 180 * lambda / Math.PI; // convert to deg
-            double J0 = GetJulianDate();
-            double T0 = (J0 - 2451545.0) / 36525;
-            double thG0 = 100.460618375 + 36000.7700536 * T0 + 0.000387933 * T0 * T0 - 2.5875 * Math.Pow(10, -8) * T0 * T0 * T0;
-            thG0 -= 360 * (int)(thG0 / 360);
-            double UT1 = _universaltime.Hour + _universaltime.Minute / 60.0 + _universaltime.Second / 3600.0;
-            double thGdeg = thG0 + 360.985647366 * UT1 / 24;
-            thGdeg = thGdeg + lambda > 360 ? thGdeg + lambda - 360 : thGdeg + lambda;
-            double thGrad = Math.PI * thGdeg / 180;
-            return thGrad;
+            // TODO (pafim37): This method should be more advanced
+            longitude = longitude * 180 / Math.PI; // convert to deg
+            return (int)((7.5 + longitude) / 15);
         }
+        #endregion
+
+        #region private fields
+        /// <summary>
+        /// Longitude of the clock (Observatory)
+        /// </summary>
+        private readonly double _longitude;
+        #endregion
     }
 }

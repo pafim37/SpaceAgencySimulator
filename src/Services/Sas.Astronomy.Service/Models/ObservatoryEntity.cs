@@ -11,7 +11,8 @@ namespace Sas.Astronomy.Service.Models
     public class ObservatoryEntity : Entity
     {
         [Required]
-        public string? Name { get; set; }
+        public string Name { get; set; }
+      
         [Required]
         public double LongitudeRad { get; set; }
         [Required]

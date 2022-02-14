@@ -10,7 +10,6 @@ namespace Sas.Astronomy.Service.Profiles
         public ObservatoryProfile()
         {
             CreateMap<ObservatoryEntity, ObservatoryDTO>().ReverseMap();
-            CreateMap<ObservatoryEntity, Observatory>().ReverseMap();
         }
     }
 }

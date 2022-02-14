@@ -25,10 +25,9 @@ namespace Sas.Astronomy.Service.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            Console.WriteLine("Hello World");
             var observatories = await _repository.GetAsync();
             var result = _mapper.Map<List<ObservatoryDTO>>(observatories);
-            return Ok(result);
+            return result != null ? Ok(result) : NoContent();
         }
 
         /// <summary>
@@ -39,18 +38,20 @@ namespace Sas.Astronomy.Service.Controllers
         [HttpGet("{name}")]
         public async Task<IActionResult> Get(string name)
         {
+            ObservatoryDTO result;
+
             if (int.TryParse(name, out int id))
             {
                 var observatory = await _repository.GetAsync(id);
-                var result = _mapper.Map<ObservatoryDTO>(observatory);
-                return Ok(result);
+                result = _mapper.Map<ObservatoryDTO>(observatory);
             }
             else
             {
-                var observatories = await _repository.GetAsync(name);
-                var result = _mapper.Map<ObservatoryDTO>(observatories);
-                return Ok(result);
+                var observatory = await _repository.GetAsync(name);
+                result = _mapper.Map<ObservatoryDTO>(observatory);
             }
+
+            return result != null ? Ok(result) : NoContent();
         }
     }
 }

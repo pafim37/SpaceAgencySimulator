@@ -1,7 +1,12 @@
 ﻿
 // See https://aka.ms/new-console-template for more information
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.Data;
+using Sas.SolarSystem.Service.DAL;
+using Sas.SolarSystem.Service.Data;
+using Sas.SolarSystem.Service.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<Context>();
 builder.Services.AddScoped<ObservatoryRepository>();
 builder.Services.AddScoped<ObservationRepository>();
+
+builder.Configuration.AddJsonFile("config.json");
+builder.Services.Configure<BodyDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
+
+builder.Services.AddSingleton<BodyDatabaseSettings>(x => x.GetRequiredService<IOptions<BodyDatabaseSettings>>().Value);
+
+builder.Services.AddScoped<IBodyDatabaseSettings, BodyDatabaseSettings>();
+builder.Services.AddScoped<IBodyDatabase, BodyDatabase>();
+builder.Services.AddScoped<IBodyRepository, BodyRepository>();
+
 builder.Services.AddControllers();
 
 /// <summary>

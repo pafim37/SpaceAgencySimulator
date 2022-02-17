@@ -3,14 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.BodySystem", "Sas.SolarSystem\Sas.BodySystem.csproj", "{78E75EEA-5BBD-447F-9551-34509D4A1731}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.GraphicRepresentation", "Sas.GraphicRepresentation\Sas.GraphicRepresentation.csproj", "{7112F398-4993-4B9E-AA07-7CFA329C9D68}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Db.BodyDatabase", "Sas.Db.BodyDatabase\Sas.Db.BodyDatabase.csproj", "{ECD5A169-8A9A-4F1F-AE8B-2A32108CC707}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Dal.BodyDataAccessLayer", "Sas.Dal.BodyDataAccessLayer\Sas.Dal.BodyDataAccessLayer.csproj", "{29758A95-8EDF-4E9F-942E-0967A1B2C1D0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Domain", "Common\Sas.Domain\Sas.Domain.csproj", "{0A0DAD26-BA32-4058-9DFC-B6FC6A1C3C81}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Sandbox.Process", "Processes\Sas.Sandbox.Process\Sas.Sandbox.Process.csproj", "{D970756A-0F1C-4319-9724-F879464FB963}"
@@ -19,28 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Astronomy.Service", "Se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica", "Common\Sas.Mathematica\Sas.Mathematica.csproj", "{50E9FFBE-9AE3-4D06-8508-BF79E724613E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.SolarSystem.Service", "Services\Sas.SolarSystem.Service\Sas.SolarSystem.Service.csproj", "{651C6B24-AA78-49F0-A3ED-974D744F29AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{78E75EEA-5BBD-447F-9551-34509D4A1731}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{78E75EEA-5BBD-447F-9551-34509D4A1731}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{78E75EEA-5BBD-447F-9551-34509D4A1731}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{78E75EEA-5BBD-447F-9551-34509D4A1731}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7112F398-4993-4B9E-AA07-7CFA329C9D68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7112F398-4993-4B9E-AA07-7CFA329C9D68}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7112F398-4993-4B9E-AA07-7CFA329C9D68}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7112F398-4993-4B9E-AA07-7CFA329C9D68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ECD5A169-8A9A-4F1F-AE8B-2A32108CC707}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ECD5A169-8A9A-4F1F-AE8B-2A32108CC707}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ECD5A169-8A9A-4F1F-AE8B-2A32108CC707}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ECD5A169-8A9A-4F1F-AE8B-2A32108CC707}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29758A95-8EDF-4E9F-942E-0967A1B2C1D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29758A95-8EDF-4E9F-942E-0967A1B2C1D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29758A95-8EDF-4E9F-942E-0967A1B2C1D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29758A95-8EDF-4E9F-942E-0967A1B2C1D0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A0DAD26-BA32-4058-9DFC-B6FC6A1C3C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A0DAD26-BA32-4058-9DFC-B6FC6A1C3C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A0DAD26-BA32-4058-9DFC-B6FC6A1C3C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +35,10 @@ Global
 		{50E9FFBE-9AE3-4D06-8508-BF79E724613E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50E9FFBE-9AE3-4D06-8508-BF79E724613E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50E9FFBE-9AE3-4D06-8508-BF79E724613E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{651C6B24-AA78-49F0-A3ED-974D744F29AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{651C6B24-AA78-49F0-A3ED-974D744F29AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{651C6B24-AA78-49F0-A3ED-974D744F29AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{651C6B24-AA78-49F0-A3ED-974D744F29AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

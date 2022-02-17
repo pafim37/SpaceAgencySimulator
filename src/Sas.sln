@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Sandbox.Process", "Proc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Astronomy.Service", "Services\Sas.Astronomy.Service\Sas.Astronomy.Service.csproj", "{71F2E551-145D-49C5-BF90-0E8AE728F901}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica", "Common\Sas.Mathematica\Sas.Mathematica.csproj", "{50E9FFBE-9AE3-4D06-8508-BF79E724613E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.SolarSystem.Service", "Services\Sas.SolarSystem.Service\Sas.SolarSystem.Service.csproj", "{651C6B24-AA78-49F0-A3ED-974D744F29AD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.BodySystem", "Sas.SolarSystem\Sas.BodySystem.csproj", "{8C012839-BF4B-43BD-80EA-E646288B30E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica", "Common\Sas.Mathematica\Sas.Mathematica.csproj", "{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +33,18 @@ Global
 		{71F2E551-145D-49C5-BF90-0E8AE728F901}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71F2E551-145D-49C5-BF90-0E8AE728F901}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71F2E551-145D-49C5-BF90-0E8AE728F901}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50E9FFBE-9AE3-4D06-8508-BF79E724613E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50E9FFBE-9AE3-4D06-8508-BF79E724613E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50E9FFBE-9AE3-4D06-8508-BF79E724613E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50E9FFBE-9AE3-4D06-8508-BF79E724613E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{651C6B24-AA78-49F0-A3ED-974D744F29AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{651C6B24-AA78-49F0-A3ED-974D744F29AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{651C6B24-AA78-49F0-A3ED-974D744F29AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{651C6B24-AA78-49F0-A3ED-974D744F29AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C012839-BF4B-43BD-80EA-E646288B30E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C012839-BF4B-43BD-80EA-E646288B30E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C012839-BF4B-43BD-80EA-E646288B30E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C012839-BF4B-43BD-80EA-E646288B30E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

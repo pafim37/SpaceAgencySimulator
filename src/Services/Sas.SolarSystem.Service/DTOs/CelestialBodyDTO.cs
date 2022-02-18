@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.BodySystem.Models
+namespace Sas.SolarSystem.Service.DTOs
 {
-    public class ThreeBodySystem
+    public class CelestialBodyDTO : BodyDTO
     {
+        public double Radius { get; set; }
     }
 }

@@ -6,8 +6,8 @@ namespace Sas.SolarSystem.Service.DAL
     {
         Task<BodyDocument> GetAsync(string name);
         Task<IEnumerable<BodyDocument>> GetAsync();
-        //Task<BodyDocument> CreateAsync(Body body);
-        //Task UpdateAsync(string name, Body body);
-        //Task RemoveAsync(string name);
+        Task<BodyDocument> CreateAsync(BodyDocument body);
+        Task UpdateAsync(string name, BodyDocument body);
+        Task RemoveAsync(string name);
     }
 }

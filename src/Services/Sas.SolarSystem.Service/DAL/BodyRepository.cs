@@ -1,27 +1,17 @@
-﻿using AutoMapper;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using Sas.SolarSystem.Service.Data;
 using Sas.SolarSystem.Service.Documents;
-using Sas.SolarSystem.Service.DTOs;
 
 namespace Sas.SolarSystem.Service.DAL
 {
     public class BodyRepository : IBodyRepository
     {
-        private readonly IBodyDatabase _context;
+        private readonly ISolarSystemContext _context;
 
-        public BodyRepository(IBodyDatabase context)
+        public BodyRepository(ISolarSystemContext context)
         {
             _context = context;
         }
-
-        // Create
-        //public async Task<BodyDocument> CreateAsync(Body body)
-        //{
-        //    var bodyDocument = _mapper.Map(body);
-        //    await _context.Bodies.InsertOneAsync(bodyDocument);
-        //    return bodyDocument;
-        //}
 
         // Read
         public async Task<BodyDocument> GetAsync(string name)
@@ -37,24 +27,29 @@ namespace Sas.SolarSystem.Service.DAL
             return bodies;
         }
 
-        //// Update
-        //public async Task UpdateAsync(string name, BodyDTO body)
-        //{
-        //    var bodyDocument = _mapper.Map(body);
-        //    await _context.Bodies.ReplaceOneAsync(b => b.Name.Equals(name), bodyDocument);
-        //}
+        // Create
+        public async Task<BodyDocument> CreateAsync(BodyDocument body)
+        {
+            await _context.Bodies.InsertOneAsync(body);
+            return body;
+        }
 
-        //// Remove
-        //public async Task RemoveAsync(string name)
-        //{
-        //    await _context.Bodies.DeleteOneAsync(b => b.Name.Equals(name));
-        //}
+        // Update
+        public async Task UpdateAsync(string name, BodyDocument body)
+        {
+            await _context.Bodies.ReplaceOneAsync(b => b.Name.Equals(name), body);
+        }
 
-        //// Remove
-        //public async Task RemoveAsync(Body body)
-        //{
-        //    var bodyDocument = _mapper.Map(body);
-        //    await _context.Bodies.DeleteOneAsync(b => b.Name.Equals(bodyDocument.Name));
-        //}
+        // Remove
+        public async Task RemoveAsync(string name)
+        {
+            await _context.Bodies.DeleteOneAsync(b => b.Name.Equals(name));
+        }
+
+        // Remove
+        public async Task RemoveAsync(BodyDocument body)
+        {
+            await _context.Bodies.DeleteOneAsync(b => b.Name.Equals(body.Name));
+        }
     }
 }

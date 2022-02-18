@@ -3,14 +3,14 @@ using System.Data.Entity;
 
 namespace Sas.Astronomy.Service.Data
 {
-    public class Context : DbContext
+    public class AstronomyContext : DbContext
     {
         public DbSet<ObservatoryEntity> Observatories { get; set; }
         public DbSet<ObservationEntity> Observations { get; set; }
 
-        public Context() : base()
+        public AstronomyContext() : base()
         {
-            Database.SetInitializer(new ContextSeed());
+            Database.SetInitializer(new AstronomyContextSeed());
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

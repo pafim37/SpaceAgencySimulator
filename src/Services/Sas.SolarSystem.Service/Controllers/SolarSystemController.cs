@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.BodySystem.Models
+namespace Sas.SolarSystem.Service.Controllers
 {
-    internal class NBodySystem
+    internal class SolarSystemController
     {
     }
 }

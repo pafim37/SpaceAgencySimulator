@@ -1,9 +1,6 @@
-﻿using Sas.Mathematica;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sas.Domain.Bodies;
+using Sas.Domain.Exceptions;
+using Sas.Mathematica;
 
 namespace Sas.Domain
 {
@@ -12,62 +9,47 @@ namespace Sas.Domain
         /// <summary>
         /// Semi major axis
         /// </summary>
-        public double SemiMajorAxis { get; }
+        public double SemiMajorAxis { get; private set; }
 
         /// <summary>
         /// Semi minor axis
         /// </summary>
-        public double SemiMinorAxis { get; }
-
-        /// <summary>
-        /// Distance from focus
-        /// </summary>
-        public double DistanceFromFocus { get; }
-
-        /// <summary>
-        /// Velocity on the orbit
-        /// </summary>
-        public double Velocity { get; }
+        public double SemiMinorAxis { get; private set; }
 
         /// <summary>
         /// Angular momentum per unit mass
         /// </summary>
-        public double AngularMomentumPerUnitMass { get; }
+        public double AngularMomentumPerUnitMass { get; private set; }
 
         /// <summary>
         /// Semi latus rectum
         /// </summary>
-        public double SemiLatusRectum { get; }
+        public double SemiLatusRectum { get; private set; }
 
         /// <summary>
         /// Eccentricity
         /// </summary>
-        public double Eccentricity { get; }
-
-        /// <summary>
-        /// G * (M + m)
-        /// </summary>
-        public double U { get; }
+        public double Eccentricity { get; private set; }
 
         /// <summary>
         /// True anomaly
         /// </summary>
-        public double TrueAnomaly { get; }
+        public double TrueAnomaly { get; private set; }
 
         /// <summary>
         /// Argument of periapsis
         /// </summary>
-        public double ArgumentOfPeriApsis { get; }
+        public double ArgumentOfPeriApsis { get; private set; }
 
         /// <summary>
         /// Inclination
         /// </summary>
-        public double Inclination { get; }
+        public double Inclination { get; private set; }
 
         /// <summary>
         /// Ascending node
         /// </summary>
-        public double AscendingNode { get; }
+        public double AscendingNode { get; private set; }
 
         /// <summary>
         /// 
@@ -76,6 +58,34 @@ namespace Sas.Domain
         /// <param name="velocity"></param>
         /// <param name="u"></param>
         public Orbit(Vector position, Vector velocity, double u)
+        {
+            AssignProperties(position, velocity, u);
+        }
+
+        public Orbit(BodyBase body)
+        {
+            if (body is not null)
+            {
+                if (body.SurroundedBody is not null)
+                {
+                    var position = body.GetPositionRelatedToSurroundedBody();
+                    var velocity = body.GetVelocityRelatedToSurroundedBody();
+                    var u = Constants.G * (body.Mass + body.SurroundedBody.Mass);
+                    AssignProperties(position, velocity, u);
+                }
+                else
+                {
+                    throw new SurroundedBodyException("Surrounded body is not assigned");
+                }
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(body));
+            }
+        }
+
+        #region private methods
+        private void AssignProperties(Vector position, Vector velocity, double u)
         {
             double r = position.Magnitude();
             double v = velocity.Magnitude();
@@ -89,7 +99,10 @@ namespace Sas.Domain
             SemiLatusRectum = _p;
             SemiMajorAxis = 1 / (2 / r - v * v / u);
             SemiMinorAxis = _p / Math.Sqrt(1 - e * e);
-
+            AngularMomentumPerUnitMass = h;
+            Eccentricity = e;
+            ArgumentOfPeriApsis = Math.Acos(Vector.DotProduct(velocity, eVector));
         }
+        #endregion
     }
 }

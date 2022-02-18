@@ -3,9 +3,9 @@ using System.Data.Entity;
 
 namespace Sas.Astronomy.Service.Data
 {
-    internal class ContextSeed : CreateDatabaseIfNotExists<Context>
+    internal class AstronomyContextSeed : CreateDatabaseIfNotExists<AstronomyContext>
     {
-        protected override void Seed(Context context)
+        protected override void Seed(AstronomyContext context)
         {
             IList<ObservatoryEntity> observatories = new List<ObservatoryEntity>();
             IList<ObservationEntity> observations = new List<ObservationEntity>();

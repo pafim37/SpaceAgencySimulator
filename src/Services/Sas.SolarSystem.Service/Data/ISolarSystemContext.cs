@@ -3,7 +3,7 @@ using Sas.SolarSystem.Service.Documents;
 
 namespace Sas.SolarSystem.Service.Data
 {
-    public interface IBodyDatabase
+    public interface ISolarSystemContext
     {
         IMongoCollection<BodyDocument> Bodies { get; set; }
     }

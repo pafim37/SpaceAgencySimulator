@@ -6,8 +6,8 @@ namespace Sas.Astronomy.Service.DAL
 {
     public class ObservationRepository
     {
-        private readonly Context _context;
-        public ObservationRepository(Context context)
+        private readonly AstronomyContext _context;
+        public ObservationRepository(AstronomyContext context)
         {
             _context = context;
         }

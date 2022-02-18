@@ -149,19 +149,19 @@ namespace Sas.BodySystem.Orbits
             else if (e == 1) return OrbitType.Parabola;
             else return OrbitType.Rest;
         }
-        public static Orbit? CreateOrbit(Vector positionVector, Vector velocityVector, double u)
-        {
-            var r = positionVector;
-            var v = velocityVector;
+        //public static Orbit? CreateOrbit(Vector positionVector, Vector velocityVector, double u)
+        //{
+        //    var r = positionVector;
+        //    var v = velocityVector;
 
-            OrbitType type = GetOrbitType(r, v, u);
+        //    OrbitType type = GetOrbitType(r, v, u);
 
-            if (type == OrbitType.Circle) return new Circle(r, v, u);
-            else if (type == OrbitType.Ellipse) return new Ellipse(r, v, u);
-            else if (type == OrbitType.Parabola) return new Parabola(r, v, u);
-            else if (type == OrbitType.Hyperbola) return new Hyperbola(r, v, u);
+        //    if (type == OrbitType.Circle) return new Circle(r, v, u);
+        //    else if (type == OrbitType.Ellipse) return new Ellipse(r, v, u);
+        //    else if (type == OrbitType.Parabola) return new Parabola(r, v, u);
+        //    else if (type == OrbitType.Hyperbola) return new Hyperbola(r, v, u);
 
-            else return null;
-        }
+        //    else return null;
+        //}
     }
 }

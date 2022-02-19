@@ -21,9 +21,10 @@ builder.Services.AddScoped<ObservationRepository>();
 builder.Configuration.AddJsonFile("config.json");
 builder.Services.Configure<BodyDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
 
+
 builder.Services.AddSingleton<BodyDatabaseSettings>(x => x.GetRequiredService<IOptions<BodyDatabaseSettings>>().Value);
 
-builder.Services.AddScoped<ISolarSystemContext, SolarSystemContext>();
+builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
 builder.Services.AddScoped<IBodyRepository, BodyRepository>();
 
 builder.Services.AddControllers();

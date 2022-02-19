@@ -64,5 +64,19 @@ namespace Sas.Astronomy.Service.Controllers
 
             return Ok(radarObservation);
         }
+
+        [HttpPost("create-observation")]
+        public async Task<IActionResult> Create1([FromBody] ObservationDTO observationDto)
+        {
+            if (observationDto is not null)
+            {
+                var observation = _mapper.Map<ObservationEntity>(observationDto);
+                await _repository.CreateAsync(observation);
+                return Created("create-observation", observationDto);
+            }
+            else
+                return NotFound();
+        }
+
     }
 }

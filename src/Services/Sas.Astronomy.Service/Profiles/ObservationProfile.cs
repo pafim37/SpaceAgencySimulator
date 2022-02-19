@@ -11,6 +11,8 @@ namespace Sas.Astronomy.Service.Profiles
         {
             CreateMap<ObservationEntity, ObservationDTO>()
                 .ForMember(dest => dest.ObservatoryName, opt => opt.MapFrom(src => src.Observatory.Name));
+
+            CreateMap<ObservationCreateInstantDTO, ObservationDTO>();
         }
     }
 }

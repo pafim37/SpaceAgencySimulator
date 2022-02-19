@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.BodySystem", "Sas.Solar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica", "Common\Sas.Mathematica\Sas.Mathematica.csproj", "{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.SolarSystem.Application", "Sas.SolarSystem.Application\Sas.SolarSystem.Application.csproj", "{C7D8278D-47C2-4E00-AE84-1F86F65E0761}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7D8278D-47C2-4E00-AE84-1F86F65E0761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7D8278D-47C2-4E00-AE84-1F86F65E0761}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7D8278D-47C2-4E00-AE84-1F86F65E0761}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7D8278D-47C2-4E00-AE84-1F86F65E0761}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

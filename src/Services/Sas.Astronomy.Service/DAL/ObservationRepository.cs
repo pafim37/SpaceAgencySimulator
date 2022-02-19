@@ -42,5 +42,13 @@ namespace Sas.Astronomy.Service.DAL
             }
             return observations;
         }
+
+        // Create 
+        public async Task<ObservationEntity> CreateAsync(ObservationEntity observation)
+        {
+            _context.Set<ObservationEntity>().Add(observation);
+            await _context.SaveChangesAsync();
+            return observation;
+        }
     }
 }

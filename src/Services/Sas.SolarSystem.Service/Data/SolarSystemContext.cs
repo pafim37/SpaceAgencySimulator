@@ -15,24 +15,13 @@ namespace Sas.SolarSystem.Service.Data
             var database = client.GetDatabase(settings.DatabaseName);
 
             Bodies = database.GetCollection<BodyDocument>(settings.CollectionName);
-            //SeedData(); 
-            //SeedData2(); 
-        }
-        private void SeedData2()
-        {
-            BodyDocument Sattelite = new() {
-                Name = "Sattelite",
-                Mass = 100,
-                AbsolutePosition = new VectorDocument { X = Constants.EarthRadius + 400, Y = 0, Z = 0 },
-                AbsoluteVelocity = new VectorDocument { X = 0, Y = 500, Z = 0 },
-            };
 
-            Bodies.InsertOne(Sattelite);
+            SeedData();
         }
         
         private void SeedData()
         {
-            CelestialBodyDocument Sun = new() {
+            BodyDocument Sun = new() {
                 Name = "Sun",
                 Mass = Constants.SolarMass,
                 AbsolutePosition = new VectorDocument { X = 0, Y = 0, Z = 0 },
@@ -40,7 +29,7 @@ namespace Sas.SolarSystem.Service.Data
                 Radius = Constants.SunRadius
             };
 
-            CelestialBodyDocument Earth = new()
+            BodyDocument Earth = new()
             {
                 Name = "Earth",
                 Mass = Constants.EarthMass,
@@ -49,6 +38,15 @@ namespace Sas.SolarSystem.Service.Data
                 Radius = Constants.EarthRadius
             };
 
+            BodyDocument Sattelite = new()
+            {
+                Name = "Sattelite",
+                Mass = 100,
+                AbsolutePosition = new VectorDocument { X = Constants.EarthRadius + 400, Y = 0, Z = 0 },
+                AbsoluteVelocity = new VectorDocument { X = 0, Y = 500, Z = 0 },
+            };
+
+            Bodies.InsertOne(Sattelite);
             Bodies.InsertOne(Sun);
             Bodies.InsertOne(Earth);
         }

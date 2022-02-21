@@ -16,7 +16,7 @@ namespace Sas.SolarSystem.Service.Data
 
             Bodies = database.GetCollection<BodyDocument>(settings.CollectionName);
 
-            SeedData();
+            // SeedData();
         }
         
         private void SeedData()

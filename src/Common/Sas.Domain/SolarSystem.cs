@@ -10,7 +10,7 @@ namespace Sas.Domain
 {
     public class SolarSystem
     {
-        private readonly List<BodyBase> _bodies;
+        private readonly List<CelestialBody> _bodies;
 
         /// <summary>
         /// Center of mass (Barycentrum)
@@ -29,27 +29,36 @@ namespace Sas.Domain
         {
             CalibrateBarycenterForZero();
             FindAndAssignSurroundedBody();
+            CalculateOribit();
         }
 
         /// <summary>
         /// Returns list of the body in solar system
         /// </summary>
         /// <returns></returns>
-        public List<BodyBase> GetBodies() => _bodies;
+        public List<CelestialBody> GetBodies() => _bodies;
 
-        public SolarSystem(List<BodyBase> bodies)
+        public SolarSystem(List<CelestialBody> bodies)
         {
-            if(bodies.Count > 1)
-            {
-                _bodies = bodies;
-                U = GetU();
-                Update();
-            }
-            else
+            if (bodies.Count < 2)
                 throw new ArgumentException("Solar system has not enough bodies");
+
+            _bodies = bodies;
+            U = GetU();
+            Update();
+
         }
 
         #region private methods
+
+        private void CalculateOribit()
+        {
+            foreach (BodyBase b in _bodies)
+            {
+                b.UpdateOrbit();
+            }
+        }
+
         private void FindAndAssignSurroundedBody()
         {
             var sortBodies = _bodies.OrderBy(x => x.Mass).ToList();

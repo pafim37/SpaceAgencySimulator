@@ -1,68 +1,35 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Sas.Domain.Bodies;
 using Sas.SolarSystem.Service.DAL;
-using Sas.SolarSystem.Service.Documents;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Sas.SolarSystem.Service.Controllers
 {
-    [Route("bodies")]
+    [Route("solar-system")]
     [ApiController]
     public class SolarSystemController : ControllerBase
     {
         private readonly IBodyRepository _repository;
+        private readonly IMapper _mapper;
 
-        public SolarSystemController(IBodyRepository repository)
+        public SolarSystemController(IBodyRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> LoadSolarSystem()
         {
-            var bodies = await _repository.GetAsync();
-            if (bodies is null)
-            {
-                return NoContent();
-            }
+            var bodiesFromDatabase = await _repository.GetAsync();
+            var bodies = _mapper.Map<IEnumerable<CelestialBody>>(bodiesFromDatabase);
+            Sas.Domain.SolarSystem solarSystem = new Sas.Domain.SolarSystem(bodies.ToList());
             return Ok(bodies);
-        }
-
-        [HttpGet("{name}")]
-        public async Task<IActionResult> Get(string name)
-        {
-            var body = await _repository.GetAsync(name);
-            if (body is null)
-            {
-                return NoContent();
-            }
-            return Ok(body);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BodyDocument body)
-        {
-            if (body is null)
-            {
-                return NotFound();
-            }
-
-            await _repository.CreateAsync(body);
-            return Created("", body);
-
-        }
-
-        [HttpDelete("{name}")]
-        public async Task<IActionResult> Delete(string name)
-        {
-            await _repository.RemoveAsync(name);
-            return NoContent();
-        }
-
-        [HttpPut("{name}")]
-        public async Task<IActionResult> Update(string name, [FromBody] BodyDocument body)
-        {
-            await _repository.UpdateAsync(name, body);
-            return NoContent();
         }
     }
 }

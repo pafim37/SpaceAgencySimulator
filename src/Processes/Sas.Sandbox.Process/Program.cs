@@ -1,11 +1,10 @@
 ﻿
 // See https://aka.ms/new-console-template for more information
-using Microsoft.Extensions.DependencyInjection;
+using MediatR;
 using Microsoft.Extensions.Options;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.Data;
-using Sas.Domain;
-using Sas.Domain.Bodies;
+using Sas.Domain.Orbits;
 using Sas.Mathematica;
 using Sas.SolarSystem.Service.DAL;
 using Sas.SolarSystem.Service.Data;
@@ -21,9 +20,11 @@ builder.Services.AddScoped<ObservationRepository>();
 builder.Configuration.AddJsonFile("config.json");
 builder.Services.Configure<BodyDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
 
+
 builder.Services.AddSingleton<BodyDatabaseSettings>(x => x.GetRequiredService<IOptions<BodyDatabaseSettings>>().Value);
 
-builder.Services.AddScoped<ISolarSystemContext, SolarSystemContext>();
+builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
+
 builder.Services.AddScoped<IBodyRepository, BodyRepository>();
 
 builder.Services.AddControllers();
@@ -51,36 +52,41 @@ string Endpoints()
     e += "https://localhost:5001/" + "observations/extend/{id}" + '\n';
     e += "https://localhost:5001/" + "observations/extend/{id}" + '\n';
     e += "https://localhost:5001/" + "bodies" + '\n';
+    e += "https://localhost:5001/" + "solar-system" + '\n';
     return e;
 }
 
+Vector r = new Vector(5000, 10000, 2100); 
+Vector v = new Vector(-5.992,1.926,3.246);
+OrbitBase o = new OrbitBase(r, v, 398600);
 
-BodyBase Sun = new("Sun", Constants.SolarMass, Vector.Zero, Vector.Zero);
+Console.WriteLine(o.SemiMajorAxis);
+//BodyBase Sun = new("Sun", Constants.SolarMass, Vector.Zero, Vector.Zero);
 
-BodyBase Earth = new(
-    "Earth",
-    Constants.EarthMass,
-    new Vector(Constants.EarthApoapsis, 0, 0),
-    new Vector(0, Constants.EarthMinVelocity, 0)
-    );
+//BodyBase Earth = new(
+//    "Earth",
+//    Constants.EarthMass,
+//    new Vector(Constants.EarthApoapsis, 0, 0),
+//    new Vector(0, Constants.EarthMinVelocity, 0)
+//    );
 
 
-List<BodyBase> bodies = new List<BodyBase>();
-bodies.Add(Earth);
-bodies.Add(Sun);
+//List<BodyBase> bodies = new List<BodyBase>();
+//bodies.Add(Earth);
+//bodies.Add(Sun);
 
-SolarSystem solarSystem = new SolarSystem(bodies);
+//SolarSystem solarSystem = new SolarSystem(bodies);
 
-solarSystem.Update();
+//solarSystem.Update();
 
-foreach (var body in solarSystem.GetBodies())
-{
-    Console.WriteLine($"{body.Name} has {body.SurroundedBody.Name}");
-}
+//foreach (var body in solarSystem.GetBodies())
+//{
+//    Console.WriteLine($"{body.Name} has {body.SurroundedBody.Name}");
+//}
 
-Earth.UpdateOrbit();
+//Earth.UpdateOrbit();
 
-Console.WriteLine(Earth.Orbit.Eccentricity);
+//Console.WriteLine(Earth.Orbit.Eccentricity);
 
 app.Run();
 

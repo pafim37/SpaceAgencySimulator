@@ -1,54 +1,26 @@
 ﻿using Sas.Domain.Exceptions;
+using Sas.Domain.Orbits;
 using Sas.Mathematica;
 
 namespace Sas.Domain.Bodies
 {
-    public class BodyBase
+    public class BodyBase : BodyPoint
     {
-        /// <summary>
-        /// Name of the body. Should be unique
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// Mass of the body
-        /// </summary>
-        public double Mass { get; set; }
-
-        /// <summary>
-        /// Position related to center of the solar system. Should be used for drawing on board
-        /// </summary>
-        public Vector AbsolutePosition { get; set; }
-
-        /// <summary>
-        /// Velocity related to center of the solar system. Should be used for drawing on board
-        /// </summary>
-        public Vector AbsoluteVelocity { get; set; }
+        #region properties
 
         /// <summary>
         /// Orbit of the body
         /// </summary>
-        public Orbit Orbit { get; set; }
+        public OrbitBase Orbit { get; set; }
 
         /// <summary>
         /// Surrounding body
         /// </summary>
-        public BodyBase SurroundedBody { get; set; }
+        public BodyPoint SurroundedBody { get; set; }
 
-        /// <summary>
-        /// Returns position related to given body 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>The relative position</returns>
-        public Vector GetPositionRelatedTo(BodyBase body)
-        {
-            if (body is not null)
-            {
-                return this.AbsolutePosition - body.AbsolutePosition;
-            }
-            else
-                throw new ArgumentNullException(nameof(body));
-        }
+        #endregion
+
+        #region methods
 
         /// <summary>
         /// Returns position related to surrounding body 
@@ -66,21 +38,6 @@ namespace Sas.Domain.Bodies
         }
 
         /// <summary>
-        /// Returns velocity related to given body 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>The relative velocity</returns>
-        public Vector GetVelocityRelatedTo(BodyBase body)
-        {
-            if (body is not null)
-            {
-                return this.AbsoluteVelocity - body.AbsoluteVelocity;
-            }
-            else
-                throw new ArgumentNullException(nameof(body));
-        }
-
-        /// <summary>
         /// Returns velocity related to surrounding body 
         /// </summary>
         /// <param name="body"></param>
@@ -94,23 +51,6 @@ namespace Sas.Domain.Bodies
             else
                 throw new SurroundedBodyException("Surrounded body is not assigned");
         }
-
-        /// <summary>
-        /// Returns sphere of influence
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns></returns>
-        public double GetSphereOfInfluence(BodyBase body)
-        {
-            if (body is not null)
-            {
-                double distance = (this.AbsolutePosition - body.AbsolutePosition).Magnitude();
-                double massRatio = Math.Pow(this.Mass / body.Mass, 0.4);
-                return distance * massRatio;
-            }
-            else
-                throw new ArgumentNullException(nameof(body));
-        }
         
         /// <summary>
         /// Update orbit of the body
@@ -121,25 +61,40 @@ namespace Sas.Domain.Bodies
         {
             if (this.SurroundedBody is not null)
             {
-                this.Orbit = new Orbit(this);
+                this.Orbit = new OrbitBase(this);
             }
             else
                 throw new SurroundedBodyException("Surrounded body is not assigned");
         }
 
+        #endregion
+
+        #region constructors
+
         /// <summary>
-        /// Constructor of the Body
+        /// Constructor of the BodyBase
         /// </summary>
         /// <param name="name"></param>
         /// <param name="mass"></param>
         /// <param name="position"></param>
         /// <param name="velocity"></param>
         public BodyBase(string name, double mass, Vector position, Vector velocity)
+            : base(name, mass, position, velocity)
         {
             Name = name;
             Mass = mass;
             AbsolutePosition = position;
             AbsoluteVelocity = velocity;
         }
+
+        /// <summary>
+        /// Parameterless constructor - need for mapping
+        /// </summary>
+        public BodyBase()
+            : base()
+        {
+        }
+
+        #endregion
     }
 }

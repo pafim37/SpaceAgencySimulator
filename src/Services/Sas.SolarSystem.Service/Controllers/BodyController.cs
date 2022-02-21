@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Sas.Mathematica;
 using Sas.SolarSystem.Service.DAL;
-using Sas.SolarSystem.Service.DTOs;
+using Sas.SolarSystem.Service.Documents;
 
 namespace Sas.SolarSystem.Service.Controllers
 {
@@ -10,51 +9,60 @@ namespace Sas.SolarSystem.Service.Controllers
     [ApiController]
     public class BodyController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IBodyRepository _repository;
 
-        public BodyController(IBodyRepository repository, IMapper mapper)
+        public BodyController(IBodyRepository repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             var bodies = await _repository.GetAsync();
-            if (bodies == null)
+            if (bodies is null)
             {
                 return NoContent();
             }
-            var result = _mapper.Map<IEnumerable<BodyDTO>>(bodies);
-            return Ok(result);
+            return Ok(bodies);
         }
 
-        [HttpGet("barycentrum")]
-        public async Task<IActionResult> GetBarycentrum()
+        [HttpGet("{name}")]
+        public async Task<IActionResult> Get(string name)
         {
-            var bodies = await _repository.GetAsync();
-            if (bodies == null)
+            var body = await _repository.GetAsync(name);
+            if (body is null)
             {
                 return NoContent();
             }
+            return Ok(body);
+        }
 
-            double sumMass = 0;
-            double x = 0;
-            double y = 0;
-            double z = 0;
-
-            foreach (var body in bodies)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] BodyDocument body)
+        {
+            if (body is null)
             {
-                x += body.Mass * body.AbsolutePosition.X;
-                y += body.Mass * body.AbsolutePosition.Y;
-                z += body.Mass * body.AbsolutePosition.Z;
-                sumMass += body.Mass;
+                return NotFound();
             }
 
-            var result = 1.0 / sumMass * new Vector(x, y, z);
-            return Ok(result);
+            await _repository.CreateAsync(body);
+            return Created("", body);
+
+        }
+
+        [HttpDelete("{name}")]
+        public async Task<IActionResult> Delete(string name)
+        {
+            await _repository.RemoveAsync(name);
+            return NoContent();
+        }
+
+        [HttpPut("{name}")]
+        public async Task<IActionResult> Update(string name, [FromBody] BodyDocument body)
+        {
+            await _repository.UpdateAsync(name, body);
+            return NoContent();
         }
     }
 }

@@ -45,11 +45,5 @@ namespace Sas.SolarSystem.Service.DAL
         {
             await _context.Bodies.DeleteOneAsync(b => b.Name.Equals(name));
         }
-
-        // Remove
-        public async Task RemoveAsync(BodyDocument body)
-        {
-            await _context.Bodies.DeleteOneAsync(b => b.Name.Equals(body.Name));
-        }
     }
 }

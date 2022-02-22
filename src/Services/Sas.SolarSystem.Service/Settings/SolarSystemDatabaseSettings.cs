@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sas.SolarSystem.Service.Settings
 {
-    public class BodyDatabaseSettings
+    public class SolarSystemDatabaseSettings
     {
         public string CollectionName { get; set; }
         public string ConnectionString { get; set; }

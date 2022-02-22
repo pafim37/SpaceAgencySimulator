@@ -5,6 +5,6 @@ namespace Sas.SolarSystem.Service.Data
 {
     public interface ISolarSystemContext
     {
-        IMongoCollection<BodyDocument> Bodies { get; set; }
+        IMongoCollection<CelestialBodyDocument> CelestialBodies { get; set; }
     }
 }

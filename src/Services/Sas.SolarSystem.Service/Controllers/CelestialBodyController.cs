@@ -7,11 +7,11 @@ namespace Sas.SolarSystem.Service.Controllers
 {
     [Route("bodies")]
     [ApiController]
-    public class BodyController : ControllerBase
+    public class CelestialBodyController : ControllerBase
     {
-        private readonly IBodyRepository _repository;
+        private readonly ICelestialBodyRepository _repository;
 
-        public BodyController(IBodyRepository repository)
+        public CelestialBodyController(ICelestialBodyRepository repository)
         {
             _repository = repository;
         }
@@ -39,7 +39,7 @@ namespace Sas.SolarSystem.Service.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BodyDocument body)
+        public async Task<IActionResult> Create([FromBody] CelestialBodyDocument body)
         {
             if (body is null)
             {
@@ -59,7 +59,7 @@ namespace Sas.SolarSystem.Service.Controllers
         }
 
         [HttpPut("{name}")]
-        public async Task<IActionResult> Update(string name, [FromBody] BodyDocument body)
+        public async Task<IActionResult> Update(string name, [FromBody] CelestialBodyDocument body)
         {
             await _repository.UpdateAsync(name, body);
             return NoContent();

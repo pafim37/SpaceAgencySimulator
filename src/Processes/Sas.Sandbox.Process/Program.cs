@@ -11,6 +11,7 @@ using Sas.SolarSystem.Service.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddScoped<AstronomyContext>();
 builder.Services.AddScoped<ObservatoryRepository>();
 builder.Services.AddScoped<ObservationRepository>();

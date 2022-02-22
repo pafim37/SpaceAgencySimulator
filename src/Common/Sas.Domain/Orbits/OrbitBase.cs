@@ -137,11 +137,7 @@ namespace Sas.Domain.Orbits
             }
             SemiMajorAxis = 1 / (2 / r - v * v / u);
             Eccentricity = e;
-            var f1 = Math.Acos(Vector.DotProduct(eVector, position) / (e * r));
-            var f2 = (e * r);
-            var f3 = Vector.DotProduct(eVector, position);
-            var f4 = Vector.DotProduct(eVector, position) / (e * r);
-            var f5 = Math.Acos(f4);
+
             if (Vector.DotProduct(position, velocity) >= 0)
             {
                 TrueAnomalyAtEpoch = Math.Acos(Vector.DotProduct(eVector, position) / (e * r));

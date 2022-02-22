@@ -12,8 +12,8 @@ namespace Sas.SolarSystem.Service.Data
             {
                 Name = "Sun",
                 Mass = Constants.SolarMass,
-                AbsolutePosition = new CelestialVectorDocument { X = 0, Y = 0, Z = 0 },
-                AbsoluteVelocity = new CelestialVectorDocument { X = 0, Y = 0, Z = 0 },
+                AbsolutePosition = new VectorDocument { X = 0, Y = 0, Z = 0 },
+                AbsoluteVelocity = new VectorDocument { X = 0, Y = 0, Z = 0 },
                 Radius = Constants.SunRadius
             };
 
@@ -21,8 +21,8 @@ namespace Sas.SolarSystem.Service.Data
             {
                 Name = "Earth",
                 Mass = Constants.EarthMass,
-                AbsolutePosition = new CelestialVectorDocument { X = Constants.EarthApoapsis, Y = 0, Z = 0 },
-                AbsoluteVelocity = new CelestialVectorDocument { X = 0, Y = Constants.EarthMinVelocity, Z = 0 },
+                AbsolutePosition = new VectorDocument { X = Constants.EarthApoapsis, Y = 0, Z = 0 },
+                AbsoluteVelocity = new VectorDocument { X = 0, Y = Constants.EarthMinVelocity, Z = 0 },
                 Radius = Constants.EarthRadius
             };
 
@@ -30,8 +30,8 @@ namespace Sas.SolarSystem.Service.Data
             {
                 Name = "Moon",
                 Mass = Constants.MoonMass,
-                AbsolutePosition = new CelestialVectorDocument { X = Constants.MoonPeriapsis + Constants.EarthApoapsis, Y = 0, Z = 0 },
-                AbsoluteVelocity = new CelestialVectorDocument { X = 0, Y = Constants.MoonMaxVelocity + Constants.EarthMinVelocity, Z = 0 },
+                AbsolutePosition = new VectorDocument { X = Constants.MoonPeriapsis + Constants.EarthApoapsis, Y = 0, Z = 0 },
+                AbsoluteVelocity = new VectorDocument { X = 0, Y = Constants.MoonMaxVelocity + Constants.EarthMinVelocity, Z = 0 },
                 Radius = Constants.MoonRadius
             };
 
@@ -39,8 +39,8 @@ namespace Sas.SolarSystem.Service.Data
             {
                 Name = "Sattelite",
                 Mass = 100,
-                AbsolutePosition = new CelestialVectorDocument { X = Constants.EarthRadius + 400, Y = 0, Z = 0 },
-                AbsoluteVelocity = new CelestialVectorDocument { X = 0, Y = 500, Z = 0 },
+                AbsolutePosition = new VectorDocument { X = Constants.EarthRadius + 400, Y = 0, Z = 0 },
+                AbsoluteVelocity = new VectorDocument { X = 0, Y = 500, Z = 0 },
             };
 
             bodies.InsertOne(Sun);

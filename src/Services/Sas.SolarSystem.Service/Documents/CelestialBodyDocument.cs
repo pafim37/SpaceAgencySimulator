@@ -8,8 +8,8 @@ namespace Sas.SolarSystem.Service.Documents
         [BsonId]
         public string Name { get; set; }
         public double Mass { get; set; }
-        public CelestialVectorDocument AbsolutePosition { get; set; }
-        public CelestialVectorDocument AbsoluteVelocity { get; set; }
+        public VectorDocument AbsolutePosition { get; set; }
+        public VectorDocument AbsoluteVelocity { get; set; }
         public double Radius { get; set; }
     }
 }

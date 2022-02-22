@@ -10,7 +10,7 @@ namespace Sas.SolarSystem.Service.Profiles
         public BodyProfile()
         {
             CreateMap<CelestialBody, CelestialBodyDocument>().ReverseMap();
-            CreateMap<CelestialVectorDocument, Vector>().ReverseMap();
+            CreateMap<VectorDocument, Vector>().ReverseMap();
         }
     }
 }

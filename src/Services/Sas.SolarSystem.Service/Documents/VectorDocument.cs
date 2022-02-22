@@ -1,6 +1,6 @@
 ﻿namespace Sas.SolarSystem.Service.Documents
 {
-    public class CelestialVectorDocument
+    public class VectorDocument
     {
         public double X { get; set; }
         public double Y { get; set; }

@@ -1,6 +1,6 @@
 {
   "DatabaseSettings": {
-    "CollectionName": "BodyCollection",
+    "CollectionName": "CelestialBodyCollection",
     "ConnectionString": "mongodb://localhost:27017",
     "DatabaseName": "SolarSystemDatabase"
   }

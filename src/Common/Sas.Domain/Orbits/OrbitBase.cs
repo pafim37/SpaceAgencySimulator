@@ -140,13 +140,12 @@ namespace Sas.Domain.Orbits
 
             if (Vector.DotProduct(position, velocity) >= 0)
             {
-                TrueAnomalyAtEpoch = Math.Acos(Vector.DotProduct(eVector, position) / (e * r)); ;
+                TrueAnomalyAtEpoch = Math.Acos(Vector.DotProduct(eVector, position) / (e * r));
             }
             else
             {
-                TrueAnomalyAtEpoch = 2 * Math.PI - Math.Acos(Vector.DotProduct(eVector, position) / (e * r)); ;
+                TrueAnomalyAtEpoch = 2 * Math.PI - Math.Acos(Vector.DotProduct(eVector, position) / (e * r));
             }
-
         }
 
         #endregion

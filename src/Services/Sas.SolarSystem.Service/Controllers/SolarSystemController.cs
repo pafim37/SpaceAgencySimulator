@@ -14,10 +14,10 @@ namespace Sas.SolarSystem.Service.Controllers
     [ApiController]
     public class SolarSystemController : ControllerBase
     {
-        private readonly IBodyRepository _repository;
+        private readonly ICelestialBodyRepository _repository;
         private readonly IMapper _mapper;
 
-        public SolarSystemController(IBodyRepository repository, IMapper mapper)
+        public SolarSystemController(ICelestialBodyRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;

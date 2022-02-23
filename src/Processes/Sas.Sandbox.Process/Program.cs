@@ -1,6 +1,8 @@
 ﻿
 // See https://aka.ms/new-console-template for more information
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.Data;
 using Sas.Domain.Orbits;
@@ -8,9 +10,11 @@ using Sas.Mathematica;
 using Sas.SolarSystem.Service.DAL;
 using Sas.SolarSystem.Service.Data;
 using Sas.SolarSystem.Service.Settings;
+using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Sas.Identity.Service.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddScoped<AstronomyContext>();
 builder.Services.AddScoped<ObservatoryRepository>();
@@ -25,6 +29,26 @@ builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
 
 builder.Services.AddScoped<ICelestialBodyRepository, CelestialBodyRepository>();
 
+builder.Services.AddDefaultIdentity<IdentityUser>(opt => opt.SignIn.RequireConfirmedAccount = true);
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = "JwtBearer";
+        options.DefaultChallengeScheme = "JwtBearer";
+    }
+    ).AddJwtBearer("JwtBearer", opt =>
+    {
+        opt.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysecret")),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true
+        };
+    }
+    );
+
 builder.Services.AddControllers();
 
 /// <summary>
@@ -38,6 +62,9 @@ app.UseRouting();
 app.MapControllers();
 app.MapGet("/", () => Endpoints());
 
+app.UseAuthorization();
+
+app.UseAuthentication();
 
 string Endpoints()
 {
@@ -59,6 +86,7 @@ Vector v = new Vector(-5.992,1.926,3.246);
 OrbitBase o = new OrbitBase(r, v, 398600);
 
 Console.WriteLine(o.SemiMajorAxis);
+
 //BodyBase Sun = new("Sun", Constants.SolarMass, Vector.Zero, Vector.Zero);
 
 //BodyBase Earth = new(

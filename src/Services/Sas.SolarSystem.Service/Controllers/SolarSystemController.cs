@@ -1,16 +1,13 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sas.Domain.Bodies;
 using Sas.SolarSystem.Service.DAL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sas.SolarSystem.Service.Controllers
 {
     [Route("solar-system")]
+    [Authorize]
     [ApiController]
     public class SolarSystemController : ControllerBase
     {

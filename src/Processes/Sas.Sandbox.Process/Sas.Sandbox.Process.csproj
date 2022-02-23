@@ -9,15 +9,20 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.16.0" />
     <PackageReference Include="Spectre.Console" Version="0.43.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Sas.Domain\Sas.Domain.csproj" />
     <ProjectReference Include="..\..\Services\Sas.Astronomy.Service\Sas.Astronomy.Service.csproj" />
+    <ProjectReference Include="..\..\Services\Sas.Identity.Service\Sas.Identity.Service.csproj" />
     <ProjectReference Include="..\..\Services\Sas.SolarSystem.Service\Sas.SolarSystem.Service.csproj" />
   </ItemGroup>
 

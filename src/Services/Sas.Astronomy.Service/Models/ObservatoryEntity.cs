@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sas.Astronomy.Service.Models
 {
-    public class ObservatoryEntity : Entity
+    public class ObservatoryEntity : EntityBase
     {
         [Required]
         public string Name { get; set; }

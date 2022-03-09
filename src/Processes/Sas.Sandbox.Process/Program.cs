@@ -13,6 +13,8 @@ using Sas.SolarSystem.Service.Settings;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Sas.Identity.Service.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Sas.Identity.Service.IdentityManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,25 +31,25 @@ builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
 
 builder.Services.AddScoped<ICelestialBodyRepository, CelestialBodyRepository>();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(opt => opt.SignIn.RequireConfirmedAccount = true);
+builder.Services.AddSingleton<IdentityContext>();
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = "JwtBearer";
-        options.DefaultChallengeScheme = "JwtBearer";
-    }
-    ).AddJwtBearer("JwtBearer", opt =>
+builder.Services.AddTransient<TokenManagement>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+    opt =>
     {
         opt.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysecret")),
+            ValidateIssuerSigningKey = false,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtSettings:JwtSecretKey").Value)),
             ValidateIssuer = false,
             ValidateAudience = false,
-            ValidateLifetime = true
+            ValidateLifetime = false
         };
     }
-    );
+    )
+    .AddCookie();
 
 builder.Services.AddControllers();
 
@@ -59,12 +61,14 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
 
 app.UseRouting();
+
+app.UseAuthentication(); // should be before Authorization
+app.UseAuthorization(); // should be between userouting and endpoints
+
 app.MapControllers();
 app.MapGet("/", () => Endpoints());
 
-app.UseAuthorization();
 
-app.UseAuthentication();
 
 string Endpoints()
 {

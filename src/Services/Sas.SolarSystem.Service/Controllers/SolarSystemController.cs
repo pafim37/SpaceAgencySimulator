@@ -7,7 +7,6 @@ using Sas.SolarSystem.Service.DAL;
 namespace Sas.SolarSystem.Service.Controllers
 {
     [Route("solar-system")]
-    [Authorize]
     [ApiController]
     public class SolarSystemController : ControllerBase
     {
@@ -20,6 +19,7 @@ namespace Sas.SolarSystem.Service.Controllers
             _mapper = mapper;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> LoadSolarSystem()
         {

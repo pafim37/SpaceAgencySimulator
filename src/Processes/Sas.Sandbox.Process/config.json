@@ -3,5 +3,8 @@
     "CollectionName": "CelestialBodyCollection",
     "ConnectionString": "mongodb://localhost:27017",
     "DatabaseName": "SolarSystemDatabase"
+  },
+  "JwtSettings": {
+    "JwtSecretKey": "q#we1rty2u$io3plk)4jh)(g5fds6a&z&x7cvb8n!m9@0"
   }
 }

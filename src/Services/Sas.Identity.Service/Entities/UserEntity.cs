@@ -9,7 +9,7 @@ namespace Sas.Identity.Service.Entities
 {
     public class UserEntity : EntityBase
     {
-        public SecureString UserName { get; set; }
+        public string UserName { get; set; }
         public SecureString Password { get; set; }
         public List<Role> Roles { get; set; }
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sas.Astronomy.Service.Models
 {
-    public abstract class Entity
+    public abstract class EntityBase
     {
         public int Id { get; set; }
     }

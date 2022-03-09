@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Sas.Astronomy.Service.Models
 {
-    public class ObservationEntity : Entity
+    public class ObservationEntity : EntityBase
     {
         [Required]
         public string ObjectName { get; set; }

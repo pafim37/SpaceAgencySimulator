@@ -38,10 +38,12 @@ namespace Sas.Identity.Service.Services
             user.RefreshTokens.Add(refreshToken);
 
             // remove old refresh tokens from user
-            removeOldRefreshTokens(user);
+            RemoveOldRefreshTokens(user);
 
             // save changes to db
-            _context.Update(user);
+            _context.Users.Attach(user);
+
+            // _context.Update(user);
             _context.SaveChanges();
 
             return new AuthenticateResponse(user, jwtToken, refreshToken.Token);
@@ -54,7 +56,7 @@ namespace Sas.Identity.Service.Services
 
         public User GetById(int id)
         {
-            throw new NotImplementedException();
+            return _context.Users.Where(x => x.Id == id).FirstOrDefault();
         }
 
         public AuthenticateResponse RefreshToken(string token, string ipAddress)
@@ -66,7 +68,7 @@ namespace Sas.Identity.Service.Services
             {
                 // revoke all descendant tokens in case this token has been compromised
                 revokeDescendantRefreshTokens(refreshToken, user, ipAddress, $"Attempted reuse of revoked ancestor token: {token}");
-                _context.Update(user);
+                // _context.Update(user);
                 _context.SaveChanges();
             }
 
@@ -78,10 +80,10 @@ namespace Sas.Identity.Service.Services
             user.RefreshTokens.Add(newRefreshToken);
 
             // remove old refresh tokens from user
-            removeOldRefreshTokens(user);
+            RemoveOldRefreshTokens(user);
 
             // save changes to db
-            _context.Update(user);
+            // _context.Update(user);
             _context.SaveChanges();
 
             // generate new jwt
@@ -100,7 +102,7 @@ namespace Sas.Identity.Service.Services
             var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
 
             if (user == null)
-                throw new AppException("Invalid token");
+                throw new Exception("Invalid token");
 
             return user;
         }
@@ -112,12 +114,12 @@ namespace Sas.Identity.Service.Services
             return newRefreshToken;
         }
 
-        private void removeOldRefreshTokens(User user)
+        private void RemoveOldRefreshTokens(User user)
         {
             // remove old inactive refresh tokens from user based on TTL in app settings
             user.RefreshTokens.RemoveAll(x =>
                 !x.IsActive &&
-                x.Created.AddDays(_appSettings.RefreshTokenTTL) <= DateTime.UtcNow);
+                x.Created.AddDays(_settings.RefreshTokenTTL) <= DateTime.UtcNow);
         }
 
         private void revokeDescendantRefreshTokens(RefreshToken refreshToken, User user, string ipAddress, string reason)

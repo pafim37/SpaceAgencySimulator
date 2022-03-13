@@ -26,7 +26,7 @@ namespace Sas.Identity.Service.Autorizations
         {
             // generate token that is valid for 15 minutes
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_settings.SecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
@@ -40,7 +40,7 @@ namespace Sas.Identity.Service.Autorizations
         public RefreshToken GenerateRefreshToken(string ipAddress)
         {
             // generate token that is valid for 7 days
-            using var rngCryptoServiceProvider = new RSACryptoServiceProvider();
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
             var randomBytes = new byte[64];
             rngCryptoServiceProvider.GetBytes(randomBytes);
             var refreshToken = new RefreshToken
@@ -60,7 +60,7 @@ namespace Sas.Identity.Service.Autorizations
                 return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_settings.SecretKey);
             try
             {
                 tokenHandler.ValidateToken(token, new TokenValidationParameters

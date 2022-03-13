@@ -1,31 +1,65 @@
 ﻿
 // See https://aka.ms/new-console-template for more information
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.Data;
 using Sas.Domain.Orbits;
+using Sas.Identity.Service.Autorizations;
+using Sas.Identity.Service.Config;
+using Sas.Identity.Service.Data;
+using Sas.Identity.Service.Middleware;
+using Sas.Identity.Service.Services;
 using Sas.Mathematica;
 using Sas.SolarSystem.Service.DAL;
 using Sas.SolarSystem.Service.Data;
 using Sas.SolarSystem.Service.Settings;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// General Configuration
+builder.Configuration.AddJsonFile("config.json");
 
+// Astronomy Service
 builder.Services.AddScoped<AstronomyContext>();
+
 builder.Services.AddScoped<ObservatoryRepository>();
 builder.Services.AddScoped<ObservationRepository>();
 
-builder.Configuration.AddJsonFile("config.json");
+// Identity Service
+builder.Services.AddSingleton<UserContext>();
+builder.Services.Configure<Settings>(builder.Configuration.GetRequiredSection("IdentitySettings"));
+
+builder.Services.AddScoped<IJwtUtils, JwtUtils>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+// Solar System Service
 builder.Services.Configure<SolarSystemDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
-
 builder.Services.AddSingleton<SolarSystemDatabaseSettings>(x => x.GetRequiredService<IOptions<SolarSystemDatabaseSettings>>().Value);
-
 builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
-
 builder.Services.AddScoped<ICelestialBodyRepository, CelestialBodyRepository>();
 
+// Controllers
 builder.Services.AddControllers();
+
+
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+//    opt =>
+//    {
+//        opt.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateIssuerSigningKey = true,
+//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("IdentitySettings:SecretKey").Value)),
+//            ValidateIssuer = false,
+//            ValidateAudience = false,
+//            ValidateLifetime = false
+//        };
+//    }
+//    );
 
 /// <summary>
 /// Add auto mapper dependancy injection
@@ -35,9 +69,14 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
 
 app.UseRouting();
+
+//app.UseAuthentication();
+
+//app.UseAuthorization();
+
+app.UseMiddleware<JwtMiddleware>();
 app.MapControllers();
 app.MapGet("/", () => Endpoints());
-
 
 string Endpoints()
 {

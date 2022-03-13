@@ -1,11 +1,6 @@
 ﻿using Sas.Identity.Service.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using BCryptNet = BCrypt.Net.BCrypt;
 namespace Sas.Identity.Service.Data
 {
     public class UserContext : DbContext
@@ -14,6 +9,7 @@ namespace Sas.Identity.Service.Data
 
         public UserContext() : base()
         {
+            Database.SetInitializer(new UserContextSeed());
         }
     }
 }

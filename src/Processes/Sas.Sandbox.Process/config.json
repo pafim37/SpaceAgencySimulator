@@ -3,5 +3,9 @@
     "CollectionName": "CelestialBodyCollection",
     "ConnectionString": "mongodb://localhost:27017",
     "DatabaseName": "SolarSystemDatabase"
+  },
+  "IdentitySettings": {
+    "SecretKey": "testsecretkeyqazwsxedcrfvtgbyhnujmikloptestsecrettestsecret",
+    "RefreshTokenTTL": "1"
   }
 }

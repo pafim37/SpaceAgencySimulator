@@ -9,6 +9,13 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
@@ -18,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Sas.Domain\Sas.Domain.csproj" />
     <ProjectReference Include="..\..\Services\Sas.Astronomy.Service\Sas.Astronomy.Service.csproj" />
+    <ProjectReference Include="..\..\Services\Sas.Identity.Service\Sas.Identity.Service\Sas.Identity.Service.csproj" />
     <ProjectReference Include="..\..\Services\Sas.SolarSystem.Service\Sas.SolarSystem.Service.csproj" />
   </ItemGroup>
 

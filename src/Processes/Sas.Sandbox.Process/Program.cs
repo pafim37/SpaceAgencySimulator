@@ -43,7 +43,10 @@ builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
 builder.Services.AddScoped<ICelestialBodyRepository, CelestialBodyRepository>();
 
 // Controllers
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+    );
 
 
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

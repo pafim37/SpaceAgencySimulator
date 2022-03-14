@@ -6,5 +6,6 @@ namespace Sas.Identity.Service.Services
     {
         Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model);
         UserEntity GetById(int id);
+        Task<IEnumerable<UserEntity>> GetAll();
     }
 }

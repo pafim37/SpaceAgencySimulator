@@ -24,7 +24,9 @@ namespace Sas.Identity.Service.Services
         {
             var user =  await _context.Users.SingleOrDefaultAsync(x => x.Name == model.Name);
 
-            if (user == null || !BCryptNet.Verify(model.Password, user.PasswordHash.ToString()))
+            var password = user.SaltPre + model.Password + user.SaltPost;
+
+            if (user == null || !BCryptNet.Verify(password, user.PasswordHash.ToString()))
                 throw new Exception();
 
             var jwtToken = _jwtUtils.GenerateJwtToken(user);
@@ -37,5 +39,9 @@ namespace Sas.Identity.Service.Services
             return _context.Users.Where(x => x.Id == id).FirstOrDefault();
         }
 
+        public async Task<IEnumerable<UserEntity>> GetAll()
+        {
+            return await _context.Users.ToListAsync();
+        }
     }
 }

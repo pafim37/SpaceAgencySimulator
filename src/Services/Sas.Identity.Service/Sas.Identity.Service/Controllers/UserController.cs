@@ -42,6 +42,13 @@ namespace Sas.Identity.Service.Controllers
             return Ok("You are authorized :)");
         }
 
+        [HttpGet("all")]
+        public async Task<IActionResult> ShowAll()
+        {
+            var users = await _userService.GetAll();
+            return Ok(users);
+        }
+
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

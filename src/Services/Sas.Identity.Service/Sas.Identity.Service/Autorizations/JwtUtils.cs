@@ -2,14 +2,10 @@
 using Microsoft.IdentityModel.Tokens;
 using Sas.Identity.Service.Config;
 using Sas.Identity.Service.Models;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Sas.Identity.Service.Autorizations
 {

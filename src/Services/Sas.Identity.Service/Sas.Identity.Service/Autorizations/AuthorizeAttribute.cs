@@ -18,7 +18,13 @@ namespace Sas.Identity.Service.Autorizations
             // authorization
             var user = (UserEntity)context.HttpContext.Items["UserEntity"];
             if (user == null)
+            {
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+            }
+            else if (user.Roles.Where(u => u.Role == Role.Admin).Any())
+            {
+                return;
+            }
         }
     }
 }

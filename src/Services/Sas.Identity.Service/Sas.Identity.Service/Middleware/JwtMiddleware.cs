@@ -18,7 +18,6 @@ namespace Sas.Identity.Service.Middleware
         public JwtMiddleware(RequestDelegate next, IOptions<Settings> settings)
         {
             _next = next;
-            _settings = settings.Value;
         }
 
         public async Task Invoke(HttpContext context, IUserService userService, IJwtUtils jwtUtils)

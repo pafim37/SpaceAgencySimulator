@@ -70,9 +70,9 @@ var app = builder.Build();
 
 app.UseRouting();
 
-//app.UseAuthentication();
+app.UseAuthentication();
 
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.UseMiddleware<JwtMiddleware>();
 app.MapControllers();

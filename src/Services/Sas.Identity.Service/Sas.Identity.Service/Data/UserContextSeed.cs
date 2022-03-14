@@ -8,7 +8,7 @@ namespace Sas.Identity.Service.Data
     {
         protected override void Seed(UserContext context)
         {
-            User testUser = new User() { Name = "pafim37", PasswordHash = BCryptNet.HashPassword("admin") };
+            UserEntity testUser = new UserEntity() { Name = "pafim37", PasswordHash = BCryptNet.HashPassword("admin") };
             context.Users.Add(testUser);
             base.Seed(context);
         }

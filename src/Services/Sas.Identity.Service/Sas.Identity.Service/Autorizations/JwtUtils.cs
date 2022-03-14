@@ -22,7 +22,7 @@ namespace Sas.Identity.Service.Autorizations
             _settings = settings.Value;
         }
 
-        public string GenerateJwtToken(User user)
+        public string GenerateJwtToken(UserEntity user)
         {
             // generate token that is valid for 15 minutes
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -35,23 +35,6 @@ namespace Sas.Identity.Service.Autorizations
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-        }
-
-        public RefreshToken GenerateRefreshToken(string ipAddress)
-        {
-            // generate token that is valid for 7 days
-            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
-            var randomBytes = new byte[64];
-            rngCryptoServiceProvider.GetBytes(randomBytes);
-            var refreshToken = new RefreshToken
-            {
-                Token = Convert.ToBase64String(randomBytes),
-                Expires = DateTime.UtcNow.AddDays(7),
-                Created = DateTime.UtcNow,
-                CreatedByIp = ipAddress
-            };
-
-            return refreshToken;
         }
 
         public int? ValidateJwtToken(string token)

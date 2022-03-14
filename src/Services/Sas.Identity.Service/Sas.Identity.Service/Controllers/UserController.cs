@@ -10,7 +10,7 @@ namespace Sas.Identity.Service.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-
+        private const string AuthorizationCookieName = "Authorization";
         private IUserService _userService;
 
         public UserController(IUserService userService)
@@ -18,88 +18,38 @@ namespace Sas.Identity.Service.Controllers
             _userService = userService;
         }
 
-        [AllowAnonymousAttribute]
         [HttpGet("login")]
+        [AllowAnonymousAttribute]
         public async Task<IActionResult> Login([FromQuery] AuthenticateRequest user)
         {
-            var ipAddress = await GetIpAddress();
-            var response = _userService.Authenticate(user, ipAddress);
-            // await SetTokenCookie(response.RefreshToken);
-            await SetTokenAuthorizationCookie(response.JwtToken);
-            return Ok(response);
+            var response = await _userService.AuthenticateAsync(user);
+            SetTokenCookie(response.JwtToken);
+            return Ok($"Hello {user.Name}");
         }
 
-        [AllowAnonymousAttribute]
-        [HttpPost("login2")]
-        public async Task<IActionResult> Login()
-        {
-            AuthenticateRequest user = new AuthenticateRequest() { Name = "pafim37", Password = "admin" };
-            var ipAddress = await GetIpAddress();
-            var response = _userService.Authenticate(user, ipAddress);
-            await SetTokenCookie(response.RefreshToken);
-            return Ok(response);
-        }
-
-        //[HttpGet("safe")]
-        //public async Task<IActionResult> Login()
-        //{
-        //    AuthenticateRequest user = new AuthenticateRequest() { Name = "pafim37", Password = "admin"};
-        //    var ipAddress = await GetIpAddress();
-        //    var response = _userService.Authenticate(user, ipAddress);
-        //    await SetTokenCookie(response.RefreshToken);
-        //    return Ok(response);
-        //}
-
-
-        [HttpGet("public")]
-        [AllowAnonymousAttribute]
-        public async Task<IActionResult> ShowPublic()
-        {
-            return Ok("Public");
-        }
-
-        [HttpGet("secret")]
+        [HttpGet("logout")]
         [AuthorizeAttribute]
-        public async Task<IActionResult> ShowSecret()
+        public IActionResult Logout()
         {
-            return Ok("Secret");
+            Response.Cookies.Delete(AuthorizationCookieName);
+            return NoContent();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Free()
+        [HttpGet("test")]
+        [AuthorizeAttribute]
+        public IActionResult Test()
         {
-            return Ok("Free");
+            return Ok("You are authorized :)");
         }
 
-        private Task SetTokenCookie(string token)
+        private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions
             {
-                HttpOnly = false,
-                Expires = DateTime.UtcNow.AddDays(1),
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddHours(1)
             };
-            Response.Cookies.Append("RefreshToken", token, cookieOptions);
-            return Task.CompletedTask;
-        }
-
-        private Task SetTokenAuthorizationCookie(string token)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = false,
-                Expires = DateTime.UtcNow.AddDays(1),
-            };
-            Response.Cookies.Append("Authorization", token, cookieOptions);
-            return Task.CompletedTask;
-        }
-
-        private async Task<string> GetIpAddress()
-        {
-            // get source ip address for the current request
-            if (Request.Headers.ContainsKey("X-Forwarded-For"))
-                return Request.Headers["X-Forwarded-For"];
-            else
-                return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            Response.Cookies.Append(AuthorizationCookieName, token, cookieOptions);
         }
     }
 }

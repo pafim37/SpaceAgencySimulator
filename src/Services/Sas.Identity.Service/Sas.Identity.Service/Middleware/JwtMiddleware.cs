@@ -14,7 +14,6 @@ namespace Sas.Identity.Service.Middleware
     public class JwtMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly Settings _settings;
 
         public JwtMiddleware(RequestDelegate next, IOptions<Settings> settings)
         {
@@ -24,13 +23,12 @@ namespace Sas.Identity.Service.Middleware
 
         public async Task Invoke(HttpContext context, IUserService userService, IJwtUtils jwtUtils)
         {
-            var nw = context.Request.Headers["Authorization"].Append();
-            var token = nw.FirstOrDefault()?.Split(" ").Last();
+            context.Request.Cookies.TryGetValue("Authorization", out string token);
             var userId = jwtUtils.ValidateJwtToken(token);
             if (userId != null)
             {
                 // attach user to context on successful jwt validation
-                context.Items["User"] = userService.GetById(userId.Value);
+                context.Items["UserEntity"] = userService.GetById(userId.Value);
             }
 
             await _next(context);

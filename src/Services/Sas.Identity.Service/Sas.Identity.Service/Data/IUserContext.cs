@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Sas.Identity.Service.Models;
+﻿using Sas.Identity.Service.Models;
+using System.Data.Entity;
 
 namespace Sas.Identity.Service.Data
 {
     public interface IUserContext
     {
-        DbSet<User> Users { get; set; }
+        DbSet<UserEntity> Users { get; set; }
     }
 }

@@ -3,9 +3,9 @@ using System.Data.Entity;
 using BCryptNet = BCrypt.Net.BCrypt;
 namespace Sas.Identity.Service.Data
 {
-    public class UserContext : DbContext
+    public class UserContext : DbContext, IUserContext
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
 
         public UserContext() : base()
         {

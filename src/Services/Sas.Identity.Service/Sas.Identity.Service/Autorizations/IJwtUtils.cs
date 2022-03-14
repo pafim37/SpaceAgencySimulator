@@ -9,8 +9,7 @@ namespace Sas.Identity.Service.Autorizations
 {
     public interface IJwtUtils
     {
-        public string GenerateJwtToken(User user);
+        public string GenerateJwtToken(UserEntity user);
         public int? ValidateJwtToken(string token);
-        public RefreshToken GenerateRefreshToken(string ipAddress);
     }
 }

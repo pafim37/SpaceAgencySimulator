@@ -24,7 +24,7 @@ namespace Sas.Identity.Service.Services
         {
             var user =  await _context.Users.SingleOrDefaultAsync(x => x.Name == model.Name);
 
-            var password = user.SaltPre + model.Password + user.SaltPost;
+            var password = model.Password + user.Salt;
 
             if (user == null || !BCryptNet.Verify(password, user.PasswordHash.ToString()))
                 throw new Exception();
@@ -34,14 +34,25 @@ namespace Sas.Identity.Service.Services
             return new AuthenticateResponse(user, jwtToken);
         }
 
-        public UserEntity GetById(int id)
+        public async Task<UserEntity> GetById(int id)
         {
-            return _context.Users.Where(x => x.Id == id).FirstOrDefault();
+            return await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<UserEntity>> GetAll()
         {
             return await _context.Users.ToListAsync();
+        }
+
+        public async Task<UserEntity> GetByNameAsync(string name)
+        {
+            return await _context.Users.Where(x => x.Name == name).FirstOrDefaultAsync();
+        }
+
+        public async Task CreateAsync(UserEntity user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
         }
     }
 }

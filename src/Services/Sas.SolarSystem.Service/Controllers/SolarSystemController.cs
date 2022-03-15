@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Sas.Domain.Bodies;
+using Sas.Identity.Service.Autorizations;
 using Sas.SolarSystem.Service.DAL;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace Sas.SolarSystem.Service.Controllers
             _mapper = mapper;
         }
 
+        [AuthorizeAttribute]
         [HttpGet]
         public async Task<IActionResult> LoadSolarSystem()
         {

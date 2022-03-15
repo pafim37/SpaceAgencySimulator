@@ -34,9 +34,9 @@ namespace Sas.Identity.Service.Services
             return new AuthenticateResponse(user, jwtToken);
         }
 
-        public async Task<UserEntity> GetById(int id)
+        public UserEntity GetById(int id)
         {
-            return await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+            return _context.Users.Where(x => x.Id == id).FirstOrDefault();
         }
 
         public async Task<IEnumerable<UserEntity>> GetAll()

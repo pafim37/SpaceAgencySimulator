@@ -5,10 +5,16 @@ using Sas.Identity.Service.Models;
 
 namespace Sas.Identity.Service.Autorizations
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class AuthorizeAttribute : Attribute, IAuthorizationFilter
+    [AttributeUsage(AttributeTargets.Method)]
+    public class AuthorizeRoleBasedAttribute : AuthorizeAttribute, IAuthorizationFilter
     {
-        public virtual void OnAuthorization(AuthorizationFilterContext context)
+        private readonly Role _role;
+        public AuthorizeRoleBasedAttribute(Role role)
+        {
+            _role = role;
+        }
+
+        public void OnAuthorization(AuthorizationFilterContext context)
         {
             // skip authorization if action is decorated with [AllowAnonymous] attribute
             var allowAnonymous = context.ActionDescriptor.EndpointMetadata.OfType<AllowAnonymousAttribute>().Any();
@@ -21,9 +27,18 @@ namespace Sas.Identity.Service.Autorizations
             {
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
-            else
+            // allow administrator
+            else if (user.Roles.Where(u => u.Role == Role.Admin).Any())
             {
                 return;
+            }
+            else if (user.Roles.Where(u => u.Role == _role).Any())
+            {
+                return;
+            }
+            else
+            {
+                context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
         }
     }

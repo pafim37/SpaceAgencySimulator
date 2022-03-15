@@ -11,7 +11,7 @@ namespace Sas.Identity.Service.Data
             UserEntity adminUser = new UserEntity() {
                 Name = "test1",
                 Salt = "WkYol8",
-                PasswordHash = BCryptNet.HashPassword("admin" + "der22Q"),
+                PasswordHash = BCryptNet.HashPassword("admin" + "WkYol8"),
                 Roles = new List<RoleEntity>(){ new RoleEntity() { Role = Role.Admin } }
             };
 

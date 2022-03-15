@@ -39,7 +39,7 @@ namespace Sas.Identity.Service.Controllers
         }
 
         [HttpGet("register")]
-        [AllowAnonymous]
+        [AllowAnonymousAttribute]
         public async Task<IActionResult> Register([FromQuery] AuthenticateRequest user)
         {
             // check of user existance in db
@@ -73,6 +73,7 @@ namespace Sas.Identity.Service.Controllers
         }
 
         [HttpGet("all")]
+        [AuthorizeRoleBasedAttribute(Role.Admin)]
         public async Task<IActionResult> ShowAll()
         {
             var users = await _userService.GetAll();

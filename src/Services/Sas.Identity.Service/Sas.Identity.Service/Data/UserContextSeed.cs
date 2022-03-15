@@ -10,33 +10,29 @@ namespace Sas.Identity.Service.Data
         {
             UserEntity adminUser = new UserEntity() {
                 Name = "test1",
-                SaltPre = "WkYol8",
-                SaltPost = "der22Q",
-                PasswordHash = BCryptNet.HashPassword("WkYol8" + "admin" + "der22Q"),
+                Salt = "WkYol8",
+                PasswordHash = BCryptNet.HashPassword("admin" + "der22Q"),
                 Roles = new List<RoleEntity>(){ new RoleEntity() { Role = Role.Admin } }
             };
 
             UserEntity goodUser = new UserEntity() {
                 Name = "test2",
-                SaltPre = "der22Q",
-                SaltPost = "WkYol8",
-                PasswordHash = BCryptNet.HashPassword("der22Q" + "good" + "WkYol8"),
+                Salt = "der22Q",
+                PasswordHash = BCryptNet.HashPassword("good" + "der22Q"),
                 Roles = new List<RoleEntity>(){ new RoleEntity() { Role = Role.God } }
             };
 
             UserEntity normalUser = new UserEntity() {
                 Name = "test3",
-                SaltPre = "der22Q",
-                SaltPost = "WkYol8",
-                PasswordHash = BCryptNet.HashPassword("der22Q" + "normal" + "WkYol8"),
+                Salt = "rt4wer",
+                PasswordHash = BCryptNet.HashPassword("normal" + "rt4wer"),
                 Roles = new List<RoleEntity>() { new RoleEntity() { Role = Role.Astronomer } } 
             };
             
             UserEntity allRoleUser = new UserEntity() {
                 Name = "test4",
-                SaltPre = "der22Q",
-                SaltPost = "WkYol8",
-                PasswordHash = BCryptNet.HashPassword("der22Q" + "all" + "WkYol8"),
+                Salt = "ytre34",
+                PasswordHash = BCryptNet.HashPassword("all" + "ytre34"),
                 Roles = new List<RoleEntity>() { new RoleEntity() { Role = Role.Admin }, new RoleEntity() { Role = Role.God }, new RoleEntity() { Role = Role.Astronomer } } 
             };
 

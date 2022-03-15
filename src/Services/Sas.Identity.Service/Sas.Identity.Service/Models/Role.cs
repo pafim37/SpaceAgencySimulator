@@ -10,6 +10,7 @@ namespace Sas.Identity.Service.Models
     {
         God,
         Astronomer,
-        Admin
+        Admin,
+        NoPrivilege
     }
 }

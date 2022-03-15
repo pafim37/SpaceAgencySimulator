@@ -1,19 +1,22 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sas.Identity.Service.Autorizations;
+using Sas.Identity.Service.Generators;
 using Sas.Identity.Service.Models;
 using Sas.Identity.Service.Services;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace Sas.Identity.Service.Controllers
 {
     [Route("identity")]
     [ApiController]
-    public class UserController : ControllerBase
+    [AuthorizeAttribute]
+    public class AuthController : ControllerBase
     {
         private const string AuthorizationCookieName = "Authorization";
         private IUserService _userService;
 
-        public UserController(IUserService userService)
+        public AuthController(IUserService userService)
         {
             _userService = userService;
         }
@@ -35,6 +38,33 @@ namespace Sas.Identity.Service.Controllers
             return NoContent();
         }
 
+        [HttpGet("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromQuery] AuthenticateRequest user)
+        {
+            // check of user existance in db
+            var userFromDb = await _userService.GetByNameAsync(user.Name);
+
+            if (userFromDb != null)
+            {
+                return NoContent();
+            }
+            else
+            {
+                var salt = StringGenerator.Generate(6);
+                var role = new RoleEntity() { Role = Role.NoPrivilege};
+                UserEntity userEntity = new UserEntity()
+                {
+                    Name = user.Name,
+                    PasswordHash = BCryptNet.HashPassword(user.Password + salt),
+                    Salt = salt,
+                    Roles = new() { role }
+                };
+                await _userService.CreateAsync(userEntity);
+                return await Login(user);
+            }
+        }
+    
         [HttpGet("test")]
         [AuthorizeAttribute]
         public IActionResult Test()

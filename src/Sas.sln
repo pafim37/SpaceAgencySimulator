@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica.Tests", "..
 		{D526E4F1-BB3A-4FA5-98CD-2420EEE726F4} = {D526E4F1-BB3A-4FA5-98CD-2420EEE726F4}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Identity.Service", "Services\Sas.Identity.Service\Sas.Identity.Service\Sas.Identity.Service.csproj", "{25B52716-1D51-407E-8CA3-5CF4FED0F347}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Identity.Service", "Services\Sas.Identity.Service\Sas.Identity.Service\Sas.Identity.Service.csproj", "{25B52716-1D51-407E-8CA3-5CF4FED0F347}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Client", "Sas.Client\Sas.Client.csproj", "{7226F886-2926-4AD6-833F-001BFBF14128}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +56,10 @@ Global
 		{25B52716-1D51-407E-8CA3-5CF4FED0F347}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25B52716-1D51-407E-8CA3-5CF4FED0F347}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25B52716-1D51-407E-8CA3-5CF4FED0F347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7226F886-2926-4AD6-833F-001BFBF14128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7226F886-2926-4AD6-833F-001BFBF14128}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7226F886-2926-4AD6-833F-001BFBF14128}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7226F886-2926-4AD6-833F-001BFBF14128}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,19 +1,22 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Sas.Identity.Service.Autorizations;
+using Sas.Domain.Users;
+using Sas.Identity.Service.Attributes;
 using Sas.Identity.Service.Generators;
 using Sas.Identity.Service.Models;
+using Sas.Identity.Service.Models.Entities;
 using Sas.Identity.Service.Services;
 using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace Sas.Identity.Service.Controllers
 {
-    [Route("identity")]
+    [Route(route)]
     [ApiController]
     [AuthorizeAttribute]
     public class AuthController : ControllerBase
     {
-        private const string AuthorizationCookieName = "Authorization";
+        private const string route = "identity";
+        private const string CookieName = "Authorization";
         private IUserService _userService;
 
         public AuthController(IUserService userService)
@@ -34,7 +37,7 @@ namespace Sas.Identity.Service.Controllers
         [AuthorizeAttribute]
         public IActionResult Logout()
         {
-            Response.Cookies.Delete(AuthorizationCookieName);
+            Response.Cookies.Delete(CookieName);
             return NoContent();
         }
 
@@ -60,8 +63,15 @@ namespace Sas.Identity.Service.Controllers
                     Salt = salt,
                     Roles = new() { role }
                 };
-                await _userService.CreateAsync(userEntity);
-                return await Login(user);
+                var result = _userService.CreateAsync(userEntity);
+                if (result.IsCompletedSuccessfully)
+                {
+                    return await Login(user);
+                }
+                else
+                {
+                    throw new Exception("User cannot be created");
+                }
             }
         }
     
@@ -85,9 +95,10 @@ namespace Sas.Identity.Service.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = DateTime.UtcNow.AddHours(1)
+                Expires = DateTime.UtcNow.AddHours(1),
+                Secure = true
             };
-            Response.Cookies.Append(AuthorizationCookieName, token, cookieOptions);
+            Response.Cookies.Append(CookieName, token, cookieOptions);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Identity.Service.Models
+namespace Sas.Domain.Users
 {
     public enum Role
     {

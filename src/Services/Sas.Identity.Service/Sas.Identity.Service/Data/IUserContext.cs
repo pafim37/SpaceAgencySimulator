@@ -1,4 +1,4 @@
-﻿using Sas.Identity.Service.Models;
+﻿using Sas.Identity.Service.Models.Entities;
 using System.Data.Entity;
 
 namespace Sas.Identity.Service.Data

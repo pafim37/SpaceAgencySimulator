@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
-using Sas.Identity.Service.Autorizations;
+using Sas.Domain.Users;
 using Sas.Identity.Service.Config;
 using Sas.Identity.Service.Data;
 using Sas.Identity.Service.Models;
+using Sas.Identity.Service.Models.Entities;
+using Sas.Identity.Service.Utils;
 using System.Data.Entity;
 using BCryptNet = BCrypt.Net.BCrypt;
 
@@ -12,13 +14,11 @@ namespace Sas.Identity.Service.Services
     {
         private readonly UserContext _context;
         private readonly IJwtUtils _jwtUtils;
-        private readonly Settings _settings;
 
-        public UserService(UserContext context, IJwtUtils jwtUtils, IOptions<Settings> settings)
+        public UserService(UserContext context, IJwtUtils jwtUtils)
         {
             _context = context;
             _jwtUtils = jwtUtils;
-            _settings = settings.Value;
         }
         public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model)
         {

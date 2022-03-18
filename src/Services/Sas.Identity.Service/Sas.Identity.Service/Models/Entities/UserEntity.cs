@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Sas.Identity.Service.Models
+namespace Sas.Identity.Service.Models.Entities
 {
     public class UserEntity : Entity
     {
@@ -11,6 +11,6 @@ namespace Sas.Identity.Service.Models
         [Required]
         public string Salt { get; set; }
         [Required]
-        public virtual List<RoleEntity> Roles { get; set;}
+        public virtual List<RoleEntity> Roles { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Sas.Domain.Users;
-using Sas.Identity.Service.Models;
+using Sas.Identity.Service.Models.Entities;
 
 namespace Sas.Identity.Service.Profiles
 {

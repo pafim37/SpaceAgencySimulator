@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Sas.Identity.Service.Config;
-using Sas.Identity.Service.Models;
+using Sas.Identity.Service.Models.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 
-namespace Sas.Identity.Service.Autorizations
+namespace Sas.Identity.Service.Utils
 {
     public class JwtUtils : IJwtUtils
     {

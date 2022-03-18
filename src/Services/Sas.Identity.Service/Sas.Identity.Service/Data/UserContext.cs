@@ -1,9 +1,9 @@
-﻿using Sas.Identity.Service.Models;
+﻿using Sas.Identity.Service.Models.Entities;
 using System.Data.Entity;
-using BCryptNet = BCrypt.Net.BCrypt;
+
 namespace Sas.Identity.Service.Data
 {
-    public class UserContext : DbContext, IUserContext
+    public class UserContext : DbContext
     {
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<RoleEntity> Roles { get; set; }

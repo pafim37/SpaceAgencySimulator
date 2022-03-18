@@ -1,14 +1,12 @@
-﻿using Sas.Identity.Service.Models.Entities;
-
-namespace Sas.Identity.Service.Models
+﻿namespace Sas.Identity.Service.Models
 {
     public class AuthenticateResponse
     {
         public string Name { get; set; }
         public string JwtToken { get; set; }
-        public AuthenticateResponse(UserEntity user, string jwtToken)
+        public AuthenticateResponse(string userName, string jwtToken)
         {
-            Name = user.Name;
+            Name = userName;
             JwtToken = jwtToken;
         }
     }

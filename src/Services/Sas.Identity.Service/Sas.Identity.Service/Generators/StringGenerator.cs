@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sas.Identity.Service.Generators
+﻿namespace Sas.Identity.Service.Generators
 {
     internal static class StringGenerator
     {
@@ -15,7 +9,7 @@ namespace Sas.Identity.Service.Generators
             string output = string.Empty;
             for (int i = 0; i < n; i++)
             {
-                int flag =_random.Next(0, 2);
+                int flag = _random.Next(0, 2);
                 if (flag == 0)
                 {
                     output += Letter(false).ToString();
@@ -26,7 +20,7 @@ namespace Sas.Identity.Service.Generators
                 }
                 else
                 {
-                    output +=_random.Next(0, 9).ToString();               
+                    output += _random.Next(0, 9).ToString();
                 }
             }
             return output;

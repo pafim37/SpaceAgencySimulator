@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Sas.Domain.Users;
-using Sas.Identity.Service.Models.Entities;
 
 namespace Sas.Identity.Service.Attributes
 {

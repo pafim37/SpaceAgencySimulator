@@ -23,7 +23,7 @@ namespace Sas.Identity.Service.Services
         }
         public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model)
         {
-            var user =  await _context.Users.SingleOrDefaultAsync(x => x.Name == model.Name);
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Name == model.Name);
 
             var password = model.Password + user.Salt;
 
@@ -37,7 +37,7 @@ namespace Sas.Identity.Service.Services
 
         public User GetById(int id)
         {
-            var userEntity =_context.Users.Where(x => x.Id == id).FirstOrDefault();
+            var userEntity = _context.Users.Where(x => x.Id == id).FirstOrDefault();
             return _mapper.Map<User>(userEntity);
         }
 

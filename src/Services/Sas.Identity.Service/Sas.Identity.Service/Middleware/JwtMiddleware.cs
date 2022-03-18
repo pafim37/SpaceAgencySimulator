@@ -3,11 +3,6 @@ using Microsoft.Extensions.Options;
 using Sas.Identity.Service.Config;
 using Sas.Identity.Service.Services;
 using Sas.Identity.Service.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sas.Identity.Service.Middleware
 {

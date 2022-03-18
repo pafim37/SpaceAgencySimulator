@@ -55,7 +55,7 @@ namespace Sas.Identity.Service.Controllers
             else
             {
                 var salt = StringGenerator.Generate(6);
-                var role = new RoleEntity() { Role = Role.NoPrivilege};
+                var role = new RoleEntity() { Role = Role.NoPrivilege };
                 UserEntity userEntity = new UserEntity()
                 {
                     Name = user.Name,
@@ -74,7 +74,7 @@ namespace Sas.Identity.Service.Controllers
                 }
             }
         }
-    
+
         [HttpGet("test")]
         [AuthorizeAttribute]
         public IActionResult Test()

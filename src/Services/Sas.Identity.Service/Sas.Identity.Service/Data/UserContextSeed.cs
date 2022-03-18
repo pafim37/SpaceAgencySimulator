@@ -1,5 +1,6 @@
 ﻿using Sas.Domain.Users;
 using Sas.Identity.Service.Models;
+using Sas.Identity.Service.Models.Entities;
 using System.Data.Entity;
 using BCryptNet = BCrypt.Net.BCrypt;
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sas.SolarSystem.Service.Settings
+﻿namespace Sas.SolarSystem.Service.Settings
 {
     public class SolarSystemDatabaseSettings
     {

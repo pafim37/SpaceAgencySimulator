@@ -1,9 +1,6 @@
 ﻿
 // See https://aka.ms/new-console-template for more information
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.Data;
 using Sas.Domain.Orbits;
@@ -16,7 +13,6 @@ using Sas.Mathematica;
 using Sas.SolarSystem.Service.DAL;
 using Sas.SolarSystem.Service.Data;
 using Sas.SolarSystem.Service.Settings;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,8 +92,8 @@ string Endpoints()
     return e;
 }
 
-Vector r = new Vector(5000, 10000, 2100); 
-Vector v = new Vector(-5.992,1.926,3.246);
+Vector r = new Vector(5000, 10000, 2100);
+Vector v = new Vector(-5.992, 1.926, 3.246);
 OrbitBase o = new OrbitBase(r, v, 398600);
 
 Console.WriteLine(o.SemiMajorAxis);

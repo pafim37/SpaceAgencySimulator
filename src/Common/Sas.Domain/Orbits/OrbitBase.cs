@@ -1,11 +1,6 @@
 ﻿using Sas.Domain.Bodies;
 using Sas.Domain.Exceptions;
 using Sas.Mathematica;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sas.Domain.Orbits
 {
@@ -23,7 +18,7 @@ namespace Sas.Domain.Orbits
         /// Eccentricity
         /// </summary>
         public double Eccentricity { get; private set; }
-        
+
         /// <summary>
         /// Mean anomaly
         /// </summary>
@@ -43,7 +38,7 @@ namespace Sas.Domain.Orbits
         /// Ascending node
         /// </summary>
         public double AscendingNode { get; private set; }
-        
+
         /// <summary>
         /// True anomaly
         /// </summary>
@@ -106,7 +101,7 @@ namespace Sas.Domain.Orbits
 
             Vector nVector = new Vector(-hVector.Y, hVector.X, 0); //first node vector n
             double n = nVector.Magnitude();
-            
+
             double i;
             if (h == 0) i = -9999;
             else i = Math.Acos(hVector.Z / h);
@@ -116,7 +111,7 @@ namespace Sas.Domain.Orbits
 
             double p = h * h / u;
 
-            if (n!=0)
+            if (n != 0)
             {
                 if (nVector.Y >= 0) AscendingNode = Math.Acos(nVector.X / n);
                 else AscendingNode = 2 * Math.PI - Math.Acos(nVector.X / n);

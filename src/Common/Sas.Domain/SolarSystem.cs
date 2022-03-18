@@ -1,10 +1,5 @@
 ﻿using Sas.Domain.Bodies;
 using Sas.Mathematica;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sas.Domain
 {
@@ -66,9 +61,8 @@ namespace Sas.Domain
             for (int i = 0; i < sortBodies.Count; i++)
             {
                 var body = sortBodies[i];
-                BodyBase closest = null;
                 double distance = double.MaxValue;
-                for (int j = i+1; j < sortBodies.Count; j++)
+                for (int j = i + 1; j < sortBodies.Count; j++)
                 {
                     var nextBody = sortBodies[j];
                     var d = body.GetPositionRelatedTo(nextBody).Magnitude();
@@ -105,7 +99,7 @@ namespace Sas.Domain
                 z += body.Mass * body.AbsolutePosition.Z;
                 totalMass += body.Mass;
             }
-            Vector position =  1 / totalMass * new Vector(x, y, z);
+            Vector position = 1 / totalMass * new Vector(x, y, z);
             return new BodyBase("Barycentrum", totalMass, position, Vector.Zero);
         }
 

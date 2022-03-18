@@ -78,7 +78,7 @@ namespace Sas.Domain.Observations
             double Zt = ro * Math.Sin(dec);
             return new Vector(Xt, Yt, Zt);
         }
-        
+
         private Vector GetGeocentricEquatorialSystemCoordinate()
         {
             double fi = Observatory.LatitudeRad;

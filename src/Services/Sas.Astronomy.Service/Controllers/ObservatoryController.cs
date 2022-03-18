@@ -67,7 +67,7 @@ namespace Sas.Astronomy.Service.Controllers
 
             return Ok(response.StatusCode);
         }
-        
+
         private async Task<ObservatoryDTO> GetObservatory(string IdOrName)
         {
             ObservatoryDTO result;

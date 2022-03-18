@@ -16,9 +16,9 @@ namespace Sas.Astronomy.Service.Data
 
             observatories.Add(Cracow);
             observatories.Add(Greenwich);
-            observatories.Add(new ObservatoryEntity { Id = 4, Name = "New York Ford", LatitudeRad = ChangeDegToRad(42.41753), LongitudeRad = ChangeDegToRad(-76.49407), Height = 348});
+            observatories.Add(new ObservatoryEntity { Id = 4, Name = "New York Ford", LatitudeRad = ChangeDegToRad(42.41753), LongitudeRad = ChangeDegToRad(-76.49407), Height = 348 });
             observatories.Add(Catalina);
-            
+
             context.Observatories.AddRange(observatories);
 
             observations.Add(new ObservationEntity { Id = 1, ObjectName = "Moon", ObservatoryId = 1, CreatedOn = new DateTime(2013, 8, 21, 19, 0, 0), AzimuthRad = ChangeDegToRad(102.15467), AltitudeRad = ChangeDegToRad(3.343), Distance = 367273905, Observatory = Cracow });

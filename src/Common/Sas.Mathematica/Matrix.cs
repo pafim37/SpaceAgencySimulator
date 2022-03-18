@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sas.Mathematica
+﻿namespace Sas.Mathematica
 {
     public class Matrix
     {
@@ -36,8 +30,8 @@ namespace Sas.Mathematica
             //}
             //else
             //{
-                _elements = elements;
-                _dim = (int)Math.Sqrt(elements.Length);
+            _elements = elements;
+            _dim = (int)Math.Sqrt(elements.Length);
             //}
         }
 
@@ -201,8 +195,8 @@ namespace Sas.Mathematica
         public static Matrix operator *(double s, Matrix matrix)
         {
             int dim = matrix.GetDimension();
-            double[] tmpMatrixElements = new double[dim*dim];
-            for (int i = 0; i < dim*dim; i++)
+            double[] tmpMatrixElements = new double[dim * dim];
+            for (int i = 0; i < dim * dim; i++)
             {
                 tmpMatrixElements[i] = s * matrix[i];
             }

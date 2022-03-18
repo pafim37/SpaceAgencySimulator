@@ -9,7 +9,7 @@ namespace Sas.Domain.Bodies
         /// </summary>
         public double Radius { get; set; }
 
-        public CelestialBody(string name, double mass, Vector position, Vector velocity) 
+        public CelestialBody(string name, double mass, Vector position, Vector velocity)
             : base(name, mass, position, velocity)
         {
         }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Sas.SolarSystem.Service.DAL;
 using Sas.SolarSystem.Service.Documents;
 

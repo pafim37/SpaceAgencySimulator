@@ -51,7 +51,7 @@ namespace Sas.Domain.Bodies
             else
                 throw new SurroundedBodyException("Surrounded body is not assigned");
         }
-        
+
         /// <summary>
         /// Update orbit of the body
         /// </summary>

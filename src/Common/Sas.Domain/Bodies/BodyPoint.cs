@@ -1,4 +1,5 @@
 ﻿using Sas.Mathematica;
+using Sas.Mathematica.Service.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,7 +75,7 @@ namespace Sas.Domain.Bodies
         {
             if (body is not null)
             {
-                double distance = (this.AbsolutePosition - body.AbsolutePosition).Magnitude();
+                double distance = (this.AbsolutePosition - body.AbsolutePosition).Magnitude;
                 double massRatio = Math.Pow(this.Mass / body.Mass, 0.4);
                 return distance * massRatio;
             }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sas.Mathematica
+﻿namespace Sas.Mathematica
 {
-    public class Matrix
+    public class GeneralMatrix
     {
         private double[] _elements;
         private int _dim;
@@ -27,16 +21,19 @@ namespace Sas.Mathematica
         /// </summary>
         public double Determinant => CalculateDeterminant();
 
-        public Matrix(params double[] elements)
+        public GeneralMatrix(params double[] elements)
         {
-            if (elements == null) throw new ArgumentNullException(nameof(elements));
+            if (elements == null)
+            {
+                throw new ArgumentNullException(nameof(elements));
+            }
             //if (!IsMatrixSquare(elements))
             //{
             //    throw new Exception("Matrix is not square");
             //}
             //else
             //{
-                _elements = elements;
+            _elements = elements;
                 _dim = (int)Math.Sqrt(elements.Length);
             //}
         }
@@ -62,7 +59,7 @@ namespace Sas.Mathematica
         /// </summary>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public Matrix Transpose()
+        public GeneralMatrix Transpose()
         {
             for (int row = 0; row < _dim; row++)
             {
@@ -79,7 +76,7 @@ namespace Sas.Mathematica
         /// <summary>
         /// Invert matrix
         /// </summary>
-        public Matrix Invert()
+        public GeneralMatrix Invert()
         {
             double det = Determinant;
             if (det == 0)
@@ -97,9 +94,9 @@ namespace Sas.Mathematica
                     tmpElements[row * dim + col] = Math.Pow(-1, row + col) * minor.Determinant;
                 }
             }
-            Matrix cofactor = new Matrix(tmpElements);
-            Matrix adjugate = cofactor.Transpose();
-            Matrix invertedMatrix = (1 / det) * adjugate;
+            GeneralMatrix cofactor = new GeneralMatrix(tmpElements);
+            GeneralMatrix adjugate = cofactor.Transpose();
+            GeneralMatrix invertedMatrix = (1 / det) * adjugate;
             _elements = invertedMatrix.GetElements();
             return this;
         }
@@ -119,7 +116,7 @@ namespace Sas.Mathematica
                 double det = 0.0;
                 for (int i = 0; i < dim; i++)
                 {
-                    Matrix minor = CreateMinor(this, dim - 1, i);
+                    GeneralMatrix minor = CreateMinor(this, dim - 1, i);
                     det += Math.Pow(-1, dim + i + 1) * this[(dim - 1) * dim + i] * minor.Determinant;
                 }
                 return det;
@@ -133,13 +130,13 @@ namespace Sas.Mathematica
         /// <param name="i">index of row to remove</param>
         /// <param name="j">index of col to remove</param>
         /// <returns></returns>
-        private Matrix CreateMinor(Matrix matrix, int i, int j)
+        private GeneralMatrix CreateMinor(GeneralMatrix matrix, int i, int j)
         {
             double[] minorelements = CreateMinorelements(matrix, i, j).ToArray();
-            return new Matrix(minorelements);
+            return new GeneralMatrix(minorelements);
         }
 
-        private IEnumerable<double> CreateMinorelements(Matrix matrix, int i, int j)
+        private IEnumerable<double> CreateMinorelements(GeneralMatrix matrix, int i, int j)
         {
             int dim = matrix.GetDimension();
             for (int row = 0; row < dim; row++)
@@ -181,7 +178,7 @@ namespace Sas.Mathematica
 
         public override bool Equals(object? obj)
         {
-            return obj is Matrix matrix &&
+            return obj is GeneralMatrix matrix &&
                    EqualityComparer<double[]>.Default.Equals(_elements, matrix._elements) &&
                    _dim == matrix._dim &&
                    Determinant == matrix.Determinant;
@@ -198,7 +195,7 @@ namespace Sas.Mathematica
         /// <param name="s"></param>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix operator *(double s, Matrix matrix)
+        public static GeneralMatrix operator *(double s, GeneralMatrix matrix)
         {
             int dim = matrix.GetDimension();
             double[] tmpMatrixElements = new double[dim*dim];
@@ -207,10 +204,10 @@ namespace Sas.Mathematica
                 tmpMatrixElements[i] = s * matrix[i];
             }
 
-            return new Matrix(tmpMatrixElements);
+            return new GeneralMatrix(tmpMatrixElements);
         }
 
-        public static bool operator ==(Matrix? left, Matrix? right)
+        public static bool operator ==(GeneralMatrix? left, GeneralMatrix? right)
         {
             if (left == null || right == null) return false;
             if (left.GetDimension() != right.GetDimension())
@@ -226,12 +223,9 @@ namespace Sas.Mathematica
             return result;
         }
 
-        public static bool operator !=(Matrix? left, Matrix? right)
+        public static bool operator !=(GeneralMatrix? left, GeneralMatrix? right)
         {
             return !(left == right);
         }
-
-
-
     }
 }

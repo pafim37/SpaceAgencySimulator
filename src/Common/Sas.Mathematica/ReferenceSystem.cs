@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sas.Mathematica.Service.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

@@ -1,6 +1,7 @@
 ﻿using Sas.Domain.Exceptions;
 using Sas.Domain.Orbits;
 using Sas.Mathematica;
+using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Domain.Bodies
 {

@@ -45,7 +45,7 @@
         /// Gets all matrix element
         /// </summary>
         /// <returns></returns>
-        public double[] GetAllElements() => _elements!;
+        public double[] GetAllElements() => _elements;
 
         /// <summary>
         /// Gets number of rows
@@ -63,9 +63,9 @@
         /// Gets dimension of the matrix if matrix is square
         /// </summary>
         /// <returns></returns>
-        public int? GetDimension()
+        public int GetDimension()
         {
-            return _squareMatrix ? _dim : null;
+            return _squareMatrix ? _dim : throw new Exception("Matrix is irregular");
         }
 
         /// <summary>
@@ -152,6 +152,7 @@
         /// </summary>
         public Matrix Invert()
         {
+            if (!_squareMatrix) throw new InvalidOperationException("Matrix is no square");
             double det = CalculateDeterminant();
             if (det == 0)
             {
@@ -164,7 +165,7 @@
             {
                 for (int col = 0; col < dim; col++)
                 {
-                    var minor = CreateMinor(this, row, col);
+                    Matrix? minor = CreateMinor(this, row, col);
                     tmpElements[row * dim + col] = Math.Pow(-1, row + col) * minor.GetDeterminant();
                 }
             }
@@ -192,8 +193,8 @@
 
             int dim = _dim;
 
-            if (dim == 1) return _elements![0];
-            else if (dim == 2) return _elements![0] * _elements[3] - _elements[1] * _elements[2];
+            if (dim == 1) return _elements[0];
+            else if (dim == 2) return _elements[0] * _elements[3] - _elements[1] * _elements[2];
             else
             {
                 double det = 0.0;
@@ -216,12 +217,12 @@
         private Matrix CreateMinor(Matrix matrix, int i, int j)
         {
             double[] minorelements = CreateMinorElements(matrix, i, j).ToArray();
-            return new Matrix(minorelements, matrix.GetDimension()!.Value-1, matrix.GetDimension()!.Value-1);
+            return new Matrix(minorelements, matrix.GetDimension()-1, matrix.GetDimension()-1);
         }
 
         private IEnumerable<double> CreateMinorElements(Matrix matrix, int i, int j)
         {
-            int dim = matrix.GetDimension().Value;
+            int dim = matrix.GetDimension();
             for (int row = 0; row < dim; row++)
             {
                 if (row == i) continue;
@@ -259,14 +260,15 @@
         /// <returns></returns>
         public static Matrix operator *(double s, Matrix matrix)
         {
-            int dim = matrix.GetDimension().Value;
-            double[] tmpMatrixElements = new double[dim*dim];
-            for (int i = 0; i < dim*dim; i++)
+            int rows = matrix.GetNumberOfRows();
+            int cols = matrix.GetNumberOfColumns();
+            double[] tmpMatrixElements = new double[rows * cols];
+            for (int i = 0; i < rows * cols; i++)
             {
                 tmpMatrixElements[i] = s * matrix[i];
             }
 
-            return new Matrix(tmpMatrixElements, dim, dim);
+            return new Matrix(tmpMatrixElements, rows, cols);
         }
 
         public static Matrix operator *(Matrix matrix, double s)
@@ -284,7 +286,7 @@
             {
                 for (int col = 0; col < _numberOfColumns; col++)
                 {
-                    result += _elements![row * (_numberOfRows-1) + col] + ", ";
+                    result += _elements[row * (_numberOfRows-1) + col] + ", ";
                 }
                 result += "\n";
             }

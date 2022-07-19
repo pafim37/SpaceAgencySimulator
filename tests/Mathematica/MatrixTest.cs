@@ -150,11 +150,11 @@ namespace Sas.Mathematica.Tests
         }
         
         [Test]
-        public void GetDimensionReturnsNullWhenMatrixIsNotSquare()
+        public void GetDimensionThrowsExceptionWhenMatrixIsNotSquare()
         {
             Matrix matrix = new Matrix(_sixElements, 2, 3);
 
-            Assert.Null(matrix.GetDimension());
+            Assert.Throws<Exception>(() => matrix.GetDimension());
         }
 
         [TestCaseSource(nameof(TransposeMatrixData))]

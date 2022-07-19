@@ -20,9 +20,9 @@
         /// <param name="numberOfRows"></param>
         /// <param name="numberOfColumns"></param>
         /// <param name="elements"></param>
-        public Matrix(int numberOfRows, int numberOfColumns, params double[] elements)
+        public Matrix(double[] elements, int numberOfRows, int numberOfColumns)
         {
-            AreArgumentsValid(numberOfRows, numberOfColumns, elements);
+            AreArgumentsValid(elements, numberOfRows, numberOfColumns);
             _numberOfRows = numberOfRows;
             _numberOfColumns = numberOfColumns;
             _elements = elements;
@@ -65,14 +65,25 @@
         /// <returns></returns>
         public int? GetDimension()
         {
-            if (_squareMatrix)
+            return _squareMatrix ? _dim : null;
+        }
+
+        /// <summary>
+        /// Returns single (col-th) column 
+        /// </summary>
+        /// <param name="col">number of column</param>
+        /// <returns></returns>
+        /// <exception cref="IndexOutOfRangeException"></exception>
+        public double[] GetColumn(int col)
+        {
+            if (col < 0 || col > _numberOfColumns) throw new IndexOutOfRangeException(nameof(col));
+            double[] column = new double[_numberOfRows];
+            for (int c = 0; c < _numberOfRows; c++)
             {
-                return _dim;
+                int index = c * _numberOfRows + col;
+                column[c] = _elements[--index];
             }
-            else
-            {
-                return null;
-            }
+            return column;
         }
 
         /// <summary>
@@ -90,10 +101,9 @@
         {
             get
             {
-                if ( (row >= 1 && row <= _numberOfRows) && (col >= 1 && col <= _numberOfColumns)) return _elements[--row * _numberOfRows + --col];
+                if ( (row >= 1 && row <= _numberOfRows) && (col >= 1 && col <= _numberOfColumns)) return _elements[--row * _numberOfColumns + --col];
                 else throw new IndexOutOfRangeException();
             }
-            set => _elements![row * _numberOfRows * _numberOfColumns + col] = value;
         }
 
         /// <summary>
@@ -112,19 +122,6 @@
             set => _elements[i] = value;
         }
 
-
-        public double[] GetColumn(int col)
-        {
-            if(col < 0 || col > _numberOfColumns) throw new IndexOutOfRangeException(nameof(col));
-            double[] column = new double[_numberOfRows];
-            for (int c = 0; c < _numberOfRows; c++)
-            {
-                int index = c * _numberOfRows + col;
-                column[c] = _elements[--index];
-            }
-            return column;
-        }
-
         /// <summary>
         /// Transpose of the matrix 
         /// </summary>
@@ -132,15 +129,21 @@
         /// <returns></returns>
         public Matrix Transpose()
         {
-            for (int row = 0; row < _dim; row++)
+            double[] transposeElements = new double[_elements.Length];
+            for (int row = 0; row < _numberOfRows; row++)
             {
-                for (int col = 0; col < _dim; col++)
+                for (int col = 0; col < _numberOfColumns; col++)
                 {
-                    double tmp = this[row * _dim + col];
-                    this[row * _dim + col] = this[col * _dim + row];
-                    this[col * _dim + row] = tmp;
+                    transposeElements[col * _numberOfRows + row] = _elements[row * _numberOfColumns + col];
                 }
             }
+
+            for (int i = 0; i < _elements.Length; i++)
+            {
+                _elements[i] = transposeElements[i];
+            }
+
+            (_numberOfRows, _numberOfColumns) = (_numberOfColumns, _numberOfRows);
             return this;
         }
 
@@ -165,7 +168,7 @@
                     tmpElements[row * dim + col] = Math.Pow(-1, row + col) * minor.GetDeterminant();
                 }
             }
-            Matrix cofactor = new Matrix(dim, dim, tmpElements);
+            Matrix cofactor = new Matrix(tmpElements, dim, dim);
             Matrix adjugate = cofactor.Transpose();
             Matrix invertedMatrix = (1 / det) * adjugate;
             _elements = invertedMatrix.GetAllElements();
@@ -213,7 +216,7 @@
         private Matrix CreateMinor(Matrix matrix, int i, int j)
         {
             double[] minorelements = CreateMinorElements(matrix, i, j).ToArray();
-            return new Matrix(matrix.GetDimension()!.Value-1, matrix.GetDimension()!.Value-1, minorelements);
+            return new Matrix(minorelements, matrix.GetDimension()!.Value-1, matrix.GetDimension()!.Value-1);
         }
 
         private IEnumerable<double> CreateMinorElements(Matrix matrix, int i, int j)
@@ -234,14 +237,14 @@
         /// Check if arguments are valid
         /// </summary>
         /// <returns></returns>
-        private void AreArgumentsValid(int numberOfRows, int numberOfColumns, params double[] elements)
+        private void AreArgumentsValid(double[] elements, int numberOfRows, int numberOfColumns)
         {
             if (elements is null) throw new ArgumentNullException(nameof(elements));
 
             if (numberOfRows <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfRows));
             if (numberOfColumns <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfColumns));
 
-            if (numberOfRows * numberOfColumns != elements.Length) throw new ArgumentOutOfRangeException("Bad number of elements for provider dimensions of matrix");
+            if (numberOfRows * numberOfColumns != elements.Length) throw new ArgumentOutOfRangeException("Bad number of elements for provided dimensions of matrix");
         }
 
         #endregion
@@ -263,7 +266,7 @@
                 tmpMatrixElements[i] = s * matrix[i];
             }
 
-            return new Matrix(dim, dim, tmpMatrixElements);
+            return new Matrix(tmpMatrixElements, dim, dim);
         }
 
         public static Matrix operator *(Matrix matrix, double s)
@@ -276,13 +279,12 @@
         #region Overrides
         public override string? ToString()
         {
-            int dim = GetDimension()!.Value;
             string result = string.Empty;
-            for (int row = 0; row < dim; row++)
+            for (int row = 0; row < _numberOfRows; row++)
             {
-                for (int col = 0; col < dim; col++)
+                for (int col = 0; col < _numberOfColumns; col++)
                 {
-                    result += _elements![row * dim + col] + ", ";
+                    result += _elements![row * (_numberOfRows-1) + col] + ", ";
                 }
                 result += "\n";
             }

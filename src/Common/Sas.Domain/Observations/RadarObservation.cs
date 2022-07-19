@@ -105,7 +105,7 @@ namespace Sas.Domain.Observations
             double fi = Observatory.LatitudeRad;
             double th = Observatory.LongitudeRad;
             double[] r = new double[9] { -Math.Sin(th), Math.Cos(th), 0, -Math.Sin(fi) * Math.Cos(th), -Math.Sin(fi) * Math.Sin(th), Math.Cos(fi), Math.Cos(fi) * Math.Cos(th), Math.Cos(fi) * Math.Sin(th), Math.Sin(fi) };
-            return new Matrix(3, 3, r);
+            return new Matrix(r, 3, 3);
         }
         #endregion
     }

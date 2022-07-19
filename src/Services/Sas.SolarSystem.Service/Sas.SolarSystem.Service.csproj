@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Sas.Domain\Sas.Domain.csproj" />
-    <ProjectReference Include="..\..\Common\Sas.Mathematica\Sas.Mathematica.Service.csproj" />
+    <ProjectReference Include="..\Mathematica\Sas.Mathematica.Service.csproj" />
     <ProjectReference Include="..\Sas.Identity.Service\Sas.Identity.Service\Sas.Identity.Service.csproj" />
   </ItemGroup>
 

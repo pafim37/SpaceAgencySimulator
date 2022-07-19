@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Sas.Domain\Sas.Domain.csproj" />
+    <ProjectReference Include="..\..\Sas.Domain\Sas.Domain.csproj" />
   </ItemGroup>
 
 </Project>

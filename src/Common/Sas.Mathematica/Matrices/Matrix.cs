@@ -2,12 +2,18 @@
 {
     public class Matrix
     {
+        #region Privates Fields
+
         private double[] _elements;
         private int _dim;
         private int _numberOfRows;
         private int _numberOfColumns;
         private bool _squareMatrix;
 
+        #endregion
+
+        #region Constructors
+        
         /// <summary>
         /// Constructor of the matrix
         /// </summary>
@@ -31,6 +37,10 @@
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// <summary>
         /// Gets all matrix element
         /// </summary>
@@ -38,23 +48,16 @@
         public double[] GetAllElements() => _elements!;
 
         /// <summary>
-        /// Gets element of matrix at position (row, col)
+        /// Gets number of rows
         /// </summary>
-        /// <param name="row">number of row</param>
-        /// <param name="col">number of column</param>
-        /// <returns>value</returns>
-        public double GetElementAtPosition(int row, int col)
-        { 
-            if(row <= 0 || row > _numberOfRows)
-            {
-                throw new ArgumentOutOfRangeException(nameof(row));
-            }
-            if ( col <= 0 || col > _numberOfColumns)
-            {
-                throw new ArgumentOutOfRangeException(nameof(col));
-            }
-            return _elements![--row * _dim + --col]; 
-        }
+        /// <returns></returns>
+        public int GetNumberOfRows() => _numberOfRows;
+
+        /// <summary>
+        /// Gets number of columns
+        /// </summary>
+        /// <returns></returns>
+        public int GetNumberOfColumns() => _numberOfColumns;
 
         /// <summary>
         /// Gets dimension of the matrix if matrix is square
@@ -83,14 +86,43 @@
         /// <param name="i"></param>
         /// <returns></returns>
         /// <exception cref="IndexOutOfRangeException"></exception>
+        public double this[int row, int col]
+        {
+            get
+            {
+                if ( (row >= 1 && row <= _numberOfRows) && (col >= 1 && col <= _numberOfColumns)) return _elements[--row * _numberOfRows + --col];
+                else throw new IndexOutOfRangeException();
+            }
+            set => _elements![row * _numberOfRows * _numberOfColumns + col] = value;
+        }
+
+        /// <summary>
+        /// Define the indexer to allow use [] notation
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        /// <exception cref="IndexOutOfRangeException"></exception>
         public double this[int i]
         {
             get
             {
-                if (i >= 0 && i < _elements!.Length) return _elements[i];
+                if (i >= 0 && i < _elements.Length) return _elements[i];
                 else throw new IndexOutOfRangeException();
             }
-            set => _elements![i] = value;
+            set => _elements[i] = value;
+        }
+
+
+        public double[] GetColumn(int col)
+        {
+            if(col < 0 || col > _numberOfColumns) throw new IndexOutOfRangeException(nameof(col));
+            double[] column = new double[_numberOfRows];
+            for (int c = 0; c < _numberOfRows; c++)
+            {
+                int index = c * _numberOfRows + col;
+                column[c] = _elements[--index];
+            }
+            return column;
         }
 
         /// <summary>
@@ -140,6 +172,10 @@
             return this;
         }
 
+        #endregion
+
+        #region Privates Methods
+
         /// <summary>
         /// Calculate a determinant of the matrix
         /// </summary>
@@ -177,7 +213,7 @@
         private Matrix CreateMinor(Matrix matrix, int i, int j)
         {
             double[] minorelements = CreateMinorElements(matrix, i, j).ToArray();
-            return new Matrix(matrix.GetDimension()!.Value, matrix.GetDimension()!.Value, minorelements);
+            return new Matrix(matrix.GetDimension()!.Value-1, matrix.GetDimension()!.Value-1, minorelements);
         }
 
         private IEnumerable<double> CreateMinorElements(Matrix matrix, int i, int j)
@@ -194,20 +230,23 @@
             }
         }
 
-        public override string? ToString()
+        /// <summary>
+        /// Check if arguments are valid
+        /// </summary>
+        /// <returns></returns>
+        private void AreArgumentsValid(int numberOfRows, int numberOfColumns, params double[] elements)
         {
-            int dim = GetDimension()!.Value;
-            string result = string.Empty;
-            for (int row = 0; row < dim; row++)
-            {
-                for (int col = 0; col < dim; col++)
-                {
-                    result += _elements![row * dim + col] + ", ";
-                }
-                result += "\n";
-            }
-            return result;
+            if (elements is null) throw new ArgumentNullException(nameof(elements));
+
+            if (numberOfRows <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfRows));
+            if (numberOfColumns <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfColumns));
+
+            if (numberOfRows * numberOfColumns != elements.Length) throw new ArgumentOutOfRangeException("Bad number of elements for provider dimensions of matrix");
         }
+
+        #endregion
+
+        #region Operators
 
         /// <summary>
         /// Overloaded multiplication operator scalar and matrix
@@ -227,39 +266,42 @@
             return new Matrix(dim, dim, tmpMatrixElements);
         }
 
-        public static bool operator ==(Matrix? left, Matrix? right)
+        public static Matrix operator *(Matrix matrix, double s)
         {
-            if (left == null || right == null) return false;
-            if (left.GetDimension() != right.GetDimension())
-            {
-                return false;
-            }
+            return s * matrix;
+        }
 
-            bool result = true;
-            for (int i = 0; i < left.GetDimension(); i++)
+        #endregion
+
+        #region Overrides
+        public override string? ToString()
+        {
+            int dim = GetDimension()!.Value;
+            string result = string.Empty;
+            for (int row = 0; row < dim; row++)
             {
-                result &= left[i] == right[i];
+                for (int col = 0; col < dim; col++)
+                {
+                    result += _elements![row * dim + col] + ", ";
+                }
+                result += "\n";
             }
             return result;
         }
 
-        public static bool operator !=(Matrix? left, Matrix? right)
+        public override bool Equals(object? obj)
         {
-            return !(left == right);
+            return obj is Matrix matrix &&
+                   _elements.SequenceEqual(matrix.GetAllElements()) &&
+                   _numberOfRows == matrix.GetNumberOfRows() &&
+                   _numberOfColumns == matrix.GetNumberOfColumns();
         }
 
-        /// <summary>
-        /// Check if arguments are valid
-        /// </summary>
-        /// <returns></returns>
-        private void AreArgumentsValid(int numberOfRows, int numberOfColumns, params double[] elements)
+        public override int GetHashCode()
         {
-            if (elements is null) throw new ArgumentNullException(nameof(elements));
-
-            if (numberOfRows <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfRows));
-            if (numberOfColumns <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfColumns));
-
-            if (numberOfRows * numberOfColumns != elements.Length) throw new ArgumentOutOfRangeException("Bad number of elements for provider dimensions of matrix");
+            return HashCode.Combine(_numberOfRows, _numberOfColumns, _elements);
         }
+
+        #endregion
     }
 }

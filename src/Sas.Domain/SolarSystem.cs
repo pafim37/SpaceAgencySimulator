@@ -1,5 +1,6 @@
 ﻿using Sas.Domain.Bodies;
 using Sas.Mathematica;
+using Sas.Mathematica.Service.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,7 +72,7 @@ namespace Sas.Domain
                 for (int j = i+1; j < sortBodies.Count; j++)
                 {
                     var nextBody = sortBodies[j];
-                    var d = body.GetPositionRelatedTo(nextBody).Magnitude();
+                    var d = body.GetPositionRelatedTo(nextBody).Magnitude;
                     if (d < distance && nextBody.GetSphereOfInfluence(body) >= d)
                     {
                         distance = d;

@@ -1,6 +1,7 @@
 ﻿using Sas.Domain.Bodies;
 using Sas.Domain.Exceptions;
 using Sas.Mathematica;
+using Sas.Mathematica.Service.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,15 +98,15 @@ namespace Sas.Domain.Orbits
         #region private methods
         private void CalculateOrbitalElements(Vector position, Vector velocity, double u)
         {
-            double r = position.Magnitude();
-            double v = velocity.Magnitude();
+            double r = position.Magnitude;
+            double v = velocity.Magnitude;
             Vector hVector = Vector.CrossProduct(position, velocity);
             Vector eVector = 1 / u * Vector.CrossProduct(velocity, hVector) - 1 / r * position;
-            double h = hVector.Magnitude();
+            double h = hVector.Magnitude;
             double e = Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
 
             Vector nVector = new Vector(-hVector.Y, hVector.X, 0); //first node vector n
-            double n = nVector.Magnitude();
+            double n = nVector.Magnitude;
             
             double i;
             if (h == 0) i = -9999;

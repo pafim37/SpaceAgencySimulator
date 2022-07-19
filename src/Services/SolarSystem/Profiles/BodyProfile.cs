@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Sas.Domain.Bodies;
-using Sas.Mathematica;
+using Sas.Mathematica.Service.Vectors;
 using Sas.SolarSystem.Service.Documents;
 
 namespace Sas.SolarSystem.Service.Profiles

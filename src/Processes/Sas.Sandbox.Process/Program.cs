@@ -13,6 +13,7 @@ using Sas.Identity.Service.Data;
 using Sas.Identity.Service.Middleware;
 using Sas.Identity.Service.Services;
 using Sas.Mathematica;
+using Sas.Mathematica.Service.Vectors;
 using Sas.SolarSystem.Service.DAL;
 using Sas.SolarSystem.Service.Data;
 using Sas.SolarSystem.Service.Settings;

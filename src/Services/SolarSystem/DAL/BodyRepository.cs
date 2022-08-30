@@ -4,11 +4,11 @@ using Sas.SolarSystem.Service.Documents;
 
 namespace Sas.SolarSystem.Service.DAL
 {
-    public class CelestialBodyRepository : ICelestialBodyRepository
+    public class BodyRepository : IBodyRepository
     {
         private readonly ISolarSystemContext _context;
 
-        public CelestialBodyRepository(ISolarSystemContext context)
+        public BodyRepository(ISolarSystemContext context)
         {
             _context = context;
         }

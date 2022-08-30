@@ -2,7 +2,7 @@
 
 namespace Sas.SolarSystem.Service.DAL
 {
-    public interface ICelestialBodyRepository
+    public interface IBodyRepository
     {
         Task<CelestialBodyDocument> GetAsync(string name);
         Task<IEnumerable<CelestialBodyDocument>> GetAsync();

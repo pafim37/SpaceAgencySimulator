@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Domain.Exceptions
+namespace Sas.SolarSystem.Service.Exceptions
 {
     public class SurroundedBodyException : Exception
     {

@@ -8,7 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common\Sas.Common.csproj" />
     <ProjectReference Include="..\Services\Mathematica\Sas.Mathematica.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Orbits\" />
   </ItemGroup>
 
 </Project>

@@ -69,7 +69,7 @@
         }
 
         /// <summary>
-        /// Returns single (col-th) column 
+        /// Returns single (col-th) column counted from 1.
         /// </summary>
         /// <param name="col">number of column</param>
         /// <returns></returns>
@@ -103,6 +103,12 @@
             {
                 if ( (row >= 1 && row <= _numberOfRows) && (col >= 1 && col <= _numberOfColumns)) return _elements[--row * _numberOfColumns + --col];
                 else throw new IndexOutOfRangeException();
+            }
+            set
+            {
+                if ((row >= 1 && row <= _numberOfRows) && (col >= 1 && col <= _numberOfColumns)) _elements[--row * _numberOfColumns + --col] = value;
+                else throw new IndexOutOfRangeException();
+
             }
         }
 
@@ -286,7 +292,7 @@
             {
                 for (int col = 0; col < _numberOfColumns; col++)
                 {
-                    result += _elements[row * (_numberOfRows-1) + col] + ", ";
+                    result += _elements[row * _numberOfColumns + col] + ", ";
                 }
                 result += "\n";
             }

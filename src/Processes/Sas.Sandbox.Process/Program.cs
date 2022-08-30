@@ -1,23 +1,19 @@
 ﻿
 // See https://aka.ms/new-console-template for more information
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.Data;
-using Sas.Domain.Orbits;
+using Sas.Domain;
 using Sas.Identity.Service.Autorizations;
 using Sas.Identity.Service.Config;
 using Sas.Identity.Service.Data;
 using Sas.Identity.Service.Middleware;
 using Sas.Identity.Service.Services;
-using Sas.Mathematica;
 using Sas.Mathematica.Service.Vectors;
 using Sas.SolarSystem.Service.DAL;
 using Sas.SolarSystem.Service.Data;
+using Sas.SolarSystem.Service.Models;
 using Sas.SolarSystem.Service.Settings;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +37,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.Configure<SolarSystemDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
 builder.Services.AddSingleton<SolarSystemDatabaseSettings>(x => x.GetRequiredService<IOptions<SolarSystemDatabaseSettings>>().Value);
 builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
-builder.Services.AddScoped<ICelestialBodyRepository, CelestialBodyRepository>();
+builder.Services.AddScoped<IBodyRepository, BodyRepository>();
 
 // Controllers
 builder.Services.AddControllers()
@@ -97,9 +93,12 @@ string Endpoints()
     return e;
 }
 
+LeastSquaresEstimation lse = new LeastSquaresEstimation();
+
+
 Vector r = new Vector(5000, 10000, 2100); 
 Vector v = new Vector(-5.992,1.926,3.246);
-OrbitBase o = new OrbitBase(r, v, 398600);
+Orbit o = new Orbit(r, v, 398600);
 
 Console.WriteLine(o.SemiMajorAxis);
 //BodyBase Sun = new("Sun", Constants.SolarMass, Vector.Zero, Vector.Zero);

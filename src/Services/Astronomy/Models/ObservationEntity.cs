@@ -6,7 +6,7 @@ namespace Sas.Astronomy.Service.Models
     public class ObservationEntity : Entity
     {
         [Required]
-        public string ObjectName { get; set; }
+        public string? ObjectName { get; set; }
         [Required]
         public DateTime CreatedOn { get; set; }
         [Required]
@@ -18,6 +18,6 @@ namespace Sas.Astronomy.Service.Models
         [Required]
         [ForeignKey("Observatory")]
         public int ObservatoryId { get; set; }
-        public ObservatoryEntity Observatory { get; set; }
+        public ObservatoryEntity? Observatory { get; set; }
     }
 }

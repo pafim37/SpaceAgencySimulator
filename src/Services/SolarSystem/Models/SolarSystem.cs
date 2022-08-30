@@ -1,22 +1,16 @@
-﻿using Sas.Domain.Bodies;
-using Sas.Mathematica;
+﻿using Sas.Mathematica;
 using Sas.Mathematica.Service.Vectors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Sas.Domain
+namespace Sas.SolarSystem.Service.Models
 {
     public class SolarSystem
     {
-        private readonly List<CelestialBody> _bodies;
+        private readonly List<Body> _bodies;
 
         /// <summary>
         /// Center of mass (Barycentrum)
         /// </summary>
-        public BodyBase Barycentrum => GetBarycenter();
+        public Body Barycentrum => GetBarycenter();
 
         /// <summary>
         /// G * (M + m)
@@ -37,9 +31,9 @@ namespace Sas.Domain
         /// Returns list of the body in solar system
         /// </summary>
         /// <returns></returns>
-        public List<CelestialBody> GetBodies() => _bodies;
+        public List<Body> GetBodies() => _bodies;
 
-        public SolarSystem(List<CelestialBody> bodies)
+        public SolarSystem(List<Body> bodies)
         {
             if (bodies.Count < 2)
                 throw new ArgumentException("Solar system has not enough bodies");
@@ -54,7 +48,7 @@ namespace Sas.Domain
 
         private void CalculateOribit()
         {
-            foreach (BodyBase b in _bodies)
+            foreach (Body b in _bodies)
             {
                 b.UpdateOrbit();
             }
@@ -67,9 +61,9 @@ namespace Sas.Domain
             for (int i = 0; i < sortBodies.Count; i++)
             {
                 var body = sortBodies[i];
-                BodyBase closest = null;
+                Body closest = null;
                 double distance = double.MaxValue;
-                for (int j = i+1; j < sortBodies.Count; j++)
+                for (int j = i + 1; j < sortBodies.Count; j++)
                 {
                     var nextBody = sortBodies[j];
                     var d = body.GetPositionRelatedTo(nextBody).Magnitude;
@@ -92,7 +86,7 @@ namespace Sas.Domain
             }
         }
 
-        private BodyBase GetBarycenter()
+        private Body GetBarycenter()
         {
             double totalMass = 0;
             double x = 0;
@@ -106,8 +100,8 @@ namespace Sas.Domain
                 z += body.Mass * body.AbsolutePosition.Z;
                 totalMass += body.Mass;
             }
-            Vector position =  1 / totalMass * new Vector(x, y, z);
-            return new BodyBase("Barycentrum", totalMass, position, Vector.Zero);
+            Vector position = 1 / totalMass * new Vector(x, y, z);
+            return new Body("Barycentrum", totalMass, position, Vector.Zero);
         }
 
         private double GetU()

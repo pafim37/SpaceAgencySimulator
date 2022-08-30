@@ -7,11 +7,11 @@ namespace Sas.SolarSystem.Service.Controllers
 {
     [Route("bodies")]
     [ApiController]
-    public class CelestialBodyController : ControllerBase
+    public class BodyController : ControllerBase
     {
-        private readonly ICelestialBodyRepository _repository;
+        private readonly IBodyRepository _repository;
 
-        public CelestialBodyController(ICelestialBodyRepository repository)
+        public BodyController(IBodyRepository repository)
         {
             _repository = repository;
         }

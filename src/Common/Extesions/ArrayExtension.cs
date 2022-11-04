@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Common
+namespace Sas.Common.Extesions
 {
     public static class ArrayExtension
     {

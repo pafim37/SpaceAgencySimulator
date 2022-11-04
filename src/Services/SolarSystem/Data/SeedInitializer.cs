@@ -1,5 +1,5 @@
 ﻿using MongoDB.Driver;
-using Sas.Mathematica;
+using Sas.Mathematica.Service;
 using Sas.SolarSystem.Service.Documents;
 
 namespace Sas.SolarSystem.Service.Data

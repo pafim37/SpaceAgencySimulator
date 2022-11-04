@@ -1,4 +1,4 @@
-﻿namespace Sas.Mathematica
+﻿namespace Sas.Mathematica.Service.Matrices
 {
     public class GeneralMatrix
     {
@@ -34,7 +34,7 @@
             //else
             //{
             _elements = elements;
-                _dim = (int)Math.Sqrt(elements.Length);
+            _dim = (int)Math.Sqrt(elements.Length);
             //}
         }
 
@@ -96,7 +96,7 @@
             }
             GeneralMatrix cofactor = new GeneralMatrix(tmpElements);
             GeneralMatrix adjugate = cofactor.Transpose();
-            GeneralMatrix invertedMatrix = (1 / det) * adjugate;
+            GeneralMatrix invertedMatrix = 1 / det * adjugate;
             _elements = invertedMatrix.GetElements();
             return this;
         }
@@ -198,8 +198,8 @@
         public static GeneralMatrix operator *(double s, GeneralMatrix matrix)
         {
             int dim = matrix.GetDimension();
-            double[] tmpMatrixElements = new double[dim*dim];
-            for (int i = 0; i < dim*dim; i++)
+            double[] tmpMatrixElements = new double[dim * dim];
+            for (int i = 0; i < dim * dim; i++)
             {
                 tmpMatrixElements[i] = s * matrix[i];
             }

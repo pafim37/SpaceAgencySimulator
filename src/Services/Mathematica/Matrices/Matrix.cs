@@ -1,4 +1,4 @@
-﻿namespace Sas.Mathematica
+﻿namespace Sas.Mathematica.Service.Matrices
 {
     public class Matrix
     {
@@ -13,7 +13,7 @@
         #endregion
 
         #region Constructors
-        
+
         /// <summary>
         /// Constructor of the matrix
         /// </summary>
@@ -101,7 +101,7 @@
         {
             get
             {
-                if ( (row >= 1 && row <= _numberOfRows) && (col >= 1 && col <= _numberOfColumns)) return _elements[--row * _numberOfColumns + --col];
+                if (row >= 1 && row <= _numberOfRows && col >= 1 && col <= _numberOfColumns) return _elements[--row * _numberOfColumns + --col];
                 else throw new IndexOutOfRangeException();
             }
         }
@@ -171,7 +171,7 @@
             }
             Matrix cofactor = new Matrix(tmpElements, dim, dim);
             Matrix adjugate = cofactor.Transpose();
-            Matrix invertedMatrix = (1 / det) * adjugate;
+            Matrix invertedMatrix = 1 / det * adjugate;
             _elements = invertedMatrix.GetAllElements();
             return this;
         }
@@ -217,7 +217,7 @@
         private Matrix CreateMinor(Matrix matrix, int i, int j)
         {
             double[] minorelements = CreateMinorElements(matrix, i, j).ToArray();
-            return new Matrix(minorelements, matrix.GetDimension()-1, matrix.GetDimension()-1);
+            return new Matrix(minorelements, matrix.GetDimension() - 1, matrix.GetDimension() - 1);
         }
 
         private IEnumerable<double> CreateMinorElements(Matrix matrix, int i, int j)
@@ -286,7 +286,7 @@
             {
                 for (int col = 0; col < _numberOfColumns; col++)
                 {
-                    result += _elements[row * (_numberOfRows-1) + col] + ", ";
+                    result += _elements[row * (_numberOfRows - 1) + col] + ", ";
                 }
                 result += "\n";
             }

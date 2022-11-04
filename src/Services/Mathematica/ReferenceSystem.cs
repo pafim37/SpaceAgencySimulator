@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sas.Mathematica
+namespace Sas.Mathematica.Service
 {
     public class ReferenceSystem
     {

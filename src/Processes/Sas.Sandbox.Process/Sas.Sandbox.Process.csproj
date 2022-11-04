@@ -25,7 +25,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Services\Astronomy\Sas.Astronomy.Service.csproj" />
     <ProjectReference Include="..\..\Services\Identity\Sas.Identity.Service.csproj" />
-    <ProjectReference Include="..\..\Services\Sas.Identity.Service\Sas.Identity.Service\Sas.Identity.Service.csproj" />
     <ProjectReference Include="..\..\Services\SolarSystem\Sas.SolarSystem.Service.csproj" />
   </ItemGroup>
 

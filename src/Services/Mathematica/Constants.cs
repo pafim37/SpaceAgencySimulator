@@ -1,4 +1,4 @@
-﻿namespace Sas.Mathematica
+﻿namespace Sas.Mathematica.Service
 {
     public class Constants
     {
@@ -7,7 +7,7 @@
 
         public static readonly double EarthMass = 5.97219 * Math.Pow(10, 24); // kg
         public static readonly double EarthPeriapsis = 147098291000; // m
-        public static readonly double EarthApoapsis = 1.52098233 * Math.Pow(10,11); // m
+        public static readonly double EarthApoapsis = 1.52098233 * Math.Pow(10, 11); // m
         public static readonly double EarthMaxVelocity = 30290; // m
         public static readonly double EarthMinVelocity = 29290; // m
 

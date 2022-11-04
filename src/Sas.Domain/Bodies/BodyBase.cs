@@ -5,7 +5,7 @@ using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Domain.Bodies
 {
-    public class BodyBase : BodyPoint
+    public class BodyBase : PointParticle
     {
         #region properties
 
@@ -17,7 +17,7 @@ namespace Sas.Domain.Bodies
         /// <summary>
         /// Surrounding body
         /// </summary>
-        public BodyPoint SurroundedBody { get; set; }
+        public PointParticle SurroundedBody { get; set; }
 
         #endregion
 

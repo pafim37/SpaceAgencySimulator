@@ -1,5 +1,5 @@
 ﻿using Sas.Domain.Bodies;
-using Sas.Mathematica;
+using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 using System;
 using System.Collections.Generic;

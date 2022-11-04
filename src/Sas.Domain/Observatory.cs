@@ -32,6 +32,7 @@ namespace Sas.Domain
         /// <param name="longitude"></param>
         public Observatory(string name, double latitude, double longitude, double height)
         {
+            // TODO (pafim37): improve Validation
             if (IsValidate(latitude) && IsValidate(longitude) && height >= 0)
             {
                 Name = name;

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sas.Domain
+﻿namespace Sas.Domain
 {
     public class AstronomicalClock
     {
@@ -41,7 +35,7 @@ namespace Sas.Domain
             SiderealTime = GetSiderealTimeRad();
         }
 
-        #region provate methods
+        #region private methods
         private double GetSiderealTimeRad()
         {
             double lambda = 180 * _longitude / Math.PI; // convert to deg

@@ -1,16 +1,8 @@
-﻿using Sas.Domain.Bodies;
-using Sas.Domain.Exceptions;
-using Sas.Mathematica.Service;
-using Sas.Mathematica.Service.Vectors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Domain.Orbits
 {
-    public class OrbitBase
+    public class Orbit
     {
 
         #region properties
@@ -24,7 +16,7 @@ namespace Sas.Domain.Orbits
         /// Eccentricity
         /// </summary>
         public double Eccentricity { get; private set; }
-        
+
         /// <summary>
         /// Mean anomaly
         /// </summary>
@@ -44,7 +36,7 @@ namespace Sas.Domain.Orbits
         /// Ascending node
         /// </summary>
         public double AscendingNode { get; private set; }
-        
+
         /// <summary>
         /// True anomaly
         /// </summary>
@@ -59,38 +51,10 @@ namespace Sas.Domain.Orbits
         /// </summary>
         /// <param name="position"></param>
         /// <param name="velocity"></param>
-        /// <param name="u"></param>
-        public OrbitBase(Vector position, Vector velocity, double u)
+        /// <param name="u">G(m1+m2)</param>
+        public Orbit(Vector position, Vector velocity, double u)
         {
             CalculateOrbitalElements(position, velocity, u);
-        }
-
-        /// <summary>
-        /// Create Orbit from another Body 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <exception cref="SurroundedBodyException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
-        public OrbitBase(BodyBase body)
-        {
-            if (body is not null)
-            {
-                if (body.SurroundedBody is not null)
-                {
-                    var position = body.GetPositionRelatedToSurroundedBody();
-                    var velocity = body.GetVelocityRelatedToSurroundedBody();
-                    var u = Constants.G * (body.Mass + body.SurroundedBody.Mass);
-                    CalculateOrbitalElements(position, velocity, u);
-                }
-                else
-                {
-                    throw new SurroundedBodyException("Surrounded body is not assigned");
-                }
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(body));
-            }
         }
 
         #endregion
@@ -107,7 +71,7 @@ namespace Sas.Domain.Orbits
 
             Vector nVector = new Vector(-hVector.Y, hVector.X, 0); //first node vector n
             double n = nVector.Magnitude;
-            
+
             double i;
             if (h == 0) i = -9999;
             else i = Math.Acos(hVector.Z / h);
@@ -117,7 +81,7 @@ namespace Sas.Domain.Orbits
 
             double p = h * h / u;
 
-            if (n!=0)
+            if (n != 0)
             {
                 if (nVector.Y >= 0) AscendingNode = Math.Acos(nVector.X / n);
                 else AscendingNode = 2 * Math.PI - Math.Acos(nVector.X / n);

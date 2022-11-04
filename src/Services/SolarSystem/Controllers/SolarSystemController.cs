@@ -29,7 +29,7 @@ namespace Sas.SolarSystem.Service.Controllers
         public async Task<IActionResult> LoadSolarSystem()
         {
             var bodiesFromDatabase = await _repository.GetAsync();
-            var bodies = _mapper.Map<IEnumerable<CelestialBody>>(bodiesFromDatabase);
+            var bodies = _mapper.Map<IEnumerable<Body>>(bodiesFromDatabase);
             Sas.Domain.SolarSystem solarSystem = new Sas.Domain.SolarSystem(bodies.ToList());
             return Ok(bodies);
         }

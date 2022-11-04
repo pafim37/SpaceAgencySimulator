@@ -8,6 +8,7 @@ namespace Sas.Domain.Observations
 {
     public class GroundObservation : ObservationBase
     {
+        #region properties
         /// <summary>
         /// Azimuth expressed in radians. Counted from North toward Easts
         /// </summary>
@@ -33,7 +34,8 @@ namespace Sas.Domain.Observations
         /// </summary>
         public double RightAscensionRad { get; }
 
-
+        #endregion
+        
         /// <summary>
         /// Constructor of the Ground Observation
         /// </summary>

@@ -23,7 +23,7 @@ namespace Sas.Domain.Bodies.BodyExtensions
         /// <returns>The relative velocity</returns>
         public static Vector GetVelocityRelatedTo(this Body body, Body other)
         {
-            return body is not null ?
+            return other is not null ?
                 body.AbsoluteVelocity - other.AbsoluteVelocity :
                 throw new ArgumentNullException(nameof(body));
         }
@@ -35,7 +35,7 @@ namespace Sas.Domain.Bodies.BodyExtensions
         /// <returns></returns>
         public static double GetSphereOfInfluenceRelatedTo(this Body body, Body other)
         {
-            if (body is not null)
+            if (other is not null)
             {
                 double distance = (body.AbsolutePosition - other.AbsolutePosition).Magnitude;
                 double massRatio = Math.Pow(body.Mass / other.Mass, 0.4);

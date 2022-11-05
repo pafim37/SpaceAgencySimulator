@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.SolarSystem.Service", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Identity.Service", "Services\Identity\Sas.Identity.Service.csproj", "{294804F2-9F2A-4A80-BACA-58BDD61EE67E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Domain.Tests", "..\tests\Domain\Sas.Domain.Tests\Sas.Domain.Tests.csproj", "{C079D69D-BC04-4516-9CBE-4517557BE5C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{294804F2-9F2A-4A80-BACA-58BDD61EE67E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{294804F2-9F2A-4A80-BACA-58BDD61EE67E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{294804F2-9F2A-4A80-BACA-58BDD61EE67E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C079D69D-BC04-4516-9CBE-4517557BE5C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C079D69D-BC04-4516-9CBE-4517557BE5C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C079D69D-BC04-4516-9CBE-4517557BE5C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C079D69D-BC04-4516-9CBE-4517557BE5C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

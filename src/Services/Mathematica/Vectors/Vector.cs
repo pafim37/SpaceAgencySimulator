@@ -235,5 +235,15 @@
         {
             return $"<{X}, {Y}, {Z}>";
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Vector vector &&
+                   X == vector.X &&
+                   Y == vector.Y &&
+                   Z == vector.Z &&
+                   Magnitude == vector.Magnitude &&
+                   Length == vector.Length;
+        }
     }
 }

@@ -68,11 +68,12 @@ namespace Sas.Domain.Bodies
 
         #region private methods
 
+        // TODO (pafim37): Consider if it should be extract
         private void IsNotNegative(double value)
         {
             if (value < 0)
             {
-                throw new ArgumentException($"Negative number name of {nameof(value)}");
+                throw new ArgumentOutOfRangeException($"Negative number name of {nameof(value)}");
             } 
         }
 

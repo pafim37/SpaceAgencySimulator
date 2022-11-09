@@ -25,5 +25,7 @@
 
         public const double G = 0.00000000006674301515; // m^3 kg^{-1} s^{-2}
 
+        public const double PI = Math.PI;
+
     }
 }

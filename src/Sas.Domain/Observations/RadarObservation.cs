@@ -1,4 +1,5 @@
-﻿using Sas.Mathematica.Service;
+﻿using Sas.Domain.Observatories;
+using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Matrices;
 using Sas.Mathematica.Service.Vectors;
 

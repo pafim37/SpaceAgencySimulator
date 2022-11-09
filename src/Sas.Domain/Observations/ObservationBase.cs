@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sas.Domain.Clocks;
+using Sas.Domain.Observatories;
 
 namespace Sas.Domain.Observations
 {

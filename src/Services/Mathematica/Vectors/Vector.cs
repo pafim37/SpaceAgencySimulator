@@ -31,6 +31,11 @@
         /// Vector zero 
         /// </summary>
         public static Vector Zero => new(0, 0, 0);
+        
+        /// <summary>
+        /// Vector unit 
+        /// </summary>
+        public static Vector Ones => new(1, 1, 1);
 
         /// <summary>
         /// Component x of the vector
@@ -190,11 +195,12 @@
         /// <returns></returns>
         public static Vector operator *(Vector v1, double s)
         {
+            double[] newElements = new double[v1.Length];
             for (int i = 0; i < v1.Length; i++)
             {
-                v1[i] *= s;
+                newElements[i] = v1[i] * s;
             }
-            return v1;
+            return new(newElements);
         }
 
         /// <summary>

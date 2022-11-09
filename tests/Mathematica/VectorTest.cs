@@ -3,6 +3,7 @@ using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Mathematica.Tests
 {
+    // change to XSunit test
     [TestFixture]
     public class VectorTest
     {
@@ -52,6 +53,17 @@ namespace Sas.Mathematica.Tests
             Assert.AreEqual(0, vector.Y);
             Assert.AreEqual(0, vector.Z);
         }
+        
+        [Test]
+        public void CreateVectorOne()
+        {
+            Vector vector = Vector.Ones;
+
+            Assert.IsNotNull(vector);
+            Assert.AreEqual(1, vector.X);
+            Assert.AreEqual(1, vector.Y);
+            Assert.AreEqual(1, vector.Z);
+        }
 
         [TestCase(new double[] { 2 }, 2)]
         [TestCase(new double[] { 3, 4 }, 5)]
@@ -74,7 +86,6 @@ namespace Sas.Mathematica.Tests
 
             Assert.IsNotNull(vector);
             Assert.AreEqual(length, vector.Length);
-
         }
 
         [TestCase(new double[] { 11, 13, 17, 19 }, 11, 13, 17, 19)]
@@ -104,7 +115,8 @@ namespace Sas.Mathematica.Tests
             Assert.AreEqual(result[1], vector3[1]);      
             Assert.AreEqual(result[2], vector3[2]);      
             Assert.AreEqual(result[3], vector3[3]);      
-            Assert.AreEqual(result[4], vector3[4]);      
+            Assert.AreEqual(result[4], vector3[4]); 
+            
 
         }
 
@@ -200,7 +212,22 @@ namespace Sas.Mathematica.Tests
             Assert.AreEqual(result[0], expectedVector[0]);
             Assert.AreEqual(result[1], expectedVector[1]);
             Assert.AreEqual(result[2], expectedVector[2]);
+            Assert.AreEqual(new Vector(elements1), vector1);
+            Assert.AreEqual(new Vector(elements2), vector2);
         }
+
+        [TestCase(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, new double[] { -3, 6, -3 })]
+        public void CrossProcuctAreTheSame(double[] elements1, double[] elements2, double[] expectedElements)
+        {
+            Vector vector1 = new Vector(elements1);
+            Vector vector2 = new Vector(elements2);
+
+            Vector result1 = Vector.CrossProduct(vector1, vector2);
+            Vector result2 = vector1.CrossProduct(vector2);
+
+            Assert.AreEqual(result1, result2);
+        }
+
 
         [TestCase(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, 56)]
         public void DotProcuctReturnsScalar(double[] elements1, double[] elements2, double dotProduct)
@@ -211,6 +238,9 @@ namespace Sas.Mathematica.Tests
             double result = Vector.DotProduct(vector1, vector2);
 
             Assert.AreEqual(result, dotProduct);
+            Assert.AreEqual(new Vector(elements1), vector1);
+            Assert.AreEqual(new Vector(elements2), vector2);
+
         }
     }
 }

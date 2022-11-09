@@ -1,4 +1,4 @@
-﻿namespace Sas.Domain
+﻿namespace Sas.Domain.Clocks
 {
     public class AstronomicalClock
     {
@@ -18,7 +18,7 @@
         /// Gets local sidereal time expressed in radians
         /// </summary>
         /// <returns></returns>
-        public double SiderealTime => GetSiderealTimeRad();
+        public double SiderealTime { get; }
 
         /// <summary>
         /// Constructor of the astronomical clock
@@ -27,10 +27,13 @@
         /// <param name="timeZone"></param>
         public AstronomicalClock(DateTime localtime, double longitude)
         {
+            // TODO: Consider summer and winter time
+            // TODO: Should local time be assign to UniversalTime?
             _longitude = longitude;
             LocalTime = localtime;
             int timeZone = FindTimeZone(longitude);
             UniversalTime = localtime;
+            SiderealTime = GetSiderealTimeRad();
         }
 
         #region private methods

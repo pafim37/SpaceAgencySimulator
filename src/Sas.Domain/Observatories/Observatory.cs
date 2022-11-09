@@ -1,6 +1,6 @@
 ﻿using Sas.Domain.Observations;
 
-namespace Sas.Domain
+namespace Sas.Domain.Observatories
 {
     public class Observatory
     {
@@ -8,7 +8,7 @@ namespace Sas.Domain
         /// Name of the observatory
         /// </summary>
         public string Name { get; }
-        
+
         /// <summary>
         /// Latitude of the observatory expressed in radians
         /// </summary>

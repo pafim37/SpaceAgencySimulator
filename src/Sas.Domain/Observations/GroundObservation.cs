@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sas.Domain.Observatories;
 
 namespace Sas.Domain.Observations
 {
@@ -35,7 +31,7 @@ namespace Sas.Domain.Observations
         public double RightAscensionRad { get; }
 
         #endregion
-        
+
         /// <summary>
         /// Constructor of the Ground Observation
         /// </summary>

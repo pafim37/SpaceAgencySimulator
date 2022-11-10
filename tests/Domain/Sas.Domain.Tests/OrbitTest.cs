@@ -17,9 +17,9 @@ namespace Sas.Domain.Tests
             Vector position = new Vector(Constants.EarthApoapsis, 0, 0);
             Vector velocity = new Vector(0, Constants.EarthMinVelocity, 0);
             double u = Constants.G * (Constants.SolarMass + Constants.EarthMass);
-            
+
             // Act
-            Orbit orbit = new Orbit(position, velocity, u);
+            Orbit orbit = OrbitFactory.Factory(position, velocity, u);
 
             // Assert
             Assert.Equal(149588585873.2210, orbit.SemiMajorAxis, 4);
@@ -41,7 +41,7 @@ namespace Sas.Domain.Tests
             Vector velocity = new Vector(-5.922, 1.926, 3.246);
             double u = 398600;
 
-            Orbit orbit = new Orbit(position, velocity, u);
+            Orbit orbit = OrbitFactory.Factory(position, velocity, u);
             Assert.Equal(19198.3565, orbit.SemiMajorAxis, 4);
             Assert.Equal(0.4095, orbit.Eccentricity, 4);
             Assert.Equal(0.5302, orbit.Inclination, 4);

@@ -5,21 +5,21 @@ using System;
 
 namespace Sas.Domain.Orbits
 {
-    public class Orbit
+    public abstract class Orbit
     {
         #region fields
 
-        private OrbitType _type;
-        private double _u;
-        private double _a;
-        private double _e;
-        private double _m;
-        private double _w;
-        private double _i;
-        private double _omega;
-        private double _phi;
-        private double _ae;
-        private double _period;
+        protected OrbitType _type;
+        protected double _u;
+        protected double _a;
+        protected double _e;
+        protected double _w;
+        protected double _i;
+        protected double _omega;
+        protected double _phi;
+        protected double _ae;
+        protected double _m;
+        protected double _period;
 
         #endregion
 
@@ -39,11 +39,6 @@ namespace Sas.Domain.Orbits
         /// Eccentricity
         /// </summary>
         public double Eccentricity => _e;
-
-        /// <summary>
-        /// Mean anomaly
-        /// </summary>
-        public double MeanAnomaly => _m;
 
         /// <summary>
         /// Argument of periapsis
@@ -71,6 +66,11 @@ namespace Sas.Domain.Orbits
         public double EccentricAnomaly => _ae;
 
         /// <summary>
+        /// Mean anomaly
+        /// </summary>
+        public double MeanAnomaly => _m;
+        
+        /// <summary>
         /// Period - time for full circulation around focus point. 
         /// Returns NaN when parabolic or hyperbolic orbit. 
         /// </summary>
@@ -96,6 +96,16 @@ namespace Sas.Domain.Orbits
 
         #region public method
         public double GetU() => _u;
+
+        public void UpdateU(double u)
+        {
+            _u = u;
+        }
+
+        public void UpdateOrbit(Vector position, Vector velocity)
+        {
+            AssignFileds(position, velocity);
+        }
         #endregion
 
         #region private methods
@@ -117,7 +127,6 @@ namespace Sas.Domain.Orbits
 
             _a = a;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
-            _type = GetOrbitType(e);
             _i = GetInclination(hVector, h); ;
             _omega = GetAscendingNode(nVector, n);
             _w = GetArgumentOfPeriapsis(eVector, e, nVector, n);
@@ -127,44 +136,8 @@ namespace Sas.Domain.Orbits
             _period = 2 * Constants.PI * Math.Sqrt((Math.Pow(a, 3) / u));
         }
 
-        private double GetMeanAnomaly(double e, double ae)
-        {
-            if (_type == OrbitType.Circular || _type == OrbitType.Elliptic)
-            {
-                return ae - e * Math.Sin(ae);
-            }
-            else if (_type == OrbitType.Parabolic || _type == OrbitType.Hyperbolic)
-            {
-                return e * Math.Sinh(ae) - ae;
-            }
-            else throw new Exception($"Cannot calculate mean anomaly. Type orbit is unknown.");
-        }
-
-        private OrbitType GetOrbitType(double e)
-        {
-            if (e == 0) return OrbitType.Circular;
-            else if (e > 0 && _e < 1) return OrbitType.Elliptic;
-            else if (e == 1) return OrbitType.Parabolic;
-            else if (e > 1) return OrbitType.Hyperbolic;
-            else throw new Exception($"Cannot predict orbit type. Unsupported value of eccentricity = {e}");
-        }
-
-        private double GetEccentricAnomaly(double e, double phi)
-        {
-            if (_type == OrbitType.Circular || _type == OrbitType.Elliptic)
-            {
-                double cosAE = (e + Math.Cos(phi)) / (1 + e * Math.Cos(phi));
-                return Math.Acos(cosAE);
-            }
-            else if (_type == OrbitType.Parabolic || _type == OrbitType.Hyperbolic)
-            {
-                double tanGudermannianAngle = (Math.Pow(e, 2) - 1) * Math.Sin(phi) / (1 + e * Math.Cos(phi));
-                double gudermannianAngle = Math.Atan(tanGudermannianAngle); // 
-                return Math.Log(Math.Tan(gudermannianAngle / 2 + Math.PI / 4));
-                
-            }
-            else throw new Exception("Cannot calculate eccentric anomaly. Type orbit is unknown.");
-        }
+        protected abstract double GetMeanAnomaly(double e, double ae);
+        protected abstract double GetEccentricAnomaly(double e, double phi);
 
         private double GetTrueAnomaly(Vector position, Vector velocity, double r, Vector eVector, double e)
         {
@@ -174,17 +147,18 @@ namespace Sas.Domain.Orbits
 
         private double GetArgumentOfPeriapsis(Vector eVector, double e, Vector nVector, double n)
         {
-            return eVector.Z >= 0 ? 
+            return eVector.Z >= 0 ?
                 Math.Acos(Vector.DotProduct(nVector, eVector) / (n * e)) :
                 2 * Math.PI - Math.Acos(Vector.DotProduct(nVector, eVector) / (n * e));
         }
 
         private static double GetInclination(Vector hVector, double h)
         {
-            return h != 0 ? 
+            return h != 0 ?
                 Math.Acos(hVector.Z / h) :
                 double.NaN;
         }
+
         private double GetAscendingNode(Vector nVector, double n)
         {
             if (n != 0)

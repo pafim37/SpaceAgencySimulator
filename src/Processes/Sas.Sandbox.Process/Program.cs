@@ -99,9 +99,9 @@ string Endpoints()
 
 Vector r = new Vector(5000, 10000, 2100); 
 Vector v = new Vector(-5.992,1.926,3.246);
-Orbit o = new Orbit(r, v, 398600);
+//Orbit o = new Orbit(r, v, 398600);
 
-Console.WriteLine(o.SemiMajorAxis);
+//Console.WriteLine(o.SemiMajorAxis);
 //BodyBase Sun = new("Sun", Constants.SolarMass, Vector.Zero, Vector.Zero);
 
 //BodyBase Earth = new(

@@ -142,7 +142,7 @@ namespace Sas.Domain.Orbits
 
         private OrbitType GetOrbitType(double e)
         {
-            if (e < 0) return OrbitType.Circular;
+            if (e == 0) return OrbitType.Circular;
             else if (e > 0 && _e < 1) return OrbitType.Elliptic;
             else if (e == 1) return OrbitType.Parabolic;
             else if (e > 1) return OrbitType.Hyperbolic;

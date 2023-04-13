@@ -1,7 +1,8 @@
-﻿using Sas.Domain.Orbits.Primitives;
+﻿using Sas.Domain.Exceptions;
+using Sas.Domain.Models.Orbits.Primitives;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Domain.Orbits
+namespace Sas.Domain.Models.Orbits
 {
     public static class OrbitFactory
     {
@@ -15,7 +16,7 @@ namespace Sas.Domain.Orbits
                 OrbitType.Elliptic => new EllipticOrbit(position, velocity, u),
                 OrbitType.Parabolic => new ParabolicOrbit(position, velocity, u),
                 OrbitType.Hyperbolic => new HyperbolicOrbit(position, velocity, u),
-                _ => throw new Exception("Cannot create orbit. Unknown orbit type")
+                _ => throw new UnknownOrbitTypeException($"Cannot create orbit. Unknown orbit type {type}")
             };
         }
 

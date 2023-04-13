@@ -1,6 +1,6 @@
 ﻿using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Domain.Bodies
+namespace Sas.Domain.Models.Bodies
 {
     public class Body
     {
@@ -74,7 +74,7 @@ namespace Sas.Domain.Bodies
             if (value < 0)
             {
                 throw new ArgumentOutOfRangeException($"Negative number name of {nameof(value)}");
-            } 
+            }
         }
 
         #endregion

@@ -1,6 +1,5 @@
-﻿using Sas.Domain.Observations;
-
-namespace Sas.Domain.Observatories
+﻿
+namespace Sas.Domain.Models.Observatories
 {
     public class Observatory
     {

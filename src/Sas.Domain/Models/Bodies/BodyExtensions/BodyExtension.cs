@@ -1,4 +1,5 @@
-﻿using Sas.Mathematica.Service.Vectors;
+﻿using Sas.Domain.Models.Bodies;
+using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Domain.Bodies.BodyExtensions
 {

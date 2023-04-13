@@ -1,4 +1,4 @@
-﻿using Sas.Domain.Bodies;
+﻿using Sas.Domain.Models.Bodies;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 using System;
@@ -19,7 +19,7 @@ namespace Sas.Domain
         public Body Barycentrum => GetBarycenter();
 
         /// <summary>
-        /// G * (M + m)
+        /// G * (M + m1 + m2 + ...)
         /// </summary>
         public double U { get; }
 

@@ -1,4 +1,5 @@
 using Sas.Domain.Bodies;
+using Sas.Domain.Models.Bodies;
 using Sas.Mathematica.Service.Vectors;
 using Xunit;
 

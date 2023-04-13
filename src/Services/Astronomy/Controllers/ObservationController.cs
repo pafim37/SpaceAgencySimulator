@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.DTOs;
 using Sas.Astronomy.Service.Models;
-using Sas.Domain.Observations;
-using Sas.Domain.Observatories;
+using Sas.Domain.Models.Observations;
+using Sas.Domain.Models.Observatories;
 
 namespace Sas.Astronomy.Service.Controllers
 {

@@ -1,4 +1,4 @@
-﻿namespace Sas.Domain.Clocks
+﻿namespace Sas.Domain.Models.Clocks
 {
     public class AstronomicalClock
     {

@@ -1,25 +1,26 @@
-﻿using Sas.Domain.Orbits.Primitives;
+﻿using Sas.Domain.Models.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 using System;
 
-namespace Sas.Domain.Orbits
+namespace Sas.Domain.Models.Orbits
 {
     public abstract class Orbit
     {
         #region fields
 
-        protected OrbitType _type;
-        protected double _u;
-        protected double _a;
-        protected double _e;
-        protected double _w;
-        protected double _i;
-        protected double _omega;
-        protected double _phi;
-        protected double _ae;
-        protected double _m;
-        protected double _period;
+        protected OrbitType _type; // orbit type
+        protected double _u;       // G(m1+m2)
+        protected double _a;       // semi-major axis
+        protected double _e;       // eccentricity
+        protected double _w;       // argument of periapsis
+        protected double _i;       // inclination
+        protected double _omega;   // ascending node
+        protected double _phi;     // true anomaly
+        protected double _ae;      // eccentric anomaly
+        protected double _m;       // mass 
+        protected double _period;  // period
+        protected double _radius;  // radius
 
         #endregion
 
@@ -33,7 +34,7 @@ namespace Sas.Domain.Orbits
         /// <summary>
         /// Semi major axis
         /// </summary>
-        public double SemiMajorAxis => _a;
+        public double? SemiMajorAxis => GetSemiMajorAxis();
 
         /// <summary>
         /// Eccentricity
@@ -69,12 +70,17 @@ namespace Sas.Domain.Orbits
         /// Mean anomaly
         /// </summary>
         public double MeanAnomaly => _m;
-        
+
         /// <summary>
         /// Period - time for full circulation around focus point. 
         /// Returns NaN when parabolic or hyperbolic orbit. 
         /// </summary>
-        public double Period => _period;
+        public double? Period => GetPeriod();
+
+        /// <summary>
+        /// Radius of the circular orbit 
+        /// </summary>
+        public double? Radius => GetRadius();
 
         #endregion
 
@@ -97,15 +103,20 @@ namespace Sas.Domain.Orbits
         #region public method
         public double GetU() => _u;
 
-        public void UpdateU(double u)
-        {
-            _u = u;
-        }
-
         public void UpdateOrbit(Vector position, Vector velocity)
         {
             AssignFileds(position, velocity);
         }
+
+        public void UpdateOrbit(Vector position, Vector velocity, double u)
+        {
+            _u = u;
+            AssignFileds(position, velocity);
+        }
+
+        public abstract double? GetRadius();
+        public abstract double? GetPeriod();
+        public abstract double? GetSemiMajorAxis();
         #endregion
 
         #region private methods
@@ -133,7 +144,7 @@ namespace Sas.Domain.Orbits
             _phi = phi;
             _ae = ae;
             _m = m;
-            _period = 2 * Constants.PI * Math.Sqrt((Math.Pow(a, 3) / u));
+            _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
         }
 
         protected abstract double GetMeanAnomaly(double e, double ae);

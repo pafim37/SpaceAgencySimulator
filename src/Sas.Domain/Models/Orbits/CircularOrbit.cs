@@ -1,7 +1,7 @@
 ﻿using Sas.Mathematica.Service.Vectors;
-using Sas.Domain.Orbits.Primitives;
+using Sas.Domain.Models.Orbits.Primitives;
 
-namespace Sas.Domain.Orbits
+namespace Sas.Domain.Models.Orbits
 {
     public class CircularOrbit : Orbit
     {
@@ -20,6 +20,21 @@ namespace Sas.Domain.Orbits
         {
             double cosAE = (e + Math.Cos(phi)) / (1 + e * Math.Cos(phi));
             return Math.Acos(cosAE);
+        }
+
+        public override double? GetRadius()
+        {
+            return _radius;
+        }
+
+        public override double? GetPeriod()
+        {
+            return _period;
+        }
+
+        public override double? GetSemiMajorAxis()
+        {
+            return null;
         }
     }
 }

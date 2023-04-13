@@ -1,4 +1,4 @@
-﻿using Sas.Domain.Clocks;
+﻿using Sas.Domain.Models.Clocks;
 using Sas.Mathematica.Service.Converters;
 using Xunit;
 

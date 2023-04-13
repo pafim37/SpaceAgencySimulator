@@ -1,6 +1,6 @@
-﻿using Sas.Domain.Observatories;
+﻿using Sas.Domain.Models.Observatories;
 
-namespace Sas.Domain.Observations
+namespace Sas.Domain.Models.Observations
 {
     public class GroundObservation : ObservationBase
     {

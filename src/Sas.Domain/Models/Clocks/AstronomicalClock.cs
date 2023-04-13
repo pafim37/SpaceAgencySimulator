@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sas.Domain
+﻿namespace Sas.Domain.Models.Clocks
 {
     public class AstronomicalClock
     {
         /// <summary>
-        /// Gets local time
+        /// Gets local time. 
         /// </summary>
         /// <returns></returns>
         public DateTime LocalTime { get; }
@@ -23,7 +17,6 @@ namespace Sas.Domain
         /// <summary>
         /// Gets local sidereal time expressed in radians
         /// </summary>
-        /// <param name="lambda">Longitude of the observator in radians</param>
         /// <returns></returns>
         public double SiderealTime { get; }
 
@@ -34,14 +27,16 @@ namespace Sas.Domain
         /// <param name="timeZone"></param>
         public AstronomicalClock(DateTime localtime, double longitude)
         {
+            // TODO: Consider summer and winter time
+            // TODO: Should local time be assign to UniversalTime?
             _longitude = longitude;
             LocalTime = localtime;
             int timeZone = FindTimeZone(longitude);
-            UniversalTime = localtime.AddHours(timeZone);
+            UniversalTime = localtime;
             SiderealTime = GetSiderealTimeRad();
         }
 
-        #region provate methods
+        #region private methods
         private double GetSiderealTimeRad()
         {
             double lambda = 180 * _longitude / Math.PI; // convert to deg
@@ -49,8 +44,8 @@ namespace Sas.Domain
             double T0 = (J0 - 2451545.0) / 36525;
             double thG0 = AokisFormula(T0);
             thG0 -= 360 * (int)(thG0 / 360);
-            double UT1 = UniversalTime.Hour + UniversalTime.Minute / 60.0 + UniversalTime.Second / 3600.0;
-            double thGdeg = thG0 + 360.985647366 * UT1 / 24;
+            double UT = UniversalTime.Hour + UniversalTime.Minute / 60.0 + UniversalTime.Second / 3600.0;
+            double thGdeg = thG0 + 360.985647366 * UT / 24;
             thGdeg = thGdeg + lambda > 360 ? thGdeg + lambda - 360 : thGdeg + lambda;
             double thGrad = Math.PI * thGdeg / 180;
             return thGrad;

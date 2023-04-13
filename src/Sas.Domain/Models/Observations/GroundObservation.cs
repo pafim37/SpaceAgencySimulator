@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sas.Domain.Models.Observatories;
 
-namespace Sas.Domain.Observations
+namespace Sas.Domain.Models.Observations
 {
     public class GroundObservation : ObservationBase
     {
+        #region properties
         /// <summary>
         /// Azimuth expressed in radians. Counted from North toward Easts
         /// </summary>
@@ -33,6 +30,7 @@ namespace Sas.Domain.Observations
         /// </summary>
         public double RightAscensionRad { get; }
 
+        #endregion
 
         /// <summary>
         /// Constructor of the Ground Observation

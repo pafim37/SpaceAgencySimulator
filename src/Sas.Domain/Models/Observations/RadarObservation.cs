@@ -1,7 +1,9 @@
-﻿using Sas.Mathematica;
+﻿using Sas.Domain.Models.Observatories;
+using Sas.Mathematica.Service;
+using Sas.Mathematica.Service.Matrices;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Domain.Observations
+namespace Sas.Domain.Models.Observations
 {
     public class RadarObservation : GroundObservation
     {
@@ -79,7 +81,7 @@ namespace Sas.Domain.Observations
             double Zt = ro * Math.Sin(dec);
             return new Vector(Xt, Yt, Zt);
         }
-        
+
         private Vector GetGeocentricEquatorialSystemCoordinate()
         {
             double fi = Observatory.LatitudeRad;

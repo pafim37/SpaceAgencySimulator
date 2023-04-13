@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Sas.Mathematica.Service.Matrices;
 using System;
 
 namespace Sas.Mathematica.Tests

@@ -1,41 +1,41 @@
 ﻿using MongoDB.Driver;
-using Sas.SolarSystem.Service.Data;
-using Sas.SolarSystem.Service.Documents;
+using Sas.BodySystem.Service.Data;
+using Sas.BodySystem.Service.Documents;
 
-namespace Sas.SolarSystem.Service.DAL
+namespace Sas.BodySystem.Service.DAL
 {
-    public class CelestialBodyRepository : ICelestialBodyRepository
+    public class BodyRepository : IBodyRepository
     {
         private readonly ISolarSystemContext _context;
 
-        public CelestialBodyRepository(ISolarSystemContext context)
+        public BodyRepository(ISolarSystemContext context)
         {
             _context = context;
         }
 
         // Read
-        public async Task<CelestialBodyDocument> GetAsync(string name)
+        public async Task<BodyDocument> GetAsync(string name)
         {
             var body = await _context.CelestialBodies.Find(b => b.Name.Equals(name)).FirstOrDefaultAsync();
             return body;
         }
 
         // Read All
-        public async Task<IEnumerable<CelestialBodyDocument>> GetAsync()
+        public async Task<IEnumerable<BodyDocument>> GetAsync()
         {
             var bodies = await _context.CelestialBodies.Find(b => true).ToListAsync();
             return bodies;
         }
 
         // Create
-        public async Task<CelestialBodyDocument> CreateAsync(CelestialBodyDocument body)
+        public async Task<BodyDocument> CreateAsync(BodyDocument body)
         {
             await _context.CelestialBodies.InsertOneAsync(body);
             return body;
         }
 
         // Update
-        public async Task UpdateAsync(string name, CelestialBodyDocument body)
+        public async Task UpdateAsync(string name, BodyDocument body)
         {
             await _context.CelestialBodies.ReplaceOneAsync(b => b.Name.Equals(name), body);
         }

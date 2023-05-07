@@ -1,5 +1,7 @@
 ﻿using Sas.Domain.Exceptions;
+using Sas.Domain.Models.Bodies;
 using Sas.Domain.Models.Orbits.Primitives;
+using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Domain.Models.Orbits
@@ -19,7 +21,16 @@ namespace Sas.Domain.Models.Orbits
                 _ => throw new UnknownOrbitTypeException($"Cannot create orbit. Unknown orbit type {type}")
             };
         }
+        public static Orbit CalculateOrbit(Body body, double u)
+        {
+            return CalculateOrbit(body.Position, body.Velocity, u);
+        }
 
+        public static Orbit CalculateOrbit(Body smallBody, Body massiveBody)
+        {
+            double u = Constants.G * (smallBody.Mass + massiveBody.Mass);
+            return CalculateOrbit(smallBody.Position, smallBody.Velocity, u);
+        }
         private static double GetEccentricity(Vector position, Vector velocity, double u)
         {
             double r = position.Magnitude;

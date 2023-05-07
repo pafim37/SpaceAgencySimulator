@@ -1,10 +1,11 @@
 ﻿using MongoDB.Driver;
-using Sas.SolarSystem.Service.Documents;
+using Sas.BodySystem.Service.Documents;
 
-namespace Sas.SolarSystem.Service.Data
+namespace Sas.BodySystem.Service.Data
 {
+
     public interface ISolarSystemContext
     {
-        IMongoCollection<CelestialBodyDocument> CelestialBodies { get; set; }
+        IMongoCollection<BodyDocument> CelestialBodies { get; set; }
     }
 }

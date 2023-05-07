@@ -1,22 +1,19 @@
 ﻿using MongoDB.Driver;
-using Sas.Mathematica;
-using Sas.SolarSystem.Service.Documents;
-using Sas.SolarSystem.Service.Settings;
-
-namespace Sas.SolarSystem.Service.Data
+using Sas.BodySystem.Service.Documents;
+using Sas.BodySystem.Service.Settings;
+namespace Sas.BodySystem.Service.Data
 {
     public class SolarSystemContext : ISolarSystemContext
     {
-        public IMongoCollection<CelestialBodyDocument> CelestialBodies { get; set; }
+        public IMongoCollection<BodyDocument> CelestialBodies { get; set; }
 
         public SolarSystemContext(SolarSystemDatabaseSettings settings)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
+            MongoClient client = new MongoClient(settings.ConnectionString);
+            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
-            CelestialBodies = database.GetCollection<CelestialBodyDocument>(settings.CollectionName);
+            CelestialBodies = database.GetCollection<BodyDocument>(settings.CollectionName);
 
-            
             bool isDocumentExist = CelestialBodies.Find(p => true).Any();
             if (!isDocumentExist)
             {

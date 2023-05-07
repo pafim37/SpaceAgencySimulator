@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Sas.SolarSystem.Service.DAL;
-using Sas.SolarSystem.Service.Documents;
+using Sas.BodySystem.Service.DAL;
+using Sas.BodySystem.Service.Documents;
 
-namespace Sas.SolarSystem.Service.Controllers
+namespace Sas.BodySystem.Service.Controllers
 {
     [Route("bodies")]
     [ApiController]
-    public class CelestialBodyController : ControllerBase
+    public class BodyController : ControllerBase
     {
-        private readonly ICelestialBodyRepository _repository;
+        private readonly IBodyRepository _repository;
 
-        public CelestialBodyController(ICelestialBodyRepository repository)
+        public BodyController(IBodyRepository repository)
         {
             _repository = repository;
         }
@@ -39,7 +39,7 @@ namespace Sas.SolarSystem.Service.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CelestialBodyDocument body)
+        public async Task<IActionResult> Create([FromBody] BodyDocument body)
         {
             if (body is null)
             {
@@ -59,7 +59,7 @@ namespace Sas.SolarSystem.Service.Controllers
         }
 
         [HttpPut("{name}")]
-        public async Task<IActionResult> Update(string name, [FromBody] CelestialBodyDocument body)
+        public async Task<IActionResult> Update(string name, [FromBody] BodyDocument body)
         {
             await _repository.UpdateAsync(name, body);
             return NoContent();

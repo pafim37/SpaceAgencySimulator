@@ -17,9 +17,9 @@ namespace Sas.Domain.Tests
             Body body = new Body("Planet", 10, position, velocity);
 
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => body.GetPositionRelatedTo(null));
-            Assert.Throws<ArgumentNullException>(() => body.GetVelocityRelatedTo(null));
-            Assert.Throws<ArgumentNullException>(() => body.GetSphereOfInfluenceRelatedTo(null));
+            _ = Assert.Throws<ArgumentNullException>(() => body.GetPositionRelatedTo(null));
+            _ = Assert.Throws<ArgumentNullException>(() => body.GetVelocityRelatedTo(null));
+            _ = Assert.Throws<ArgumentNullException>(() => body.GetSphereOfInfluenceRelatedTo(null));
         }
 
         [Fact]

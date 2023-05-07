@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
-using Sas.Domain.Bodies;
 using Sas.Domain.Models.Bodies;
 using Sas.Mathematica.Service.Vectors;
-using Sas.SolarSystem.Service.Documents;
+using Sas.BodySystem.Service.Documents;
 
-namespace Sas.SolarSystem.Service.Profiles
+namespace Sas.BodySystem.Service.Profiles
 {
     internal class BodyProfile : Profile
     {
         public BodyProfile()
         {
-            CreateMap<Body, CelestialBodyDocument>().ReverseMap();
+            CreateMap<Body, BodyDocument>().ReverseMap();
             CreateMap<VectorDocument, Vector>().ReverseMap();
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace Sas.SolarSystem.Service.Documents
+﻿namespace Sas.BodySystem.Service.Documents
 {
     public class VectorDocument
     {

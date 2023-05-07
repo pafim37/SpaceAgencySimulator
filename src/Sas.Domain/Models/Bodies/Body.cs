@@ -17,17 +17,17 @@ namespace Sas.Domain.Models.Bodies
         public double Mass { get; set; }
 
         /// <summary>
-        /// Position related to center of the solar system. Should be used for drawing on board
+        /// Position related to center of the solar system
         /// </summary>
-        public Vector AbsolutePosition { get; set; }
+        public Vector Position { get; set; }
 
         /// <summary>
-        /// Velocity related to center of the solar system. Should be used for drawing on board
+        /// Velocity related to center of the solar system
         /// </summary>
-        public Vector AbsoluteVelocity { get; set; }
+        public Vector Velocity { get; set; }
 
         /// <summary>
-        /// Radius of the celeastial body
+        /// Radius of the body
         /// </summary>
         public double Radius { get; set; }
 
@@ -50,13 +50,13 @@ namespace Sas.Domain.Models.Bodies
 
             Name = name;
             Mass = mass;
-            AbsolutePosition = position;
-            AbsoluteVelocity = velocity;
+            Position = position;
+            Velocity = velocity;
             Radius = radius;
         }
 
         /// <summary>
-        /// Parameterless constructor - need for mapping
+        /// Parameterless constructor - needed for mapping
         /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public Body()

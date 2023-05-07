@@ -1,17 +1,16 @@
 ﻿using Sas.Domain.Models.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
-using System;
 
 namespace Sas.Domain.Models.Orbits
 {
     public abstract class Orbit
     {
         #region fields
-
         protected OrbitType _type; // orbit type
         protected double _u;       // G(m1+m2)
         protected double _a;       // semi-major axis
+        protected double _b;       // semi-minor axis
         protected double _e;       // eccentricity
         protected double _w;       // argument of periapsis
         protected double _i;       // inclination
@@ -35,6 +34,11 @@ namespace Sas.Domain.Models.Orbits
         /// Semi major axis
         /// </summary>
         public double? SemiMajorAxis => GetSemiMajorAxis();
+
+        /// <summary>
+        /// Semi minor axis
+        /// </summary>
+        public double? SemiMinorAxis => GetSemiMinorAxis();
 
         /// <summary>
         /// Eccentricity
@@ -91,7 +95,7 @@ namespace Sas.Domain.Models.Orbits
         /// </summary>
         /// <param name="position"></param>
         /// <param name="velocity"></param>
-        /// <param name="u">G(m1+m2)</param>
+        /// <param name="u">Standard gravitational parameter: G(m1+m2)</param>
         public Orbit(Vector position, Vector velocity, double u)
         {
             _u = u;
@@ -117,6 +121,7 @@ namespace Sas.Domain.Models.Orbits
         public abstract double? GetRadius();
         public abstract double? GetPeriod();
         public abstract double? GetSemiMajorAxis();
+        public abstract double? GetSemiMinorAxis();
         #endregion
 
         #region private methods
@@ -132,11 +137,12 @@ namespace Sas.Domain.Models.Orbits
             double n = nVector.Magnitude;
             Vector eVector = 1 / u * Vector.CrossProduct(velocity, hVector) - 1 / r * position;
             double e = eVector.Magnitude;
+            double b = a * Math.Sqrt(1 - e * e);
             double phi = GetTrueAnomaly(position, velocity, r, eVector, e);
             double ae = GetEccentricAnomaly(e, phi);
             double m = GetMeanAnomaly(e, ae);
-
             _a = a;
+            _b = b;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
             _i = GetInclination(hVector, h); ;
             _omega = GetAscendingNode(nVector, n);
@@ -145,6 +151,7 @@ namespace Sas.Domain.Models.Orbits
             _ae = ae;
             _m = m;
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
+            _radius = r;
         }
 
         protected abstract double GetMeanAnomaly(double e, double ae);

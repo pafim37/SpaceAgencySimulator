@@ -36,5 +36,10 @@ namespace Sas.Domain.Models.Orbits
         {
             return _a;
         }
+
+        public override double? GetSemiMinorAxis()
+        {
+            return _b;
+        }
     }
 }

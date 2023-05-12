@@ -18,6 +18,10 @@ namespace Sas.Sandbox.Process
             // General Configuration
             builder.Configuration.AddJsonFile("config.json");
 
+            // Logging
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+
             // Astronomy Service
             builder.Services.AddScoped<AstronomyContext>();
 

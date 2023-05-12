@@ -13,13 +13,6 @@ namespace Sas.BodySystem.Service.Data
             IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
             CelestialBodies = database.GetCollection<BodyDocument>(settings.CollectionName);
-
-            bool isDocumentExist = CelestialBodies.Find(p => true).Any();
-            if (!isDocumentExist)
-            {
-                SeedInitializer.Seed(CelestialBodies);
-            }
         }
-
     }
 }

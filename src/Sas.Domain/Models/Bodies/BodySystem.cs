@@ -53,7 +53,11 @@ namespace Sas.Domain.Models.Bodies
         /// </summary>
         public void Update()
         {
-            FindOrbits();
+            if (_bodies.Count > 1)
+            {
+                // TODO: fix me
+                // FindOrbits();
+            }
         }
         #endregion
 

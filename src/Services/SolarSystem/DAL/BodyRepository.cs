@@ -21,7 +21,7 @@ namespace Sas.BodySystem.Service.DAL
         }
 
         // Read All
-        public async Task<IEnumerable<BodyDocument>> GetAsync()
+        public async Task<IEnumerable<BodyDocument>> GetAllAsync()
         {
             var bodies = await _context.CelestialBodies.Find(b => true).ToListAsync();
             return bodies;
@@ -34,7 +34,33 @@ namespace Sas.BodySystem.Service.DAL
             return body;
         }
 
+        // Create many
+        public async Task<IEnumerable<BodyDocument>> CreateAsync(IEnumerable<BodyDocument> bodies)
+        {
+            await _context.CelestialBodies.InsertManyAsync(bodies);
+            return bodies;
+        }
+
+        // Create or Update
+        public async Task<IEnumerable<BodyDocument>> CreateOrUpdateAsync(IEnumerable<BodyDocument> bodies)
+        {
+            foreach (BodyDocument body in bodies)
+            {
+                BodyDocument bodyToUpdate = await GetAsync(body.Name).ConfigureAwait(false);
+                if(bodyToUpdate != null)
+                {
+                    await UpdateAsync(body.Name, body).ConfigureAwait(false);
+                }
+                else
+                {
+                    await CreateAsync(body).ConfigureAwait(false);
+                }
+            }
+            return bodies;
+        }
+
         // Update
+        // TODO: Consider between Update and Replace
         public async Task UpdateAsync(string name, BodyDocument body)
         {
             await _context.CelestialBodies.ReplaceOneAsync(b => b.Name.Equals(name), body);

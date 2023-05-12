@@ -19,7 +19,7 @@ namespace Sas.BodySystem.Service.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var bodies = await _repository.GetAsync();
+            var bodies = await _repository.GetAllAsync();
             if (bodies is null)
             {
                 return NoContent();

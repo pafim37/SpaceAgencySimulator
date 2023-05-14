@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using Sas.BodySystem.Service.Documents;
+using Sas.BodySystem.Service.DTOs;
 using Sas.Domain.Models.Bodies;
 using Sas.Mathematica.Service.Vectors;
-using Sas.BodySystem.Service.Documents;
 
 namespace Sas.BodySystem.Service.Profiles
 {
@@ -9,6 +10,8 @@ namespace Sas.BodySystem.Service.Profiles
     {
         public BodyProfile()
         {
+            CreateMap<BodyDocument, BodyDTO>().ReverseMap();
+            CreateMap<VectorDocument, VectorDTO>().ReverseMap();
             CreateMap<Body, BodyDocument>().ReverseMap();
             CreateMap<VectorDocument, Vector>().ReverseMap();
         }

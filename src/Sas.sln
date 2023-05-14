@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.BodySystem.Service", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Domain.Tests", "..\tests\Domain\Sas.Domain.Tests\Sas.Domain.Tests.csproj", "{C079D69D-BC04-4516-9CBE-4517557BE5C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.SandboxConsole.Process", "Sas.SandboxConsole.Process\Sas.SandboxConsole.Process.csproj", "{A36F30FF-575B-4E50-9CD3-88223F899EEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.BodySystem.Tests", "..\tests\SolarSystem\Sas.BodySystem.Tests\Sas.BodySystem.Tests.csproj", "{D514D814-BF35-4548-804C-E74ABEFCFE0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,10 +71,10 @@ Global
 		{C079D69D-BC04-4516-9CBE-4517557BE5C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C079D69D-BC04-4516-9CBE-4517557BE5C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C079D69D-BC04-4516-9CBE-4517557BE5C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A36F30FF-575B-4E50-9CD3-88223F899EEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A36F30FF-575B-4E50-9CD3-88223F899EEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A36F30FF-575B-4E50-9CD3-88223F899EEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A36F30FF-575B-4E50-9CD3-88223F899EEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D514D814-BF35-4548-804C-E74ABEFCFE0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D514D814-BF35-4548-804C-E74ABEFCFE0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D514D814-BF35-4548-804C-E74ABEFCFE0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D514D814-BF35-4548-804C-E74ABEFCFE0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,7 +88,6 @@ Global
 		{C5E2E3BE-6DB2-43C4-AAC7-A6AA33E189A6} = {3E9FE29F-2A15-4583-853F-4C7E60DCB753}
 		{78E29FF4-F00E-4086-8A34-E81F1E5AE4A8} = {8F6F46CD-3CDE-4302-9834-023269C008EE}
 		{A315D07E-8F48-4AE6-99B5-428AE7A5D9FB} = {5A6C825A-9DE4-479C-A142-89C92B35829B}
-		{A36F30FF-575B-4E50-9CD3-88223F899EEF} = {38CA6442-41FF-4C2A-97E7-4104AF838324}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {134514F9-9E28-4183-AB9F-4B8B84DAC997}

@@ -6,7 +6,6 @@ using Sas.BodySystem.Service.Documents;
 using Sas.BodySystem.Service.DTOs;
 using Sas.Domain.Models.Bodies;
 using Sas.Mathematica.Service.Vectors;
-using System.Text.Json;
 
 namespace Sas.BodySystem.Service.Controllers
 {
@@ -36,30 +35,15 @@ namespace Sas.BodySystem.Service.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBodySystem()
+        public async Task<IActionResult> CreateBodySystem([FromBody] IEnumerable<BodyDTO> bodyDtoList)
         {
             _logger.LogInformation("[POST] Body System Request");
-            string requestBody = await GetRequestBodyFromStream().ConfigureAwait(false);
-            if (requestBody.Equals(string.Empty, StringComparison.Ordinal))
-            {
-                _logger.LogDebug("No bodies were found in the request");
-                return NoContent();
-            }
-            Sas.Domain.Models.Bodies.BodySystem bodySystem;
-            List<Body> bodyList = GetBodyListFromRequestBody(requestBody);
-            _logger.LogDebug("Successfully get bodies list from the request");
-            if (bodyList.Any())
-            {
-                await _repository.CreateOrUpdateAsync(_mapper.Map<IEnumerable<BodyDocument>>(bodyList)).ConfigureAwait(false);
-                bodySystem = new(bodyList);
-                _logger.LogInformation("Successfully handle request");
-                return Ok(bodySystem);
-            }
-            else
-            {
-                _logger.LogDebug("No bodies were found in the list");
-                return Ok();
-            }
+            IEnumerable<BodyDocument> bodyDocumentList = _mapper.Map<IEnumerable<BodyDocument>>(bodyDtoList);
+            await _repository.CreateOrUpdateAsync(bodyDocumentList).ConfigureAwait(false);
+            List<Body> bodyList = CreateBodyList(bodyDtoList);
+            Sas.Domain.Models.Bodies.BodySystem bodySystem = new(bodyList);
+            _logger.LogInformation("Successfully handle request");
+            return Ok(bodySystem);
         }
 
         [HttpDelete]
@@ -70,56 +54,16 @@ namespace Sas.BodySystem.Service.Controllers
             return NoContent();
         }
 
-        private async Task<string> GetRequestBodyFromStream()
+        private static List<Body> CreateBodyList(IEnumerable<BodyDTO>? bodyDtoList)
         {
-            string requestBody = string.Empty;
-            using (StreamReader reader = new StreamReader(Request.Body))
-            {
-                requestBody = await reader.ReadToEndAsync().ConfigureAwait(false);
-            }
-            return requestBody;
-        }
-
-        private List<Body> GetBodyListFromRequestBody(string requestBody)
-        {
-            JsonSerializerOptions option = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-            List<BodyDTO>? bodyDtoList = null;
-            try
-            {
-                bodyDtoList = JsonSerializer.Deserialize<List<BodyDTO>>(requestBody, option);
-            }
-            catch (Exception ex) 
-            { 
-                try
-                {
-                    BodyDTO? body = JsonSerializer.Deserialize<BodyDTO>(requestBody, option);
-                    ArgumentNullException.ThrowIfNull(body, nameof(body));
-                    bodyDtoList = new() { body }; 
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError($"An error occured when deserialized body request: {ex.Message}");
-                    _logger.LogError($"Second attempt failed: {e.Message}");
-                }
-            }
-
+            ArgumentNullException.ThrowIfNull(bodyDtoList, nameof(bodyDtoList));
             List<Body> bodyList = new();
-            if (bodyDtoList is null)
-            {
-                return new List<Body>();
-            }
-
             foreach (BodyDTO body in bodyDtoList)
             {
                 Vector position = new Vector(body.Position.X, body.Position.Y, body.Position.Z);
                 Vector velocity = new Vector(body.Velocity.X, body.Velocity.Y, body.Velocity.Z);
                 bodyList.Add(new Body(body.Name, body.Mass, position, velocity, body.Radius));
             }
-
             return bodyList;
         }
     }

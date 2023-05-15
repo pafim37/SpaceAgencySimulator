@@ -6,9 +6,9 @@ namespace Sas.BodySystem.Service.DAL
 {
     public class BodyRepository : IBodyRepository
     {
-        private readonly ISolarSystemContext _context;
+        private readonly IBodyContext _context;
 
-        public BodyRepository(ISolarSystemContext context)
+        public BodyRepository(IBodyContext context)
         {
             _context = context;
         }
@@ -16,7 +16,7 @@ namespace Sas.BodySystem.Service.DAL
         // Read
         public async Task<BodyDocument> GetAsync(string name)
         {
-            var body = await _context.CelestialBodies.Find(b => b.Name.Equals(name)).FirstOrDefaultAsync();
+            BodyDocument body = await _context.CelestialBodies.Find(b => b.Name.Equals(name)).FirstOrDefaultAsync();
             return body;
         }
 

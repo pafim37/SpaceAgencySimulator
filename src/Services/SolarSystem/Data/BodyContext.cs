@@ -3,11 +3,11 @@ using Sas.BodySystem.Service.Documents;
 using Sas.BodySystem.Service.Settings;
 namespace Sas.BodySystem.Service.Data
 {
-    public class SolarSystemContext : ISolarSystemContext
+    public class BodyContext : IBodyContext
     {
         public IMongoCollection<BodyDocument> CelestialBodies { get; set; }
 
-        public SolarSystemContext(SolarSystemDatabaseSettings settings)
+        public BodyContext(BodyDatabaseSettings settings)
         {
             MongoClient client = new MongoClient(settings.ConnectionString);
             IMongoDatabase database = client.GetDatabase(settings.DatabaseName);

@@ -4,7 +4,7 @@ using Sas.BodySystem.Service.Documents;
 namespace Sas.BodySystem.Service.Data
 {
 
-    public interface ISolarSystemContext
+    public interface IBodyContext
     {
         IMongoCollection<BodyDocument> CelestialBodies { get; set; }
     }

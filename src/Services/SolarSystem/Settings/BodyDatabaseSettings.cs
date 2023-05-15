@@ -1,6 +1,6 @@
 ﻿namespace Sas.BodySystem.Service.Settings
 {
-    public class SolarSystemDatabaseSettings
+    public class BodyDatabaseSettings
     {
         public string? CollectionName { get; set; }
         public string? ConnectionString { get; set; }

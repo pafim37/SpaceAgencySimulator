@@ -29,9 +29,9 @@ namespace Sas.Sandbox.Process
             builder.Services.AddScoped<ObservationRepository>();
 
             // Solar System Service
-            builder.Services.Configure<SolarSystemDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
-            builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<SolarSystemDatabaseSettings>>().Value);
-            builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
+            builder.Services.Configure<BodyDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
+            builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<BodyDatabaseSettings>>().Value);
+            builder.Services.AddSingleton<IBodyContext, BodyContext>();
             builder.Services.AddScoped<IBodyRepository, BodyRepository>();
 
             builder.Services.AddCors(options =>

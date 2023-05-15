@@ -39,7 +39,7 @@ namespace Sas.BodySystem.Service.Controllers
         {
             _logger.LogInformation("[POST] Body System Request");
             IEnumerable<BodyDocument> bodyDocumentList = _mapper.Map<IEnumerable<BodyDocument>>(bodyDtoList);
-            await _repository.CreateOrUpdateAsync(bodyDocumentList).ConfigureAwait(false);
+            await _repository.CreateOrReplaceAsync(bodyDocumentList).ConfigureAwait(false);
             List<Body> bodyList = CreateBodyList(bodyDtoList);
             Sas.Domain.Models.Bodies.BodySystem bodySystem = new(bodyList);
             _logger.LogInformation("Successfully handle request");

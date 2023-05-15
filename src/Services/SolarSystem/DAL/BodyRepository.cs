@@ -16,7 +16,7 @@ namespace Sas.BodySystem.Service.DAL
         // Read
         public async Task<BodyDocument> GetAsync(string name)
         {
-            BodyDocument body = await _context.CelestialBodies.Find(b => b.Name.Equals(name)).FirstOrDefaultAsync();
+            BodyDocument body = await _context.CelestialBodies.Find(b => b.Name!.Equals(name)).FirstOrDefaultAsync();
             return body;
         }
 
@@ -42,14 +42,14 @@ namespace Sas.BodySystem.Service.DAL
         }
 
         // Create or Update
-        public async Task<IEnumerable<BodyDocument>> CreateOrUpdateAsync(IEnumerable<BodyDocument> bodies)
+        public async Task<IEnumerable<BodyDocument>> CreateOrReplaceAsync(IEnumerable<BodyDocument> bodies)
         {
             foreach (BodyDocument body in bodies)
             {
-                BodyDocument bodyToUpdate = await GetAsync(body.Name).ConfigureAwait(false);
+                BodyDocument bodyToUpdate = await GetAsync(body.Name!).ConfigureAwait(false);
                 if(bodyToUpdate != null)
                 {
-                    await UpdateAsync(body.Name, body).ConfigureAwait(false);
+                    await ReplaceAsync(body.Name!, body).ConfigureAwait(false);
                 }
                 else
                 {
@@ -60,16 +60,15 @@ namespace Sas.BodySystem.Service.DAL
         }
 
         // Update
-        // TODO: Consider between Update and Replace
-        public async Task UpdateAsync(string name, BodyDocument body)
+        public async Task ReplaceAsync(string name, BodyDocument body)
         {
-            await _context.CelestialBodies.ReplaceOneAsync(b => b.Name.Equals(name), body);
+            await _context.CelestialBodies.ReplaceOneAsync(b => b.Name!.Equals(name), body);
         }
 
         // Remove
         public async Task RemoveAsync(string name)
         {
-            await _context.CelestialBodies.DeleteOneAsync(b => b.Name.Equals(name));
+            await _context.CelestialBodies.DeleteOneAsync(b => b.Name!.Equals(name));
         }
     }
 }

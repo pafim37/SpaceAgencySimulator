@@ -126,7 +126,7 @@ namespace Sas.BodySystem.Tests
             OkObjectResult okResult = result.Should().BeOfType<OkObjectResult>().Subject;
             Domain.Models.Bodies.BodySystem data = okResult.Value.Should().BeAssignableTo<Sas.Domain.Models.Bodies.BodySystem>().Subject;
             data.Bodies.Should().HaveCount(2);
-            _bodyRepositoryMock.Verify(mock => mock.CreateOrUpdateAsync(It.IsAny<IEnumerable<BodyDocument>>()), Times.Once());
+            _bodyRepositoryMock.Verify(mock => mock.CreateOrReplaceAsync(It.IsAny<IEnumerable<BodyDocument>>()), Times.Once());
             _mapperMock.Verify(mock => mock.Map<IEnumerable<BodyDocument>>(It.IsAny<IEnumerable<BodyDTO>>()), Times.Once());
         }
 

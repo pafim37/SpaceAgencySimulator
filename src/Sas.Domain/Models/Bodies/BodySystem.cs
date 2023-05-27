@@ -1,5 +1,6 @@
 ﻿using Sas.Domain.Bodies.BodyExtensions;
 using Sas.Domain.Models.Orbits;
+using Sas.Domain.Models.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
@@ -55,8 +56,7 @@ namespace Sas.Domain.Models.Bodies
         {
             if (_bodies.Count > 1)
             {
-                // TODO: fix me
-                // FindOrbits();
+                FindOrbits();
             }
         }
         #endregion
@@ -79,44 +79,34 @@ namespace Sas.Domain.Models.Bodies
         #region private methods
         private void FindOrbits()
         {
-            var sortBodies = _bodies.OrderBy(x => x.Mass).ToList();
+            List<Body> sortBodies = _bodies.OrderBy(x => x.Mass).ToList();
             for (int i = 0; i < sortBodies.Count - 1; i++)
             {
-                var currBody = sortBodies[i];
+                Body surroundedBody = sortBodies[i];
                 Body? resultBody = null;
                 double distance = double.MaxValue;
                 for (int j = i + 1; j < sortBodies.Count; j++)
                 {
-                    var nextBody = sortBodies[j];
-                    var relativeDistance = currBody.GetPositionRelatedTo(nextBody).Magnitude;
-                    var influence = nextBody.GetSphereOfInfluenceRelatedTo(currBody);
-                    if (relativeDistance < distance && influence > relativeDistance)
+                    Body centerBody = sortBodies[j];
                     {
-                        distance = relativeDistance;
-                        resultBody = nextBody;
+                        double relativeDistance = surroundedBody.GetPositionRelatedTo(centerBody).Magnitude;
+                        double influence = centerBody.GetSphereOfInfluenceRelatedTo(surroundedBody);
+                        if (relativeDistance < distance && influence >= relativeDistance)
+                        {
+                            distance = relativeDistance;
+                            resultBody = centerBody;
+                        }
                     }
                 }
-                _orbitsDescription.Add(
-                    new OrbitHolder()
-                    {
-                        Name = currBody.Name,
-                        SurroundedBodyName = resultBody?.Name,
-                        Orbit = OrbitFactory.CalculateOrbit(
-                            currBody.GetPositionRelatedTo(resultBody),
-                            currBody.GetVelocityRelatedTo(resultBody),
-                            Constants.G * (currBody.Mass + resultBody.Mass))
-                    }); ;
-            }
-            _orbitsDescription.Add(
-                new OrbitHolder()
+                if (surroundedBody.Mass / resultBody.Mass < 0.03)  // TODO: remove this hardcoded value
                 {
-                    Name = sortBodies[sortBodies.Count - 1].Name,
-                    SurroundedBodyName = Barycentrum.Name,
-                    Orbit = OrbitFactory.CalculateOrbit(
-                            sortBodies[sortBodies.Count - 1].GetPositionRelatedTo(Barycentrum),
-                            sortBodies[sortBodies.Count - 1].GetVelocityRelatedTo(Barycentrum),
-                            Constants.G * (sortBodies[sortBodies.Count - 1].Mass + Barycentrum.Mass))
-                });
+                    AddBodyToSystem(surroundedBody, resultBody);
+                }
+                else
+                {
+                    AddBodyToSystem(sortBodies[^1], Barycentrum);
+                }
+            }
         }
         public void CalibrateBarycenterToZero()
         {
@@ -125,6 +115,29 @@ namespace Sas.Domain.Models.Bodies
             {
                 body.Position -= barycenter.Position;
             }
+        }
+        private void AddBodyToSystem(Body surroundedBody, Body? resultBody)
+        {
+            var orbit = OrbitFactory.CalculateOrbit(
+                surroundedBody.GetPositionRelatedTo(resultBody),
+                surroundedBody.GetVelocityRelatedTo(resultBody),
+                1 * (surroundedBody.Mass + resultBody.Mass)); // TODO: G
+            Vector center = Vector.Zero;
+            if (orbit.OrbitType == OrbitType.Elliptic)
+            {
+                center = new Vector(resultBody.Position.X - Math.Cos(orbit.TrueAnomaly) * (orbit.SemiMajorAxis * orbit.Eccentricity).Value + 2 * (orbit.SemiMajorAxis * orbit.Eccentricity).Value * Math.Sin(orbit.TrueAnomaly), 0, 0);
+            }
+            else if (orbit.OrbitType == OrbitType.Circular)
+            {
+                center = new Vector(orbit.GetRadius().Value, orbit.GetRadius().Value, 0);
+            }
+            var orbitHolder = new OrbitHolder()
+            {
+                Name = surroundedBody.Name,
+                Orbit = orbit,
+                Center = center
+            };
+            _orbitsDescription.Add(orbitHolder);
         }
         private Body GetBarycenter()
         {
@@ -135,7 +148,7 @@ namespace Sas.Domain.Models.Bodies
             }
             double totalMass = _bodies.Sum(body => body.Mass);
             position = 1 / totalMass * position;
-            return new Body("Barycentrum", totalMass, position, Vector.Zero);
+            return new Body("Barycentrum", totalMass, position, Vector.Zero); // TODO: remove this hardcoced value
         }
         private double GetU()
         {

@@ -31,7 +31,8 @@ namespace Sas.BodySystem.Service.Controllers
             IEnumerable<Body> bodies = _mapper.Map<IEnumerable<Body>>(bodiesFromDb);
             _logger.LogDebug("Successfully mapped bodies from database");
             Sas.Domain.Models.Bodies.BodySystem bodySystem = new(bodies);
-            return Ok(bodySystem);
+            BodySystemDTO bodySystemDto = _mapper.Map<BodySystemDTO>(bodySystem);
+            return Ok(bodySystemDto);
         }
 
         [HttpPost]
@@ -42,8 +43,9 @@ namespace Sas.BodySystem.Service.Controllers
             await _repository.CreateOrReplaceAsync(bodyDocumentList).ConfigureAwait(false);
             List<Body> bodyList = CreateBodyList(bodyDtoList);
             Sas.Domain.Models.Bodies.BodySystem bodySystem = new(bodyList);
+            BodySystemDTO bodySystemDto = _mapper.Map<BodySystemDTO>(bodySystem);
             _logger.LogInformation("Successfully handle request");
-            return Ok(bodySystem);
+            return Ok(bodySystemDto);
         }
 
         [HttpDelete]

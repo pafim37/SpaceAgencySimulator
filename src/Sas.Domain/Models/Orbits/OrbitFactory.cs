@@ -11,7 +11,7 @@ namespace Sas.Domain.Models.Orbits
         public static Orbit CalculateOrbit(Vector position, Vector velocity, double u)
         {
             double e = GetEccentricity(position, velocity, u);
-            var type = GetOrbitType(e);
+            OrbitType type = GetOrbitType(e);
             return type switch
             {
                 OrbitType.Circular => new CircularOrbit(position, velocity, u),

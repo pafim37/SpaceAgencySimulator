@@ -14,6 +14,8 @@ namespace Sas.BodySystem.Service.Profiles
             CreateMap<VectorDocument, VectorDTO>().ReverseMap();
             CreateMap<Body, BodyDocument>().ReverseMap();
             CreateMap<VectorDocument, Vector>().ReverseMap();
+            CreateMap<Body, BodyDTO>().ReverseMap();
+            CreateMap<Vector, VectorDTO>().ReverseMap();
         }
     }
 }

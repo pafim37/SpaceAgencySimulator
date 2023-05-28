@@ -35,12 +35,13 @@ namespace Sas.Domain.Models.Orbits
 
         public override double? GetSemiMajorAxis()
         {
-            return null;
+            return _a;
         }
 
         public override double? GetSemiMinorAxis()
         {
-            return null;
+            double? a = GetSemiMajorAxis();
+            return a * Math.Sqrt(_e * _e - 1);
         }
     }
 }

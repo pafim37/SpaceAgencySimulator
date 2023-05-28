@@ -11,6 +11,7 @@ namespace Sas.Domain.Models.Orbits
         protected double _u;       // G(m1+m2)
         protected double _a;       // semi-major axis
         protected double _b;       // semi-minor axis
+        protected double _p;       // semi-latus rectum
         protected double _e;       // eccentricity
         protected double _w;       // argument of periapsis
         protected double _i;       // inclination
@@ -141,6 +142,7 @@ namespace Sas.Domain.Models.Orbits
             double phi = GetTrueAnomaly(position, velocity, r, eVector, e);
             double ae = GetEccentricAnomaly(e, phi);
             double m = GetMeanAnomaly(e, ae);
+            double p = h * h / u;
             _a = a;
             _b = b;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
@@ -150,6 +152,7 @@ namespace Sas.Domain.Models.Orbits
             _phi = phi;
             _ae = ae;
             _m = m;
+            _p = p;
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
         }

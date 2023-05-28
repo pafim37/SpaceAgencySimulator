@@ -131,6 +131,10 @@ namespace Sas.Domain.Models.Bodies
             {
                 center = new Vector(orbit.GetRadius().Value, orbit.GetRadius().Value, 0);
             }
+            else if (orbit.OrbitType == OrbitType.Hyperbolic)
+            {
+                center = new Vector(surroundedBody.Position.X, surroundedBody.Position.Y,0);
+            }
             var orbitHolder = new OrbitHolder()
             {
                 Name = surroundedBody.Name,

@@ -139,7 +139,7 @@ namespace Sas.Domain.Models.Bodies
             }
             else if (orbit.OrbitType == OrbitType.Circular)
             {
-                center = new Vector(orbit.Radius.Value, orbit.Radius.Value, 0);
+                center = new Vector(resultBody.Position.X, resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Hyperbolic)
             {

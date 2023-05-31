@@ -151,6 +151,16 @@ namespace Sas.Domain.Models.Bodies
                 rotationAngle = -orbit.TrueAnomaly + bodyAngle;
                 center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis.Value, orbit.MinDistance - orbit.SemiMajorAxis.Value, 0);
             }
+            else if (orbit.OrbitType == OrbitType.Parabolic)
+            {
+                var origin = resultBody.Position;
+                ReferenceSystem referenceSystem = new(origin);
+                var point = surroundedBody.GetPositionRelatedTo(resultBody);
+                referenceSystem.SetPoint(point);
+                var bodyAngle = referenceSystem.Phi;
+                rotationAngle =bodyAngle;
+                center = new Vector(resultBody.Position.X, resultBody.Position.Y, 0);
+            }
             var orbitHolder = new OrbitHolder()
             {
                 Name = surroundedBody.Name,

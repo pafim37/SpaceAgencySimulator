@@ -22,22 +22,22 @@ namespace Sas.Domain.Models.Orbits
             return Math.Acos(cosAE);
         }
 
-        public override double? GetRadius()
+        protected override double? GetRadius()
         {
             return _radius;
         }
 
-        public override double? GetPeriod()
+        protected override double? GetPeriod()
         {
             return _period;
         }
 
-        public override double? GetSemiMajorAxis()
+        protected override double? GetSemiMajorAxis()
         {
             return null;
         }
 
-        public override double? GetSemiMinorAxis()
+        protected override double? GetSemiMinorAxis()
         {
             return null;
         }

@@ -23,22 +23,22 @@ namespace Sas.Domain.Models.Orbits
             return Math.Log(Math.Tan(gudermannianAngle / 2 + Math.PI / 4));
         }
 
-        public override double? GetRadius()
+        protected override double? GetRadius()
         {
             return null;
         }
 
-        public override double? GetPeriod()
+        protected override double? GetPeriod()
         {
             return null;
         }
 
-        public override double? GetSemiMajorAxis()
+        protected override double? GetSemiMajorAxis()
         {
             return null;
         }
 
-        public override double? GetSemiMinorAxis()
+        protected override double? GetSemiMinorAxis()
         {
            return null;
         }

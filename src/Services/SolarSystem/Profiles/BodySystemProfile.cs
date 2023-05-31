@@ -19,6 +19,7 @@ namespace Sas.BodySystem.Service.Profiles
                 .ForMember(src => src.Center, des => des.MapFrom(src => src.Center))
                 .ForMember(src => src.SemiMajorAxis, des => des.MapFrom(src => src.Orbit.SemiMajorAxis))
                 .ForMember(src => src.SemiMinorAxis, des => des.MapFrom(src => src.Orbit.SemiMinorAxis))
+                .ForMember(src => src.Rotation, des => des.MapFrom(src => src.Rotation))
                 .ReverseMap();
 
             //CreateMap<Orbit, OrbitDTO>()

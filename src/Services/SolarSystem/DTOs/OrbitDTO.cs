@@ -7,5 +7,6 @@
         public VectorDTO Center;
         public double SemiMajorAxis;
         public double SemiMinorAxis;
+        public double Rotation;
     }
 }

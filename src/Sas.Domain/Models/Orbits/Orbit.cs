@@ -21,6 +21,7 @@ namespace Sas.Domain.Models.Orbits
         protected double _m;       // mass 
         protected double _period;  // period
         protected double _radius;  // radius
+        protected double _rp;      // peri
 
         #endregion
 
@@ -40,6 +41,11 @@ namespace Sas.Domain.Models.Orbits
         /// Semi minor axis
         /// </summary>
         public double? SemiMinorAxis => GetSemiMinorAxis();
+
+        /// <summary>
+        /// Semi latus rectum
+        /// </summary>
+        public double SemiLatusRectum => _p;
 
         /// <summary>
         /// Eccentricity
@@ -87,6 +93,11 @@ namespace Sas.Domain.Models.Orbits
         /// </summary>
         public double? Radius => GetRadius();
 
+        /// <summary>
+        /// Minimal distance between focus and point on orbit
+        /// </summary>
+        public double MinDistance => _rp;
+
         #endregion
 
         #region constructors
@@ -119,10 +130,10 @@ namespace Sas.Domain.Models.Orbits
             AssignFileds(position, velocity);
         }
 
-        public abstract double? GetRadius();
-        public abstract double? GetPeriod();
-        public abstract double? GetSemiMajorAxis();
-        public abstract double? GetSemiMinorAxis();
+        protected abstract double? GetRadius();
+        protected abstract double? GetPeriod();
+        protected abstract double? GetSemiMajorAxis();
+        protected abstract double? GetSemiMinorAxis();
         #endregion
 
         #region private methods
@@ -143,6 +154,7 @@ namespace Sas.Domain.Models.Orbits
             double ae = GetEccentricAnomaly(e, phi);
             double m = GetMeanAnomaly(e, ae);
             double p = h * h / u;
+            double rp = p / (1 + _e);
             _a = a;
             _b = b;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
@@ -155,6 +167,7 @@ namespace Sas.Domain.Models.Orbits
             _p = p;
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
+            _rp = rp;
         }
 
         protected abstract double GetMeanAnomaly(double e, double ae);

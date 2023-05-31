@@ -12,6 +12,7 @@ namespace Sas.Domain.Models.Bodies
 
         private readonly List<Body> _bodies;
         private readonly List<OrbitHolder> _orbitsDescription;
+        private readonly double G;
 
         #endregion
 
@@ -62,10 +63,11 @@ namespace Sas.Domain.Models.Bodies
         #endregion
 
         #region constructors
-        public BodySystem(IEnumerable<Body> bodies)
+        public BodySystem(IEnumerable<Body> bodies, double gravitationalConst = Constants.G)
         {
             _bodies = bodies.ToList();
             _orbitsDescription = new();
+            G = gravitationalConst;
             Update();
         }
 
@@ -123,23 +125,38 @@ namespace Sas.Domain.Models.Bodies
                 surroundedBody.GetVelocityRelatedTo(resultBody),
                 1 * (surroundedBody.Mass + resultBody.Mass)); // TODO: G
             Vector center = Vector.Zero;
+            double rotationAngle = 0;
             if (orbit.OrbitType == OrbitType.Elliptic)
             {
-                center = new Vector(resultBody.Position.X - Math.Cos(orbit.TrueAnomaly) * (orbit.SemiMajorAxis * orbit.Eccentricity).Value + 2 * (orbit.SemiMajorAxis * orbit.Eccentricity).Value * Math.Sin(orbit.TrueAnomaly), 0, 0);
+                var origin = resultBody.Position;
+                ReferenceSystem referenceSystem = new(origin);
+                var point = surroundedBody.GetPositionRelatedTo(resultBody);
+                referenceSystem.SetPoint(point);
+                var bodyAngle = referenceSystem.Phi;
+                rotationAngle = orbit.TrueAnomaly - bodyAngle;
+                var x = rotationAngle / Math.PI * 180;
+                center = new Vector(resultBody.Position.X + Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, 0);
             }
             else if (orbit.OrbitType == OrbitType.Circular)
             {
-                center = new Vector(orbit.GetRadius().Value, orbit.GetRadius().Value, 0);
+                center = new Vector(orbit.Radius.Value, orbit.Radius.Value, 0);
             }
             else if (orbit.OrbitType == OrbitType.Hyperbolic)
             {
-                center = new Vector(surroundedBody.Position.X, surroundedBody.Position.Y,0);
+                var origin = resultBody.Position;
+                ReferenceSystem referenceSystem = new(origin);
+                var point = surroundedBody.GetPositionRelatedTo(resultBody);
+                referenceSystem.SetPoint(point);
+                var bodyAngle = referenceSystem.Phi;
+                rotationAngle = -orbit.TrueAnomaly + bodyAngle;
+                center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis.Value, orbit.MinDistance - orbit.SemiMajorAxis.Value, 0);
             }
             var orbitHolder = new OrbitHolder()
             {
                 Name = surroundedBody.Name,
                 Orbit = orbit,
-                Center = center
+                Center = center,
+                Rotation = rotationAngle
             };
             _orbitsDescription.Add(orbitHolder);
         }
@@ -157,7 +174,7 @@ namespace Sas.Domain.Models.Bodies
         private double GetU()
         {
             double totalMass = _bodies.Sum(body => body.Mass);
-            return totalMass * Constants.G;
+            return totalMass * G;
         }
         #endregion
     }

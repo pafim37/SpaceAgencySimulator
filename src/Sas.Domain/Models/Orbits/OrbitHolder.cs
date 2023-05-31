@@ -7,5 +7,6 @@ namespace Sas.Domain.Models.Orbits
         public string Name;
         public Vector? Center;
         public Orbit? Orbit;
+        public double Rotation;
     }
 }

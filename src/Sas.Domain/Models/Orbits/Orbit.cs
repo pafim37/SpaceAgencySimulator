@@ -154,7 +154,7 @@ namespace Sas.Domain.Models.Orbits
             double ae = GetEccentricAnomaly(e, phi);
             double m = GetMeanAnomaly(e, ae);
             double p = h * h / u;
-            double rp = p / (1 + _e);
+            double rp = p / (1 + e);
             _a = a;
             _b = b;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));

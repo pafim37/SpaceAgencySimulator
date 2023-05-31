@@ -65,10 +65,19 @@ namespace Sas.BodySystem.Tests
             _bodyDto2
         };
 
+        private static BodySystemDTO _bodySystemDTOs => new BodySystemDTO()
+        {
+            Bodies = _bodyDtoTestData.ToList(),
+            Orbits = new List<OrbitDTO>()
+        };
+
         private void SetupMocks()
         {
             _bodyRepositoryMock.Setup(mock => mock.GetAllAsync())
                 .ReturnsAsync(new List<BodyDocument>());
+
+            _mapperMock.Setup(mock => mock.Map<BodySystemDTO>(It.IsAny<Sas.Domain.Models.Bodies.BodySystem>()))
+                .Returns(_bodySystemDTOs);
         }
 
         private void SetupMocksBodyDocumentToBody()
@@ -102,8 +111,9 @@ namespace Sas.BodySystem.Tests
             result.Should().NotBeNull();
             OkObjectResult okResult = result.Should().BeOfType<OkObjectResult>().Subject;
             okResult.StatusCode.Should().Be(200);
-            Domain.Models.Bodies.BodySystem data = okResult.Value.Should().BeAssignableTo<Sas.Domain.Models.Bodies.BodySystem>().Subject;
+            BodySystemDTO data = okResult.Value.Should().BeAssignableTo<BodySystemDTO>().Subject;
             data.Bodies.Should().HaveCount(2);
+            data.Orbits.Should().HaveCount(0); // TODO: test it!
             _bodyRepositoryMock.Verify(mock => mock.GetAllAsync(), Times.Once());
             _mapperMock.Verify(mock => mock.Map<IEnumerable<Body>>(It.IsAny<IEnumerable<BodyDocument>>()), Times.Once());
         }
@@ -124,7 +134,7 @@ namespace Sas.BodySystem.Tests
                 .Should().BeAsync();
             result.Should().NotBeNull();
             OkObjectResult okResult = result.Should().BeOfType<OkObjectResult>().Subject;
-            Domain.Models.Bodies.BodySystem data = okResult.Value.Should().BeAssignableTo<Sas.Domain.Models.Bodies.BodySystem>().Subject;
+            BodySystemDTO data = okResult.Value.Should().BeAssignableTo<BodySystemDTO>().Subject;
             data.Bodies.Should().HaveCount(2);
             _bodyRepositoryMock.Verify(mock => mock.CreateOrReplaceAsync(It.IsAny<IEnumerable<BodyDocument>>()), Times.Once());
             _mapperMock.Verify(mock => mock.Map<IEnumerable<BodyDocument>>(It.IsAny<IEnumerable<BodyDTO>>()), Times.Once());

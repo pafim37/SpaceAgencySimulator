@@ -40,16 +40,5 @@ namespace Sas.Domain.Bodies.BodyExtensions
             double massRatio = Math.Pow(body.Mass / other.Mass, 0.4);
             return distance * massRatio;
         }
-
-        /// <summary>
-        /// Returns orbit for given body
-        /// </summary>
-        /// <param name="body"></param>
-        /// <param name="u">G(m1+m2+...mn)</param>
-        /// <returns></returns>
-        public static Orbit GetOrbit(this Body body, double u) 
-        {
-            return OrbitFactory.CalculateOrbit(body, u);
-        }
     }
 }

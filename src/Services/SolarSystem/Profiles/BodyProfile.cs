@@ -6,16 +6,22 @@ using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.BodySystem.Service.Profiles
 {
-    internal class BodyProfile : Profile
+    public class BodyProfile : Profile
     {
         public BodyProfile()
         {
-            CreateMap<BodyDocument, BodyDTO>().ReverseMap();
-            CreateMap<VectorDocument, VectorDTO>().ReverseMap();
-            CreateMap<Body, BodyDocument>().ReverseMap();
-            CreateMap<VectorDocument, Vector>().ReverseMap();
-            CreateMap<Body, BodyDTO>().ReverseMap();
-            CreateMap<Vector, VectorDTO>().ReverseMap();
+            _ = CreateMap<Body, BodyDTO>()
+                .ReverseMap();
+            _ = CreateMap<BodyDTO, BodyDocument>()
+                .ReverseMap();
+            _ = CreateMap<BodyDocument, Body>()
+                .ReverseMap();
+            _ = CreateMap<Vector, VectorDTO>()
+                .ReverseMap();
+            _ = CreateMap<VectorDTO, VectorDocument>()
+                .ReverseMap();
+            _ = CreateMap<VectorDocument, Vector>()
+                .ReverseMap();
         }
     }
 }

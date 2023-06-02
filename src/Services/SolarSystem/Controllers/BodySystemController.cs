@@ -31,19 +31,21 @@ namespace Sas.BodySystem.Service.Controllers
             IEnumerable<Body> bodies = _mapper.Map<IEnumerable<Body>>(bodiesFromDb);
             _logger.LogDebug("Successfully mapped bodies from database");
             Sas.Domain.Models.Bodies.BodySystem bodySystem = new(bodies);
-            BodySystemDTO bodySystemDto = _mapper.Map<BodySystemDTO>(bodySystem);
+            BodySystemOutputData bodySystemDto = _mapper.Map<BodySystemOutputData>(bodySystem);
+            _logger.LogInformation("Successfully handle request");
             return Ok(bodySystemDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBodySystem([FromBody] IEnumerable<BodyDTO> bodyDtoList)
+        public async Task<IActionResult> CreateBodySystem([FromBody] BodySystemInputData inputData)
         {
             _logger.LogInformation("[POST] Body System Request");
-            IEnumerable<BodyDocument> bodyDocumentList = _mapper.Map<IEnumerable<BodyDocument>>(bodyDtoList);
+            double gravitationalConst = inputData.GravitationalConstant;
+            IEnumerable<BodyDocument> bodyDocumentList = _mapper.Map<IEnumerable<BodyDocument>>(inputData.Bodies);
             await _repository.CreateOrReplaceAsync(bodyDocumentList).ConfigureAwait(false);
-            List<Body> bodyList = CreateBodyList(bodyDtoList);
-            Sas.Domain.Models.Bodies.BodySystem bodySystem = new(bodyList);
-            BodySystemDTO bodySystemDto = _mapper.Map<BodySystemDTO>(bodySystem);
+            List<Body> bodyList = CreateBodyList(inputData.Bodies);
+            Sas.Domain.Models.Bodies.BodySystem bodySystem = new(bodyList, gravitationalConst);
+            BodySystemOutputData bodySystemDto = _mapper.Map<BodySystemOutputData>(bodySystem);
             _logger.LogInformation("Successfully handle request");
             return Ok(bodySystemDto);
         }

@@ -2,9 +2,9 @@
 {
     public enum OrbitType
     {
-        Circular,
         Elliptic,
-        Parabolic,
-        Hyperbolic
+        Hyperbolic,
+        Circular,
+        Parabolic
     }
 }

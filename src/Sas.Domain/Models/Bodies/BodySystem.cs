@@ -12,7 +12,7 @@ namespace Sas.Domain.Models.Bodies
 
         private readonly List<Body> _bodies;
         private readonly List<OrbitHolder> _orbitsDescription;
-        private readonly double G;
+        private readonly double _G; // gravitational constant
 
         #endregion
 
@@ -26,6 +26,11 @@ namespace Sas.Domain.Models.Bodies
         /// G * (M + m1 + m2 + ...)
         /// </summary>
         public double U => GetU();
+
+        /// <summary>
+        /// G * (M + m1 + m2 + ...)
+        /// </summary>
+        public double G => _G;
 
         /// <summary>
         /// Returns list of bodies in current system
@@ -55,10 +60,7 @@ namespace Sas.Domain.Models.Bodies
         /// </summary>
         public void Update()
         {
-            if (_bodies.Count > 1)
-            {
-                FindOrbits();
-            }
+            FindOrbits();
         }
         #endregion
 
@@ -67,7 +69,7 @@ namespace Sas.Domain.Models.Bodies
         {
             _bodies = bodies.ToList();
             _orbitsDescription = new();
-            G = gravitationalConst;
+            _G = gravitationalConst;
             Update();
         }
 
@@ -123,7 +125,7 @@ namespace Sas.Domain.Models.Bodies
             var orbit = OrbitFactory.CalculateOrbit(
                 surroundedBody.GetPositionRelatedTo(resultBody),
                 surroundedBody.GetVelocityRelatedTo(resultBody),
-                1 * (surroundedBody.Mass + resultBody.Mass)); // TODO: G
+                _G * (surroundedBody.Mass + resultBody.Mass));
             Vector center = Vector.Zero;
             double rotationAngle = 0;
             if (orbit.OrbitType == OrbitType.Elliptic)
@@ -184,7 +186,7 @@ namespace Sas.Domain.Models.Bodies
         private double GetU()
         {
             double totalMass = _bodies.Sum(body => body.Mass);
-            return totalMass * G;
+            return totalMass * _G;
         }
         #endregion
     }

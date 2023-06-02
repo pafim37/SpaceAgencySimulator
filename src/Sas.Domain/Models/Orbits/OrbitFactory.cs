@@ -28,9 +28,9 @@ namespace Sas.Domain.Models.Orbits
             return CalculateOrbit(body.Position, body.Velocity, u);
         }
 
-        public static Orbit CalculateOrbit(Body smallBody, Body massiveBody)
+        public static Orbit CalculateOrbit(Body smallBody, Body massiveBody, double G = Constants.G)
         {
-            double u = Constants.G * (smallBody.Mass + massiveBody.Mass);
+            double u = G * (smallBody.Mass + massiveBody.Mass);
             return CalculateOrbit(smallBody.Position, smallBody.Velocity, u);
         }
         private static double GetEccentricity(Vector position, Vector velocity, double u)

@@ -65,7 +65,13 @@ namespace Sas.BodySystem.Tests
             _bodyDto2
         };
 
-        private static BodySystemDTO _bodySystemDTOs => new BodySystemDTO()
+        private static BodySystemInputData _bodySystemInputData => new BodySystemInputData()
+        {
+            GravitationalConstant = 1,
+            Bodies = _bodyDtoTestData.ToList()
+        };
+
+        private static BodySystemOutputData _bodySystemDTOs => new BodySystemOutputData()
         {
             Bodies = _bodyDtoTestData.ToList(),
             Orbits = new List<OrbitDTO>()
@@ -76,7 +82,7 @@ namespace Sas.BodySystem.Tests
             _bodyRepositoryMock.Setup(mock => mock.GetAllAsync())
                 .ReturnsAsync(new List<BodyDocument>());
 
-            _mapperMock.Setup(mock => mock.Map<BodySystemDTO>(It.IsAny<Sas.Domain.Models.Bodies.BodySystem>()))
+            _mapperMock.Setup(mock => mock.Map<BodySystemOutputData>(It.IsAny<Sas.Domain.Models.Bodies.BodySystem>()))
                 .Returns(_bodySystemDTOs);
         }
 
@@ -111,7 +117,7 @@ namespace Sas.BodySystem.Tests
             result.Should().NotBeNull();
             OkObjectResult okResult = result.Should().BeOfType<OkObjectResult>().Subject;
             okResult.StatusCode.Should().Be(200);
-            BodySystemDTO data = okResult.Value.Should().BeAssignableTo<BodySystemDTO>().Subject;
+            BodySystemOutputData data = okResult.Value.Should().BeAssignableTo<BodySystemOutputData>().Subject;
             data.Bodies.Should().HaveCount(2);
             data.Orbits.Should().HaveCount(0); // TODO: test it!
             _bodyRepositoryMock.Verify(mock => mock.GetAllAsync(), Times.Once());
@@ -126,7 +132,7 @@ namespace Sas.BodySystem.Tests
             SetupMocksBodyDtoToBodyDocument();
             BodySystemController controller = new BodySystemController(_bodyRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
             // Act
-            IActionResult result = await controller.CreateBodySystem(_bodyDtoTestData).ConfigureAwait(false);
+            IActionResult result = await controller.CreateBodySystem(_bodySystemInputData).ConfigureAwait(false);
 
             typeof(BodySystemController).Methods()
                 .ThatReturn<IActionResult>()
@@ -134,7 +140,7 @@ namespace Sas.BodySystem.Tests
                 .Should().BeAsync();
             result.Should().NotBeNull();
             OkObjectResult okResult = result.Should().BeOfType<OkObjectResult>().Subject;
-            BodySystemDTO data = okResult.Value.Should().BeAssignableTo<BodySystemDTO>().Subject;
+            BodySystemOutputData data = okResult.Value.Should().BeAssignableTo<BodySystemOutputData>().Subject;
             data.Bodies.Should().HaveCount(2);
             _bodyRepositoryMock.Verify(mock => mock.CreateOrReplaceAsync(It.IsAny<IEnumerable<BodyDocument>>()), Times.Once());
             _mapperMock.Verify(mock => mock.Map<IEnumerable<BodyDocument>>(It.IsAny<IEnumerable<BodyDTO>>()), Times.Once());

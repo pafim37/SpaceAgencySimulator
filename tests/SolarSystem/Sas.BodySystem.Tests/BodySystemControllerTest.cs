@@ -21,7 +21,7 @@ namespace Sas.BodySystem.Tests
         private readonly Mock<ILogger<BodySystemController>> _loggerMock = new();
 
 
-        private static BodyDTO _bodyDto1 = new BodyDTO()
+        private static readonly BodyDTO BodyDto1 = new()
         {
             Name = "BodyDTO1",
             Mass = 1,
@@ -30,7 +30,7 @@ namespace Sas.BodySystem.Tests
             Radius = 1,
         };
 
-        private static BodyDTO _bodyDto2 = new BodyDTO()
+        private static readonly BodyDTO BodyDto2 = new()
         {
             Name = "BodyDTO2",
             Mass = 2,
@@ -39,7 +39,7 @@ namespace Sas.BodySystem.Tests
             Radius = 2,
         };
 
-        private static Body _body1 => new Body()
+        private static Body Body1 => new()
         {
             Name = "Body1",
             Mass = 1,
@@ -47,7 +47,7 @@ namespace Sas.BodySystem.Tests
             Velocity = Vector.Ones,
             Radius = 1,
         };
-        private static Body _body2 => new Body()
+        private static Body Body2 => new()
         {
             Name = "Body2",
             Mass = 2,
@@ -56,26 +56,26 @@ namespace Sas.BodySystem.Tests
             Radius = 2,
         };
 
-        private static IEnumerable<Body> _bodyTestData => new List<Body>() {
-            _body1,
-            _body2
+        private static IEnumerable<Body> BodyTestData => new List<Body>() {
+            Body1,
+            Body2
         };
 
-        private static IEnumerable<BodyDTO> _bodyDtoTestData => new List<BodyDTO>() {
-            _bodyDto1,
-            _bodyDto2
+        private static IEnumerable<BodyDTO> BodyDtoTestData => new List<BodyDTO>() {
+            BodyDto1,
+            BodyDto2
         };
 
-        private static BodySystemInputData _bodySystemInputData => new BodySystemInputData()
+        private static BodySystemInputData BodySystemInputData => new()
         {
             GravitationalConstant = Constants.G,
-            Bodies = _bodyDtoTestData.ToList()
+            Bodies = BodyDtoTestData.ToList()
         };
 
-        private static BodySystemOutputData _bodySystemDTOs => new BodySystemOutputData()
+        private static BodySystemOutputData BodySystemDTOs => new()
         {
             GravitationalConstant = Constants.G,
-            Bodies = _bodyDtoTestData.ToList(),
+            Bodies = BodyDtoTestData.ToList(),
             Orbits = new List<OrbitDTO>()
         };
 
@@ -85,13 +85,13 @@ namespace Sas.BodySystem.Tests
                 .ReturnsAsync(new List<BodyDocument>());
 
             _mapperMock.Setup(mock => mock.Map<BodySystemOutputData>(It.IsAny<Sas.Domain.Models.Bodies.BodySystem>()))
-                .Returns(_bodySystemDTOs);
+                .Returns(BodySystemDTOs);
         }
 
         private void SetupMocksBodyDocumentToBody()
         {
             _mapperMock.Setup(mock => mock.Map<IEnumerable<Body>>(It.IsAny<IEnumerable<BodyDocument>>()))
-                .Returns(_bodyTestData);
+                .Returns(BodyTestData);
         }
 
         private void SetupMocksBodyDtoToBodyDocument()
@@ -103,7 +103,6 @@ namespace Sas.BodySystem.Tests
         [Fact]
         public async Task GetBodySystemReturnsBodySystem()
         {
-            // Arrange
             SetupMocks();
             SetupMocksBodyDocumentToBody();
             BodySystemController controller = new BodySystemController(_bodyRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
@@ -121,7 +120,7 @@ namespace Sas.BodySystem.Tests
             okResult.StatusCode.Should().Be(200);
             BodySystemOutputData data = okResult.Value.Should().BeAssignableTo<BodySystemOutputData>().Subject;
             data.Bodies.Should().HaveCount(2);
-            data.Orbits.Should().HaveCount(0); // TODO: test it!
+            data.Orbits.Should().HaveCount(0);
             data.GravitationalConstant.Should().Be(Constants.G);
             _bodyRepositoryMock.Verify(mock => mock.GetAllAsync(), Times.Once());
             _mapperMock.Verify(mock => mock.Map<IEnumerable<Body>>(It.IsAny<IEnumerable<BodyDocument>>()), Times.Once());
@@ -135,7 +134,7 @@ namespace Sas.BodySystem.Tests
             SetupMocksBodyDtoToBodyDocument();
             BodySystemController controller = new BodySystemController(_bodyRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
             // Act
-            IActionResult result = await controller.CreateBodySystem(_bodySystemInputData).ConfigureAwait(false);
+            IActionResult result = await controller.CreateBodySystem(BodySystemInputData).ConfigureAwait(false);
 
             typeof(BodySystemController).Methods()
                 .ThatReturn<IActionResult>()

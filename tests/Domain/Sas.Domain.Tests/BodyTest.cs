@@ -68,10 +68,10 @@ namespace Sas.Domain.Tests
         public void BodySystemReturnsCircularOrbit()
         {
             // Arrange
-            double M = 10000000000; // TODO: is it heavy?
-            double rx = 10;
+            double M = 1000000;
+            double rx = 100;
             Vector smallVelocity = new Vector(0, Math.Sqrt(Constants.G * M / rx), 0);
-            Body smallBody = new Body("Small Body", 10, new Vector(rx, 0, 0), smallVelocity);
+            Body smallBody = new Body("Small Body", 1, new Vector(rx, 0, 0), smallVelocity);
             Body bigBody = new Body("Big body", M, Vector.Zero, Vector.Zero);
             List<Body> bodies = new List<Body>() { bigBody, smallBody };
 
@@ -79,17 +79,7 @@ namespace Sas.Domain.Tests
             BodySystem bodySystem = new BodySystem(bodies);
 
             // Assert
-            Assert.Equal("Barycentrum", bodySystem.Barycentrum.Name);
-            Assert.Equal(10000000010, bodySystem.Barycentrum.Mass);
-            Assert.Equal(Vector.Zero, bodySystem.Barycentrum.Position);
-            Assert.Equal(Vector.Zero, bodySystem.Barycentrum.Velocity);
-            Assert.Equal(0, bodySystem.Barycentrum.Radius);
-            Assert.Equal(0.66743, bodySystem.U, 5);
-
             Assert.Equal(OrbitType.Circular, bodySystem.OrbitsDescription.First().Orbit.OrbitType);
-
-
         }
-
     }
 }

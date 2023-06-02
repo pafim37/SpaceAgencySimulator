@@ -8,6 +8,7 @@ using Sas.BodySystem.Service.DAL;
 using Sas.BodySystem.Service.Documents;
 using Sas.BodySystem.Service.DTOs;
 using Sas.Domain.Models.Bodies;
+using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 using Xunit;
 
@@ -67,12 +68,13 @@ namespace Sas.BodySystem.Tests
 
         private static BodySystemInputData _bodySystemInputData => new BodySystemInputData()
         {
-            GravitationalConstant = 1,
+            GravitationalConstant = Constants.G,
             Bodies = _bodyDtoTestData.ToList()
         };
 
         private static BodySystemOutputData _bodySystemDTOs => new BodySystemOutputData()
         {
+            GravitationalConstant = Constants.G,
             Bodies = _bodyDtoTestData.ToList(),
             Orbits = new List<OrbitDTO>()
         };
@@ -120,6 +122,7 @@ namespace Sas.BodySystem.Tests
             BodySystemOutputData data = okResult.Value.Should().BeAssignableTo<BodySystemOutputData>().Subject;
             data.Bodies.Should().HaveCount(2);
             data.Orbits.Should().HaveCount(0); // TODO: test it!
+            data.GravitationalConstant.Should().Be(Constants.G);
             _bodyRepositoryMock.Verify(mock => mock.GetAllAsync(), Times.Once());
             _mapperMock.Verify(mock => mock.Map<IEnumerable<Body>>(It.IsAny<IEnumerable<BodyDocument>>()), Times.Once());
         }
@@ -142,6 +145,8 @@ namespace Sas.BodySystem.Tests
             OkObjectResult okResult = result.Should().BeOfType<OkObjectResult>().Subject;
             BodySystemOutputData data = okResult.Value.Should().BeAssignableTo<BodySystemOutputData>().Subject;
             data.Bodies.Should().HaveCount(2);
+            data.Orbits.Should().HaveCount(0);
+            data.GravitationalConstant.Should().Be(Constants.G);
             _bodyRepositoryMock.Verify(mock => mock.CreateOrReplaceAsync(It.IsAny<IEnumerable<BodyDocument>>()), Times.Once());
             _mapperMock.Verify(mock => mock.Map<IEnumerable<BodyDocument>>(It.IsAny<IEnumerable<BodyDTO>>()), Times.Once());
         }

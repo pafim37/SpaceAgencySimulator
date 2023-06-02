@@ -39,7 +39,7 @@ namespace Sas.Mathematica.Service
             _zO = 0;
         }
 
-        public void Cartesian(Vector vector)
+        public void SetPoint(Vector vector)
         {
             _x = vector.X - _xO;
             _y = vector.Y - _yO;

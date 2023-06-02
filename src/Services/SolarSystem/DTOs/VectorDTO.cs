@@ -1,6 +1,6 @@
-﻿namespace Sas.BodySystem.Service.Documents
+﻿namespace Sas.BodySystem.Service.DTOs
 {
-    public class VectorDocument
+    public class VectorDTO
     {
         public double X { get; set; }
         public double Y { get; set; }

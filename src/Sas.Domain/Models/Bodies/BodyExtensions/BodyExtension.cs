@@ -1,4 +1,5 @@
 ﻿using Sas.Domain.Models.Bodies;
+using Sas.Domain.Models.Orbits;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Domain.Bodies.BodyExtensions
@@ -12,9 +13,8 @@ namespace Sas.Domain.Bodies.BodyExtensions
         /// <returns>The relative position</returns>
         public static Vector GetPositionRelatedTo(this Body body, Body other)
         {
-            return other is not null ?
-                body.AbsolutePosition - other.AbsolutePosition :
-                throw new ArgumentNullException(nameof(body));
+            ArgumentNullException.ThrowIfNull(other, nameof(other));
+            return body.Position - other.Position;
         }
 
         /// <summary>
@@ -24,9 +24,8 @@ namespace Sas.Domain.Bodies.BodyExtensions
         /// <returns>The relative velocity</returns>
         public static Vector GetVelocityRelatedTo(this Body body, Body other)
         {
-            return other is not null ?
-                body.AbsoluteVelocity - other.AbsoluteVelocity :
-                throw new ArgumentNullException(nameof(body));
+            ArgumentNullException.ThrowIfNull(other, nameof(other));
+            return body.Velocity - other.Velocity;
         }
 
         /// <summary>
@@ -36,14 +35,10 @@ namespace Sas.Domain.Bodies.BodyExtensions
         /// <returns></returns>
         public static double GetSphereOfInfluenceRelatedTo(this Body body, Body other)
         {
-            if (other is not null)
-            {
-                double distance = (body.AbsolutePosition - other.AbsolutePosition).Magnitude;
-                double massRatio = Math.Pow(body.Mass / other.Mass, 0.4);
-                return distance * massRatio;
-            }
-            else
-                throw new ArgumentNullException(nameof(body));
+            ArgumentNullException.ThrowIfNull(other, nameof(other));
+            double distance = (body.Position - other.Position).Magnitude;
+            double massRatio = Math.Pow(body.Mass / other.Mass, 0.4);
+            return distance * massRatio;
         }
     }
 }

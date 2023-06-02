@@ -3,9 +3,9 @@
 using Microsoft.Extensions.Options;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.Data;
-using Sas.SolarSystem.Service.DAL;
-using Sas.SolarSystem.Service.Data;
-using Sas.SolarSystem.Service.Settings;
+using Sas.BodySystem.Service.DAL;
+using Sas.BodySystem.Service.Data;
+using Sas.BodySystem.Service.Settings;
 
 namespace Sas.Sandbox.Process
 {
@@ -18,6 +18,10 @@ namespace Sas.Sandbox.Process
             // General Configuration
             builder.Configuration.AddJsonFile("config.json");
 
+            // Logging
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+
             // Astronomy Service
             builder.Services.AddScoped<AstronomyContext>();
 
@@ -25,10 +29,18 @@ namespace Sas.Sandbox.Process
             builder.Services.AddScoped<ObservationRepository>();
 
             // Solar System Service
-            builder.Services.Configure<SolarSystemDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
-            builder.Services.AddSingleton<SolarSystemDatabaseSettings>(x => x.GetRequiredService<IOptions<SolarSystemDatabaseSettings>>().Value);
-            builder.Services.AddSingleton<ISolarSystemContext, SolarSystemContext>();
-            builder.Services.AddScoped<ICelestialBodyRepository, CelestialBodyRepository>();
+            builder.Services.Configure<BodyDatabaseSettings>(builder.Configuration.GetRequiredSection("DatabaseSettings"));
+            builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<BodyDatabaseSettings>>().Value);
+            builder.Services.AddSingleton<IBodyContext, BodyContext>();
+            builder.Services.AddScoped<IBodyRepository, BodyRepository>();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("http://localhost:3000")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod());
+            });
 
             // Controllers
             builder.Services.AddControllers()
@@ -47,6 +59,8 @@ namespace Sas.Sandbox.Process
             app.UseRouting();
 
             app.MapControllers();
+
+            app.UseCors("AllowSpecificOrigin");
 
             app.Run();
         }

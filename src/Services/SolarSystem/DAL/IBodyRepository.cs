@@ -11,5 +11,6 @@ namespace Sas.BodySystem.Service.DAL
         Task<IEnumerable<BodyDocument>> CreateOrReplaceAsync(IEnumerable<BodyDocument> bodies);
         Task ReplaceAsync(string name, BodyDocument body);
         Task RemoveAsync(string name);
+        Task RemoveManyAsync(IEnumerable<string?> names);
     }
 }

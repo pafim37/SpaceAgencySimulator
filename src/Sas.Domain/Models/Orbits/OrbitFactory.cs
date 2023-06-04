@@ -2,7 +2,6 @@
 using Sas.Domain.Models.Bodies;
 using Sas.Domain.Models.Orbits.Primitives;
 using Sas.Mathematica.Service;
-using Sas.Mathematica.Service.Matrices;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Domain.Models.Orbits
@@ -12,7 +11,6 @@ namespace Sas.Domain.Models.Orbits
         public static Orbit CalculateOrbit(Vector position, Vector velocity, double u)
         {
             double e = GetEccentricity(position, velocity, u);
-            e = Math.Round(e, 5);
             OrbitType type = GetOrbitType(e);
             return type switch
             {

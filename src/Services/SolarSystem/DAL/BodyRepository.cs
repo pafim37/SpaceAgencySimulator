@@ -70,5 +70,11 @@ namespace Sas.BodySystem.Service.DAL
         {
             await _context.CelestialBodies.DeleteOneAsync(b => b.Name!.Equals(name));
         }
+
+        public async Task RemoveManyAsync(IEnumerable<string?> names)
+        {
+            FilterDefinition<BodyDocument> filter = Builders<BodyDocument>.Filter.In(x => x.Name, names);
+            await _context.CelestialBodies.DeleteManyAsync(filter);
+        }
     }
 }

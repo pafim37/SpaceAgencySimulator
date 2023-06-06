@@ -20,12 +20,6 @@ namespace Sas.BodySystem.Tests
         private readonly Mock<IMapper> _mapperMock = new();
         private readonly Mock<ILogger<BodySystemController>> _loggerMock = new();
 
-        //private static readonly List<BodyDocument> BodyDocuments = new()
-        //{
-        //    new BodyDocument { Name = "Sun", Mass = 10000, Position = new() {X = 0, Y = 0, Z =0 }, Velocity = new() {X = 0, Y = 0, Z =0 }, Radius = 10 },
-        //    new BodyDocument { Name = "Earth", Mass = 10, Position = new() {X = 100, Y = 0, Z =0 }, Velocity = new() {X = 0, Y = 2, Z =0 }, Radius = 1 },
-        //};
-
         private static readonly BodySystemInputData BodySystemInputData = new()
         {
             GravitationalConstant = 1,
@@ -36,12 +30,23 @@ namespace Sas.BodySystem.Tests
             }
         };
 
+        private static readonly BodySystemOutputData BodySystemOutputData = new()
+        {
+            GravitationalConstant = 1,
+            Bodies = new List<BodyDTO>()
+            {
+                new BodyDTO() { Name = "Sun", Mass = 10000, Position = new() {X = 0, Y = 0, Z =0 }, Velocity = new() {X = 0, Y = 0, Z =0 }, Radius = 10 },
+                new BodyDTO() { Name = "Earth", Mass = 10, Position = new() {X = 100, Y = 0, Z =0 }, Velocity = new() {X = 0, Y = 2, Z =0 }, Radius = 1 }
+            },
+            Orbits = new List<OrbitDTO>()
+        };
+
         private void SetupMocks()
         {
             _bodyRepositoryMock.Setup(mock => mock.GetAllAsync())
                 .ReturnsAsync(new List<BodyDocument>());
             _mapperMock.Setup(mock => mock.Map<BodySystemOutputData>(It.IsAny<Sas.Domain.Models.Bodies.BodySystem>()))
-                .Returns(new BodySystemOutputData());
+                .Returns(BodySystemOutputData);
             _mapperMock.Setup(mock => mock.Map<IEnumerable<Body>>(It.IsAny<IEnumerable<BodyDocument>>()))
                 .Returns(new List<Body>());
             _mapperMock.Setup(mock => mock.Map<IEnumerable<BodyDocument>>(It.IsAny<IEnumerable<BodyDTO>>()))

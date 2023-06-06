@@ -45,7 +45,7 @@ namespace Sas.BodySystem.Service.Controllers
         }
 
         [HttpPost("save")]
-        public async Task<IActionResult> Save([FromBody] IEnumerable<BodyDTO> bodies) // TODO: no longer need gravitational const here
+        public async Task<IActionResult> Save([FromBody] IEnumerable<BodyDTO> bodies)
         {
             _logger.LogInformation("[POST] Save Bodies Request");
             await SaveBodies(bodies).ConfigureAwait(false);
@@ -54,13 +54,13 @@ namespace Sas.BodySystem.Service.Controllers
         }
 
         [HttpPost("create")]
-        public IActionResult Create([FromBody] BodySystemInputData inputData)
+        public Task<IActionResult> Create([FromBody] BodySystemInputData inputData)
         {
-            return CreateBodySystem(inputData.Bodies, inputData.GravitationalConstant);
+            return Task.FromResult(CreateBodySystem(inputData.Bodies, inputData.GravitationalConstant));
         }
 
         [HttpPost("synchronize")]
-        public async Task<IActionResult> Synchronize([FromBody] BodySystemInputData inputData) // TODO: no longer need gravitational const here
+        public async Task<IActionResult> Synchronize([FromBody] BodySystemInputData inputData)
         {
             _logger.LogInformation("[POST] Synchronize Request");
             IEnumerable<BodyDocument> bodiesFromDb = await _repository.GetAllAsync().ConfigureAwait(false);
@@ -84,9 +84,9 @@ namespace Sas.BodySystem.Service.Controllers
             _logger.LogInformation("[POST] Body System Request");
             IEnumerable<Body> bodyList = _mapper.Map<IEnumerable<Body>>(bodies);
             Sas.Domain.Models.Bodies.BodySystem bodySystem = new(bodyList, gravitationalConst);
-            BodySystemOutputData bodySystemDto = _mapper.Map<BodySystemOutputData>(bodySystem);
+            BodySystemOutputData bodySystemOutputData = _mapper.Map<BodySystemOutputData>(bodySystem);
             _logger.LogInformation("Successfully create body system");
-            return Ok(bodySystemDto);
+            return Ok(bodySystemOutputData);
         }
 
         private async Task SaveBodies(IEnumerable<BodyDTO> bodies)

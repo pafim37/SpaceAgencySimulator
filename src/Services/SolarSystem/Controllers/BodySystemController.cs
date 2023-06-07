@@ -71,14 +71,6 @@ namespace Sas.BodySystem.Service.Controllers
             return CreateBodySystem(commonBodies, inputData.GravitationalConstant);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteFromBodySystem([FromBody] string bodyName)
-        {
-            _logger.LogInformation("[DELETE] Body System Request");
-            await _repository.RemoveAsync(bodyName).ConfigureAwait(false);
-            return NoContent();
-        }
-
         private IActionResult CreateBodySystem(IEnumerable<BodyDTO> bodies, double gravitationalConst)
         {
             _logger.LogInformation("[POST] Body System Request");

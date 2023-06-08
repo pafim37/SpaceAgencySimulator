@@ -8,7 +8,7 @@ namespace Sas.BodySystem.Service.Profiles
     {
         public BodySystemProfile()
         {
-            var x = CreateMap<Sas.Domain.Models.Bodies.BodySystem, BodySystemOutputData>()
+            _ = CreateMap<Sas.Domain.Models.Bodies.BodySystem, BodySystemOutputData>()
                 .ForMember(src => src.Bodies, des => des.MapFrom(src => src.Bodies))
                 .ForMember(src => src.Orbits, des => des.MapFrom(src => src.OrbitsDescription))
                 .ForMember(src => src.GravitationalConstant, des => des.MapFrom(src => src.G))

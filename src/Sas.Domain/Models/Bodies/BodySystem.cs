@@ -132,12 +132,10 @@ namespace Sas.Domain.Models.Bodies
             {
                 var origin = resultBody.Position;
                 ReferenceSystem referenceSystem = new(origin);
-                var point = surroundedBody.GetPositionRelatedTo(resultBody);
-                referenceSystem.SetPoint(point);
+                referenceSystem.SetPoint(surroundedBody.Position);
                 var bodyAngle = referenceSystem.Phi;
                 rotationAngle = orbit.TrueAnomaly - bodyAngle;
-                var x = rotationAngle / Math.PI * 180;
-                center = new Vector(resultBody.Position.X + Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, 0);
+                center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, 0);
             }
             else if (orbit.OrbitType == OrbitType.Circular)
             {
@@ -147,21 +145,19 @@ namespace Sas.Domain.Models.Bodies
             {
                 var origin = resultBody.Position;
                 ReferenceSystem referenceSystem = new(origin);
-                var point = surroundedBody.GetPositionRelatedTo(resultBody);
-                referenceSystem.SetPoint(point);
+                referenceSystem.SetPoint(surroundedBody.Position);
                 var bodyAngle = referenceSystem.Phi;
-                rotationAngle = -orbit.TrueAnomaly + bodyAngle;
-                center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis.Value, orbit.MinDistance - orbit.SemiMajorAxis.Value, 0);
+                rotationAngle = orbit.TrueAnomaly + bodyAngle;
+                center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis.Value + Math.Cos(rotationAngle) * resultBody.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Parabolic)
             {
                 var origin = resultBody.Position;
                 ReferenceSystem referenceSystem = new(origin);
-                var point = surroundedBody.GetPositionRelatedTo(resultBody);
-                referenceSystem.SetPoint(point);
+                referenceSystem.SetPoint(surroundedBody.Position);
                 var bodyAngle = referenceSystem.Phi;
-                rotationAngle =bodyAngle;
-                center = new Vector(resultBody.Position.X, resultBody.Position.Y, 0);
+                rotationAngle = bodyAngle;
+                center = new Vector(resultBody.Position.Y, resultBody.Position.X, 0);
             }
             var orbitHolder = new OrbitHolder()
             {

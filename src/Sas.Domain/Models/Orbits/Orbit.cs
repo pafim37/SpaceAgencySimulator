@@ -1,6 +1,7 @@
 ﻿using Sas.Domain.Models.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
+using System.Runtime.Intrinsics.Arm;
 
 namespace Sas.Domain.Models.Orbits
 {
@@ -175,7 +176,10 @@ namespace Sas.Domain.Models.Orbits
 
         private double GetTrueAnomaly(Vector position, Vector velocity, double r, Vector eVector, double e)
         {
-            double phi = Math.Acos(Vector.DotProduct(eVector, position) / (e * r));
+            var dotProduct = Vector.DotProduct(eVector, position) / (e * r);
+            if (dotProduct < -1) dotProduct = -1;
+            if (dotProduct > 1) dotProduct = 1;
+            double phi = Math.Acos(dotProduct);
             return Vector.DotProduct(position, velocity) >= 0 ? phi : 2 * Math.PI - phi;
         }
 

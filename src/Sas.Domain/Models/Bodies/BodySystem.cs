@@ -9,11 +9,11 @@ namespace Sas.Domain.Models.Bodies
     public class BodySystem
     {
         #region fields
-
+        private const double TwoBodyProblemMassRatioLimit = 0.03;
+        private const string BarycentrumName = "Barycentrum";
         private readonly List<Body> _bodies;
         private readonly List<OrbitHolder> _orbitsDescription;
         private readonly double _G; // gravitational constant
-
         #endregion
 
         #region properties
@@ -44,7 +44,6 @@ namespace Sas.Domain.Models.Bodies
         #endregion
 
         #region public methods
-
         /// <summary>
         /// Adds a new body to the system
         /// </summary>
@@ -102,7 +101,7 @@ namespace Sas.Domain.Models.Bodies
                         }
                     }
                 }
-                if (surroundedBody.Mass / resultBody.Mass < 0.03)  // TODO: remove this hardcoded value
+                if (surroundedBody.Mass / resultBody.Mass < TwoBodyProblemMassRatioLimit)  // TODO: remove this hardcoded value
                 {
                     AddBodyToSystem(surroundedBody, resultBody);
                 }
@@ -130,12 +129,8 @@ namespace Sas.Domain.Models.Bodies
             double rotationAngle = 0;
             if (orbit.OrbitType == OrbitType.Elliptic)
             {
-                var origin = resultBody.Position;
-                ReferenceSystem referenceSystem = new(origin);
-                referenceSystem.SetPoint(surroundedBody.Position);
-                var bodyAngle = referenceSystem.Phi;
-                rotationAngle = orbit.TrueAnomaly - bodyAngle;
-                center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, 0);
+                rotationAngle = orbit.RotationAngle.Value;
+                center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Circular)
             {
@@ -143,20 +138,12 @@ namespace Sas.Domain.Models.Bodies
             }
             else if (orbit.OrbitType == OrbitType.Hyperbolic)
             {
-                var origin = resultBody.Position;
-                ReferenceSystem referenceSystem = new(origin);
-                referenceSystem.SetPoint(surroundedBody.Position);
-                var bodyAngle = referenceSystem.Phi;
-                rotationAngle = orbit.TrueAnomaly + bodyAngle;
+                rotationAngle = -orbit.RotationAngle.Value;
                 center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis.Value + Math.Cos(rotationAngle) * resultBody.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Parabolic)
             {
-                var origin = resultBody.Position;
-                ReferenceSystem referenceSystem = new(origin);
-                referenceSystem.SetPoint(surroundedBody.Position);
-                var bodyAngle = referenceSystem.Phi;
-                rotationAngle = bodyAngle;
+                rotationAngle = orbit.RotationAngle.Value;
                 center = new Vector(resultBody.Position.Y, resultBody.Position.X, 0);
             }
             var orbitHolder = new OrbitHolder()
@@ -177,7 +164,7 @@ namespace Sas.Domain.Models.Bodies
             }
             double totalMass = _bodies.Sum(body => body.Mass);
             position = 1 / totalMass * position;
-            return new Body("Barycentrum", totalMass, position, Vector.Zero); // TODO: remove this hardcoced value
+            return new Body(BarycentrumName, totalMass, position, Vector.Zero);
         }
         private double GetU()
         {

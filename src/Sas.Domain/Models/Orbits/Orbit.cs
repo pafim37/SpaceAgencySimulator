@@ -22,8 +22,8 @@ namespace Sas.Domain.Models.Orbits
         protected double _m;       // mass 
         protected double _period;  // period
         protected double _radius;  // radius
-        protected double _rp;      // peri
-
+        protected double _rMin;      // peri
+        protected double _rotation;// orbit rotation
         #endregion
 
         #region properties
@@ -97,7 +97,12 @@ namespace Sas.Domain.Models.Orbits
         /// <summary>
         /// Minimal distance between focus and point on orbit
         /// </summary>
-        public double MinDistance => _rp;
+        public double MinDistance => _rMin;
+
+        /// <summary>
+        /// TODO:
+        /// </summary>
+        public double? RotationAngle => _rotation;
 
         #endregion
 
@@ -135,6 +140,8 @@ namespace Sas.Domain.Models.Orbits
         protected abstract double? GetPeriod();
         protected abstract double? GetSemiMajorAxis();
         protected abstract double? GetSemiMinorAxis();
+        protected abstract double GetMeanAnomaly(double e, double ae);
+        protected abstract double GetEccentricAnomaly(double e, double phi);
         #endregion
 
         #region private methods
@@ -151,15 +158,16 @@ namespace Sas.Domain.Models.Orbits
             Vector eVector = 1 / u * Vector.CrossProduct(velocity, hVector) - 1 / r * position;
             double e = eVector.Magnitude;
             double b = a * Math.Sqrt(1 - e * e);
-            double phi = GetTrueAnomaly(position, velocity, r, eVector, e);
+            double phi = GetTrueAnomaly(position, velocity, eVector, e);
             double ae = GetEccentricAnomaly(e, phi);
             double m = GetMeanAnomaly(e, ae);
             double p = h * h / u;
-            double rp = p / (1 + e);
+            double rMin = p / (1 + e);
+            double i = GetInclination(hVector, h);
             _a = a;
             _b = b;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
-            _i = GetInclination(hVector, h); ;
+            _i = i;
             _omega = GetAscendingNode(nVector, n);
             _w = GetArgumentOfPeriapsis(eVector, e, nVector, n);
             _phi = phi;
@@ -168,15 +176,20 @@ namespace Sas.Domain.Models.Orbits
             _p = p;
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
-            _rp = rp;
+            _rMin = rMin;
+            _rotation = FindRotationAngle(position, phi, i);
         }
 
-        protected abstract double GetMeanAnomaly(double e, double ae);
-        protected abstract double GetEccentricAnomaly(double e, double phi);
-
-        private double GetTrueAnomaly(Vector position, Vector velocity, double r, Vector eVector, double e)
+        private double FindRotationAngle(Vector position, double phi, double i)
         {
-            var dotProduct = Vector.DotProduct(eVector, position) / (e * r);
+            ReferenceSystem rs = new();
+            rs.SetPoint(position);
+            return double.IsNaN(i) ? rs.Phi : Math.Cos(i) * phi - rs.Phi;
+        }
+
+        private double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)
+        {
+            var dotProduct = Vector.DotProduct(eVector, position) / (e * position.Magnitude);
             if (dotProduct < -1) dotProduct = -1;
             if (dotProduct > 1) dotProduct = 1;
             double phi = Math.Acos(dotProduct);
@@ -209,7 +222,6 @@ namespace Sas.Domain.Models.Orbits
                 return double.NaN;
             }
         }
-
         #endregion
     }
 }

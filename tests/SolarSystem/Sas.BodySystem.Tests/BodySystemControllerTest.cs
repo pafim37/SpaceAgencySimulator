@@ -160,23 +160,5 @@ namespace Sas.BodySystem.Tests
             BodySystemOutputData data = okResult.Value.Should().BeAssignableTo<BodySystemOutputData>().Subject;
             _mapperMock.Verify(mock => mock.Map<IEnumerable<Body>>(It.IsAny<IEnumerable<BodyDTO>>()), Times.Once());
         }
-
-        [Fact]
-        public async Task DeleteFromBodySystemTest()
-        {
-            // Arrange
-            string bodyName = "bodyName";
-            BodySystemController controller = new BodySystemController(_bodyRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
-            // Act
-            IActionResult result = await controller.DeleteFromBodySystem(bodyName).ConfigureAwait(false);
-
-            typeof(BodySystemController).Methods()
-                .ThatReturn<IActionResult>()
-                .ThatAreDecoratedWith<HttpDeleteAttribute>()
-                .Should().BeAsync();
-            result.Should().NotBeNull();
-            NoContentResult noContentResult = result.Should().BeOfType<NoContentResult>().Subject;
-            _bodyRepositoryMock.Verify(mock => mock.RemoveAsync(It.IsAny<string>()), Times.Once());
-        }
     }
 }

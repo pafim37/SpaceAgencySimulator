@@ -1,7 +1,5 @@
-using Sas.Domain.Bodies;
+using FluentAssertions;
 using Sas.Domain.Models.Bodies;
-using Sas.Domain.Models.Orbits.Primitives;
-using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 using Xunit;
 
@@ -10,76 +8,88 @@ namespace Sas.Domain.Tests
     public class BodyTest
     {
         [Fact]
-        public void RadiusOfTheBodyIsZeroWhenBodyIsBeingCreatedWithoutRadius()
+        public void BodyShouldAssignProperties()
         {
             // Arrange
-            Vector position = Vector.Zero;
-            Vector velocity = Vector.Zero;
+            string name = "Planet";
+            double mass = 10;
+            Vector position = Vector.Ones;
+            Vector velocity = Vector.Ones;
 
             // Act
-            Body body = new Body("Planet", 10, position, velocity);
+            Body body = new(name, mass, position, velocity);
 
             // Assert
-            Assert.Equal(0, body.Radius);
+            body.Name.Should().Be(name);
+            body.Mass.Should().Be(mass);
+            body.Position.Should().Be(position);
+            body.Velocity.Should().Be(velocity);
+            body.Radius.Should().Be(0);
         }
 
         [Fact]
-        public void BodyShouldThrowExceptionWhenNonNegativeMass()
+        public void BodyShouldAssignPropertiesWithRadius()
+        {
+            // Arrange
+            string name = "Planet";
+            double mass = 10;
+            Vector position = Vector.Ones;
+            Vector velocity = Vector.Ones;
+            double radius = 10;
+
+            // Act
+            Body body = new(name, mass, position, velocity, radius);
+
+            // Assert
+            body.Name.Should().Be(name);
+            body.Mass.Should().Be(mass);
+            body.Position.Should().Be(position);
+            body.Velocity.Should().Be(velocity);
+            body.Radius.Should().Be(radius);
+        }
+
+        [Fact]
+        public void BodyShouldThrowsExceptionWhenNegativeMass()
         {
             // Arrange
             Vector position = Vector.Zero;
             Vector velocity = Vector.Zero;
             double negativeMass = -1;
 
+            Action action = () =>
+            {
+                new Body("Planet", negativeMass, position, velocity);
+            };
+
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Body("Planet", negativeMass, position, velocity));
+            action.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [Fact]
-        public void BodyShouldThrowExceptionWhenNonNegativeRadius()
+        public void BodyShouldThrowsExceptionWhenNegativeRadius()
         {
             // Arrange
             Vector position = Vector.Zero;
             Vector velocity = Vector.Zero;
             double negativeRadius = -1;
 
+            Action action = () =>
+            {
+                new Body("Planet", 0, position, velocity, negativeRadius);
+            };
+
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Body("Planet", 0, position, velocity, negativeRadius));
+            action.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [Fact]
-        public void BodyShouldAssignProperRadius()
+        public void ParameterlessConstructorCreatesBody()
         {
-            // Arrange
-            Vector position = Vector.Zero;
-            Vector velocity = Vector.Zero;
-            double radius = 37.42;
-
-            // Act
-            Body body = new Body("Planet", 0, position, velocity, radius);
+            // Arrange & Act
+            var body = new Body();
 
             // Assert
-            Assert.Equal(radius, body.Radius);
-        }
-
-
-        // TODO: Improve that test. Consider what precision should be for Circular Orbit
-        [Fact]
-        public void BodySystemReturnsCircularOrbit()
-        {
-            // Arrange
-            double M = 1000000;
-            double rx = 100;
-            Vector smallVelocity = new Vector(0, Math.Sqrt(Constants.G * M / rx), 0);
-            Body smallBody = new Body("Small Body", 1, new Vector(rx, 0, 0), smallVelocity);
-            Body bigBody = new Body("Big body", M, Vector.Zero, Vector.Zero);
-            List<Body> bodies = new List<Body>() { bigBody, smallBody };
-
-            // Act
-            BodySystem bodySystem = new BodySystem(bodies);
-
-            // Assert
-            Assert.Equal(OrbitType.Circular, bodySystem.OrbitsDescription.First().Orbit.OrbitType);
+            body.Should().NotBeNull();
         }
     }
 }

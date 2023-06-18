@@ -5,7 +5,6 @@ namespace Sas.Domain.Models.Bodies
     public class Body
     {
         #region properties
-
         /// <summary>
         /// Name of the body. Should be unique
         /// </summary>
@@ -30,11 +29,9 @@ namespace Sas.Domain.Models.Bodies
         /// Radius of the body
         /// </summary>
         public double Radius { get; set; }
-
         #endregion
 
         #region constructors
-
         /// <summary>
         /// Constructor of the BodyPoint
         /// </summary>
@@ -63,12 +60,9 @@ namespace Sas.Domain.Models.Bodies
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
         }
-
         #endregion
 
         #region private methods
-
-        // TODO (pafim37): Consider if it should be extract
         private void IsNotNegative(double value)
         {
             if (value < 0)
@@ -76,7 +70,6 @@ namespace Sas.Domain.Models.Bodies
                 throw new ArgumentOutOfRangeException($"Negative number name of {nameof(value)}");
             }
         }
-
         #endregion
     }
 }

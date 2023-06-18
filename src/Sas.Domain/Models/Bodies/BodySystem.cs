@@ -101,7 +101,7 @@ namespace Sas.Domain.Models.Bodies
                         }
                     }
                 }
-                if (surroundedBody.Mass / resultBody.Mass < TwoBodyProblemMassRatioLimit)  // TODO: remove this hardcoded value
+                if (surroundedBody.Mass / resultBody.Mass < TwoBodyProblemMassRatioLimit)
                 {
                     AddBodyToSystem(surroundedBody, resultBody);
                 }
@@ -119,7 +119,7 @@ namespace Sas.Domain.Models.Bodies
                 body.Position -= barycenter.Position;
             }
         }
-        private void AddBodyToSystem(Body surroundedBody, Body? resultBody)
+        private void AddBodyToSystem(Body surroundedBody, Body resultBody)
         {
             var orbit = OrbitFactory.CalculateOrbit(
                 surroundedBody.GetPositionRelatedTo(resultBody),
@@ -129,8 +129,8 @@ namespace Sas.Domain.Models.Bodies
             double rotationAngle = 0;
             if (orbit.OrbitType == OrbitType.Elliptic)
             {
-                rotationAngle = orbit.RotationAngle.Value;
-                center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
+                rotationAngle = orbit.RotationAngle;
+                center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis!.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Circular)
             {
@@ -138,12 +138,12 @@ namespace Sas.Domain.Models.Bodies
             }
             else if (orbit.OrbitType == OrbitType.Hyperbolic)
             {
-                rotationAngle = -orbit.RotationAngle.Value;
-                center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis.Value + Math.Cos(rotationAngle) * resultBody.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
+                rotationAngle = -orbit.RotationAngle;
+                center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis!.Value + Math.Cos(rotationAngle) * resultBody.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Parabolic)
             {
-                rotationAngle = orbit.RotationAngle.Value;
+                rotationAngle = orbit.RotationAngle;
                 center = new Vector(resultBody.Position.Y, resultBody.Position.X, 0);
             }
             var orbitHolder = new OrbitHolder()

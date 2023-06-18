@@ -3,7 +3,6 @@ using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Mathematica.Tests
 {
-    // change to XSunit test
     [TestFixture]
     public class VectorTest
     {

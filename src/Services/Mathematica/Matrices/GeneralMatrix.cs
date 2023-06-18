@@ -3,7 +3,7 @@
     public class GeneralMatrix
     {
         private double[] _elements;
-        private int _dim;
+        private readonly int _dim;
 
         public double[] GetElements() => _elements;
         public int GetDimension() => _dim;
@@ -90,7 +90,7 @@
             {
                 for (int col = 0; col < dim; col++)
                 {
-                    var minor = CreateMinor(this, row, col);
+                    GeneralMatrix minor = CreateMinor(this, row, col);
                     tmpElements[row * dim + col] = Math.Pow(-1, row + col) * minor.Determinant;
                 }
             }

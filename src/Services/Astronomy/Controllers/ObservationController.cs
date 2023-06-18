@@ -28,8 +28,8 @@ namespace Sas.Astronomy.Service.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var observations = await _repository.GetAsync();
-            var result = _mapper.Map<List<ObservationDTO>>(observations);
+            IEnumerable<ObservationEntity> observations = await _repository.GetAsync();
+            List<ObservationDTO> result = _mapper.Map<List<ObservationDTO>>(observations);
             return result != null ? Ok(result) : NoContent();
         }
 
@@ -41,15 +41,15 @@ namespace Sas.Astronomy.Service.Controllers
         [HttpGet("{name}")]
         public async Task<IActionResult> Get(string name)
         {
-            var observations = await _repository.GetAsync(name);
-            var result = _mapper.Map<List<ObservationDTO>>(observations);
+            IEnumerable<ObservationEntity> observations = await _repository.GetAsync(name);
+            List<ObservationDTO> result = _mapper.Map<List<ObservationDTO>>(observations);
             return result != null ? Ok(result) : NoContent();
         }
 
         [HttpGet("extend/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var observation = await _repository.GetAsync(id);
+            ObservationEntity observation = await _repository.GetAsync(id);
 
             Observatory observatory = new Observatory(observation.Observatory.Name, observation.Observatory.LatitudeRad, observation.Observatory.LongitudeRad, observation.Observatory.Height);
 
@@ -70,7 +70,7 @@ namespace Sas.Astronomy.Service.Controllers
         {
             if (observationDto is not null)
             {
-                var observation = _mapper.Map<ObservationEntity>(observationDto);
+                ObservationEntity observation = _mapper.Map<ObservationEntity>(observationDto);
                 await _repository.CreateAsync(observation);
                 return Created("create-observation", observationDto);
             }

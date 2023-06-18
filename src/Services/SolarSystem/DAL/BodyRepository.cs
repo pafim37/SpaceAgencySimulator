@@ -23,7 +23,7 @@ namespace Sas.BodySystem.Service.DAL
         // Read All
         public async Task<IEnumerable<BodyDocument>> GetAllAsync()
         {
-            var bodies = await _context.CelestialBodies.Find(b => true).ToListAsync();
+            List<BodyDocument> bodies = await _context.CelestialBodies.Find(b => true).ToListAsync();
             return bodies;
         }
 
@@ -47,7 +47,7 @@ namespace Sas.BodySystem.Service.DAL
             foreach (BodyDocument body in bodies)
             {
                 BodyDocument bodyToUpdate = await GetAsync(body.Name!).ConfigureAwait(false);
-                if(bodyToUpdate != null)
+                if (bodyToUpdate != null)
                 {
                     await ReplaceAsync(body.Name!, body).ConfigureAwait(false);
                 }

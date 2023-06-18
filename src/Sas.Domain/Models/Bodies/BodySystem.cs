@@ -121,7 +121,7 @@ namespace Sas.Domain.Models.Bodies
         }
         private void AddBodyToSystem(Body surroundedBody, Body resultBody)
         {
-            var orbit = OrbitFactory.CalculateOrbit(
+            Orbit orbit = OrbitFactory.CalculateOrbit(
                 surroundedBody.GetPositionRelatedTo(resultBody),
                 surroundedBody.GetVelocityRelatedTo(resultBody),
                 _G * (surroundedBody.Mass + resultBody.Mass));
@@ -146,7 +146,7 @@ namespace Sas.Domain.Models.Bodies
                 rotationAngle = orbit.RotationAngle;
                 center = new Vector(resultBody.Position.Y, resultBody.Position.X, 0);
             }
-            var orbitHolder = new OrbitHolder()
+            OrbitHolder orbitHolder = new OrbitHolder()
             {
                 Name = surroundedBody.Name,
                 Orbit = orbit,

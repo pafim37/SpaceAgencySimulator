@@ -86,7 +86,7 @@ namespace Sas.Domain.Tests
         public void ParameterlessConstructorCreatesBody()
         {
             // Arrange & Act
-            var body = new Body();
+            Body body = new Body();
 
             // Assert
             body.Should().NotBeNull();

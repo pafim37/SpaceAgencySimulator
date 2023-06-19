@@ -9,8 +9,6 @@ namespace Sas.Domain.Tests
     public class OrbitTest
     {
         [Fact]
-        // TODO: Earth in Apo and in Peri should return the same values for SemiMajorAxis
-        // TODO: where is the zero for true anomaly
         public void OrbitReturnsOrbitalElementsForEarthInApoapsis()
         {
             // Arrange

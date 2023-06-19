@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.DTOs;
+using Sas.Astronomy.Service.Models;
 using System.Text;
 
 namespace Sas.Astronomy.Service.Controllers
@@ -29,8 +30,8 @@ namespace Sas.Astronomy.Service.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var observatories = await _repository.GetAsync();
-            var result = _mapper.Map<List<ObservatoryDTO>>(observatories);
+            IEnumerable<ObservatoryEntity> observatories = await _repository.GetAsync();
+            List<ObservatoryDTO> result = _mapper.Map<List<ObservatoryDTO>>(observatories);
             return result != null ? Ok(result) : NoContent();
         }
 
@@ -51,34 +52,34 @@ namespace Sas.Astronomy.Service.Controllers
         [HttpPost("{IdOrName}/create-instant-observation")]
         public async Task<IActionResult> CreateObservation(string IdOrName, [FromBody] ObservationCreateInstantDTO observationCreateInstantDto)
         {
-            var observatory = await GetObservatory(IdOrName);
-            var observationDto = _mapper.Map<ObservationDTO>(observationCreateInstantDto);
+            ObservatoryDTO observatory = await GetObservatory(IdOrName);
+            ObservationDTO observationDto = _mapper.Map<ObservationDTO>(observationCreateInstantDto);
             observationDto.CreatedOn = DateTime.Now;
             observationDto.ObservatoryName = observatory.Name;
 
-            var data = new StringContent(
+            StringContent data = new StringContent(
                 JsonConvert.SerializeObject(observationDto),
                 Encoding.UTF8,
                 "application/json"
                 );
 
             string url = "https://localhost:5001/observation/create-observation";
-            var response = await _client.PostAsync(url, data);
+            HttpResponseMessage response = await _client.PostAsync(url, data);
 
             return Ok(response.StatusCode);
         }
-        
+
         private async Task<ObservatoryDTO> GetObservatory(string IdOrName)
         {
             ObservatoryDTO result;
             if (int.TryParse(IdOrName, out int id))
             {
-                var observatory = await _repository.GetAsync(id);
+                ObservatoryEntity observatory = await _repository.GetAsync(id);
                 result = _mapper.Map<ObservatoryDTO>(observatory);
             }
             else
             {
-                var observatory = await _repository.GetAsync(IdOrName);
+                ObservatoryEntity observatory = await _repository.GetAsync(IdOrName);
                 result = _mapper.Map<ObservatoryDTO>(observatory);
             }
 

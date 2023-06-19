@@ -1,6 +1,6 @@
 ﻿using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Common.Extesions
+namespace Sas.Mathematica.Service.Extensions
 {
     public static class ArrayExtension
     {

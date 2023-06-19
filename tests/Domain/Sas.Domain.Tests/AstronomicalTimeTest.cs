@@ -22,9 +22,9 @@ namespace Sas.Domain.Tests
                 //},
                 new object[]
                 {
-                    ConvertNumberToAngle.ToRads(ConvertAngleToNumber.GetDeg(20.2167f)), 
+                    ConvertAngle.DegToRad(20.2167f),
                     new DateTime(2012, 2, 13, 2, 30, 0),
-                    ConvertNumberToAngle.ToRads(ConvertAngleToNumber.GetDeg(200.26241475864445f))
+                    ConvertAngle.DegToRad(200.26241475864445f)
                 }
             };
 
@@ -36,7 +36,7 @@ namespace Sas.Domain.Tests
             AstronomicalClock astronomicalClock = new(localtime, longitude);
 
             // Act
-            var actualSiderealTime = astronomicalClock.SiderealTime;
+            double actualSiderealTime = astronomicalClock.SiderealTime;
 
             // Assert
             Assert.Equal(expectedSiderealTime, actualSiderealTime, 4);

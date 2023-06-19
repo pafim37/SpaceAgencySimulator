@@ -15,10 +15,10 @@ namespace Sas.Astronomy.Service.DAL
         // Read All
         public async Task<IEnumerable<ObservationEntity>> GetAsync()
         {
-            var observations = await _context.Set<ObservationEntity>().ToListAsync();
-            foreach (var observation in observations)
+            List<ObservationEntity> observations = await _context.Set<ObservationEntity>().ToListAsync();
+            foreach (ObservationEntity? observation in observations)
             {
-                var observatory = await _context.Set<ObservatoryEntity>().Where(x => x.Id == observation.ObservatoryId).FirstOrDefaultAsync();
+                ObservatoryEntity observatory = await _context.Set<ObservatoryEntity>().Where(x => x.Id == observation.ObservatoryId).FirstOrDefaultAsync();
                 observation.Observatory = observatory;
             }
             return observations;
@@ -27,7 +27,7 @@ namespace Sas.Astronomy.Service.DAL
         // Read by id
         public async Task<ObservationEntity> GetAsync(int id)
         {
-            var observation = await _context.Set<ObservationEntity>().Where(x => x.Id == id).FirstOrDefaultAsync();
+            ObservationEntity observation = await _context.Set<ObservationEntity>().Where(x => x.Id == id).FirstOrDefaultAsync();
             observation.Observatory = await _context.Set<ObservatoryEntity>().Where(x => x.Id == observation.ObservatoryId).FirstOrDefaultAsync();
             return observation;
         }
@@ -35,8 +35,8 @@ namespace Sas.Astronomy.Service.DAL
         // Read by object name
         public async Task<IEnumerable<ObservationEntity>> GetAsync(string objectName)
         {
-            var observations = await _context.Set<ObservationEntity>().Where(x => x.ObjectName.Equals(objectName)).ToListAsync();
-            foreach (var observation in observations)
+            List<ObservationEntity> observations = await _context.Set<ObservationEntity>().Where(x => x.ObjectName.Equals(objectName)).ToListAsync();
+            foreach (ObservationEntity? observation in observations)
             {
                 observation.Observatory = await _context.Set<ObservatoryEntity>().Where(x => x.Id == observation.ObservatoryId).FirstOrDefaultAsync();
             }

@@ -1,7 +1,6 @@
 ﻿using Sas.Domain.Models.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
-using System.Runtime.Intrinsics.Arm;
 
 namespace Sas.Domain.Models.Orbits
 {
@@ -22,12 +21,11 @@ namespace Sas.Domain.Models.Orbits
         protected double _m;       // mass 
         protected double _period;  // period
         protected double _radius;  // radius
-        protected double _rMin;      // peri
+        protected double _rMin;    // r - minimum
         protected double _rotation;// orbit rotation
         #endregion
 
         #region properties
-
         /// <summary>
         /// Type of the orbit
         /// </summary>
@@ -100,14 +98,12 @@ namespace Sas.Domain.Models.Orbits
         public double MinDistance => _rMin;
 
         /// <summary>
-        /// TODO:
+        /// The angle by which the orbit is rotated.
         /// </summary>
-        public double? RotationAngle => _rotation;
-
+        public double RotationAngle => _rotation;
         #endregion
 
         #region constructors
-
         /// <summary>
         /// Create Orbit from position and velocity
         /// </summary>
@@ -119,7 +115,6 @@ namespace Sas.Domain.Models.Orbits
             _u = u;
             AssignFileds(position, velocity);
         }
-
         #endregion
 
         #region public method
@@ -135,7 +130,9 @@ namespace Sas.Domain.Models.Orbits
             _u = u;
             AssignFileds(position, velocity);
         }
+        #endregion
 
+        #region protected abstracts
         protected abstract double? GetRadius();
         protected abstract double? GetPeriod();
         protected abstract double? GetSemiMajorAxis();
@@ -180,23 +177,22 @@ namespace Sas.Domain.Models.Orbits
             _rotation = FindRotationAngle(position, phi, i);
         }
 
-        private double FindRotationAngle(Vector position, double phi, double i)
+        private static double FindRotationAngle(Vector position, double phi, double i)
         {
-            ReferenceSystem rs = new();
-            rs.SetPoint(position);
+            ReferenceSystem rs = new(position);
             return double.IsNaN(i) ? rs.Phi : Math.Cos(i) * phi - rs.Phi;
         }
 
-        private double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)
+        private static double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)
         {
-            var dotProduct = Vector.DotProduct(eVector, position) / (e * position.Magnitude);
+            double dotProduct = Vector.DotProduct(eVector, position) / (e * position.Magnitude);
             if (dotProduct < -1) dotProduct = -1;
             if (dotProduct > 1) dotProduct = 1;
             double phi = Math.Acos(dotProduct);
             return Vector.DotProduct(position, velocity) >= 0 ? phi : 2 * Math.PI - phi;
         }
 
-        private double GetArgumentOfPeriapsis(Vector eVector, double e, Vector nVector, double n)
+        private static double GetArgumentOfPeriapsis(Vector eVector, double e, Vector nVector, double n)
         {
             return eVector.Z >= 0 ?
                 Math.Acos(Vector.DotProduct(nVector, eVector) / (n * e)) :
@@ -210,7 +206,7 @@ namespace Sas.Domain.Models.Orbits
                 double.NaN;
         }
 
-        private double GetAscendingNode(Vector nVector, double n)
+        private static double GetAscendingNode(Vector nVector, double n)
         {
             if (n != 0)
             {

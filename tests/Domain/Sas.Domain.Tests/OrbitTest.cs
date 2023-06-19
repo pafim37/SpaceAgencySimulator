@@ -34,15 +34,12 @@ namespace Sas.Domain.Tests
         [Fact]
         public void OrbitReturnsOrbitalElements()
         {
-            // Arrange
             Vector position = new Vector(5000, 10000, 2100);
             Vector velocity = new Vector(-5.922, 1.926, 3.246);
             double u = 398600;
 
-            // Act
             Orbit orbit = OrbitFactory.CalculateOrbit(position, velocity, u);
 
-            // Assert
             Assert.Equal(19198.3565, orbit.SemiMajorAxis!.Value, 4);
             Assert.Equal(0.4095, orbit.Eccentricity, 4);
             Assert.Equal(0.5302, orbit.Inclination, 4);

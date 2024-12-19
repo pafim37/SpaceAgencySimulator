@@ -1,19 +1,18 @@
-﻿namespace Sas.Mathematica.Service.Matrices
+﻿using Sas.Mathematica.Service.Vectors;
+
+namespace Sas.Mathematica.Service.Matrices
 {
     public class Matrix
     {
         #region Privates Fields
-
         private double[] _elements;
-        private int _dim;
+        private readonly int _dim;
         private int _numberOfRows;
         private int _numberOfColumns;
-        private bool _squareMatrix;
-
+        private readonly bool _squareMatrix;
         #endregion
 
         #region Constructors
-
         /// <summary>
         /// Constructor of the matrix
         /// </summary>
@@ -29,38 +28,39 @@
             if (numberOfRows == _numberOfColumns)
             {
                 _squareMatrix = true;
-                _dim = (int)Math.Sqrt(elements.Length);
+                _dim = numberOfRows;
             }
             else
             {
                 _squareMatrix = false;
             }
         }
-
         #endregion
 
-        #region Public Methods
-
-        /// <summary>
-        /// Gets all matrix element
-        /// </summary>
-        /// <returns></returns>
-        public double[] GetAllElements() => _elements;
-
+        #region Properties
         /// <summary>
         /// Gets number of rows
         /// </summary>
         /// <returns></returns>
-        public int GetNumberOfRows() => _numberOfRows;
+        public int RowsNumber { get { return _numberOfRows; } }
 
         /// <summary>
         /// Gets number of columns
         /// </summary>
         /// <returns></returns>
-        public int GetNumberOfColumns() => _numberOfColumns;
+        public int ColumnsNumber { get { return _numberOfColumns; } }
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
-        /// Gets dimension of the matrix if matrix is square
+        /// Returns all matrix element
+        /// </summary>
+        /// <returns></returns>
+        public double[] GetAllElements() => _elements;
+
+        /// <summary>
+        /// Returns dimension of the matrix if matrix is square
         /// </summary>
         /// <returns></returns>
         public int GetDimension()
@@ -101,9 +101,27 @@
         {
             get
             {
-                if (row >= 1 && row <= _numberOfRows && col >= 1 && col <= _numberOfColumns) return _elements[--row * _numberOfColumns + --col];
-                else throw new IndexOutOfRangeException();
+                if (row >= 1 && row <= _numberOfRows && col >= 1 && col <= _numberOfColumns)
+                {
+                    return _elements[--row * _numberOfColumns + --col];
+                }
+                else
+                {
+                    throw new IndexOutOfRangeException();
+                }
             }
+            set
+            {
+                if (row >= 1 && row <= _numberOfRows && col >= 1 && col <= _numberOfColumns)
+                {
+                    _elements[--row * _numberOfColumns + --col] = value;
+                }
+                else
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+
         }
 
         /// <summary>
@@ -169,17 +187,20 @@
                     tmpElements[row * dim + col] = Math.Pow(-1, row + col) * minor.GetDeterminant();
                 }
             }
-            Matrix cofactor = new Matrix(tmpElements, dim, dim);
+            Matrix cofactor = new(tmpElements, dim, dim);
             Matrix adjugate = cofactor.Transpose();
             Matrix invertedMatrix = 1 / det * adjugate;
             _elements = invertedMatrix.GetAllElements();
             return this;
         }
-
+        public Vector ToVector()
+        {
+            return new Vector(_elements);
+        }
         #endregion
 
-        #region Privates Methods
 
+        #region Privates Methods
         /// <summary>
         /// Calculate a determinant of the matrix
         /// </summary>
@@ -208,19 +229,19 @@
         }
 
         /// <summary>
-        /// Create a minor of matrix by remove row and column
+        /// Creates a minor of matrix by remove row and column
         /// </summary>
         /// <param name="matrix"></param>
         /// <param name="i">index of row to remove</param>
         /// <param name="j">index of col to remove</param>
         /// <returns></returns>
-        private Matrix CreateMinor(Matrix matrix, int i, int j)
+        private static Matrix CreateMinor(Matrix matrix, int i, int j)
         {
             double[] minorelements = CreateMinorElements(matrix, i, j).ToArray();
             return new Matrix(minorelements, matrix.GetDimension() - 1, matrix.GetDimension() - 1);
         }
 
-        private IEnumerable<double> CreateMinorElements(Matrix matrix, int i, int j)
+        private static IEnumerable<double> CreateMinorElements(Matrix matrix, int i, int j)
         {
             int dim = matrix.GetDimension();
             for (int row = 0; row < dim; row++)
@@ -238,20 +259,19 @@
         /// Check if arguments are valid
         /// </summary>
         /// <returns></returns>
-        private void AreArgumentsValid(double[] elements, int numberOfRows, int numberOfColumns)
+        private static void AreArgumentsValid(double[] elements, int numberOfRows, int numberOfColumns)
         {
-            if (elements is null) throw new ArgumentNullException(nameof(elements));
-
-            if (numberOfRows <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfRows));
-            if (numberOfColumns <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfColumns));
-
-            if (numberOfRows * numberOfColumns != elements.Length) throw new ArgumentOutOfRangeException("Bad number of elements for provided dimensions of matrix");
+            ArgumentNullException.ThrowIfNull(elements);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfRows);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColumns);
+            if (numberOfRows * numberOfColumns != elements.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(elements), "Bad number of elements for provided dimensions of matrix");
+            }
         }
-
         #endregion
 
         #region Operators
-
         /// <summary>
         /// Overloaded multiplication operator scalar and matrix
         /// </summary>
@@ -260,8 +280,8 @@
         /// <returns></returns>
         public static Matrix operator *(double s, Matrix matrix)
         {
-            int rows = matrix.GetNumberOfRows();
-            int cols = matrix.GetNumberOfColumns();
+            int rows = matrix.RowsNumber;
+            int cols = matrix.ColumnsNumber;
             double[] tmpMatrixElements = new double[rows * cols];
             for (int i = 0; i < rows * cols; i++)
             {
@@ -271,9 +291,48 @@
             return new Matrix(tmpMatrixElements, rows, cols);
         }
 
+        /// <summary>
+        /// Overloaded multiplication operator matrix and scalar
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static Matrix operator *(Matrix matrix, double s)
         {
             return s * matrix;
+        }
+
+        /// <summary>
+        /// Overloaded multiplication of matrix and matrix 
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static Matrix operator *(Matrix A, Matrix B)
+        {
+            int rowsA = A.RowsNumber;
+            int colsA = A.ColumnsNumber;
+            int rowsB = B.RowsNumber;
+            int colsB = B.ColumnsNumber;
+
+            if (colsA != rowsB)
+                throw new InvalidOperationException("Number of columns of the first matrix is not equal to the numbers of the rows of the secound matrix");
+
+            Matrix result = new(new double[rowsA * colsB], rowsA, colsB);
+
+            for (int i = 1; i <= rowsA; i++)
+            {
+                for (int j = 1; j <= colsB; j++)
+                {
+                    for (int k = 1; k <= colsA; k++)
+                    {
+                        result[i, j] += A[i, k] * B[k, j];
+                    }
+                }
+            }
+
+            return result;
         }
 
         #endregion
@@ -295,15 +354,15 @@
 
         public override bool Equals(object? obj)
         {
-            return obj is Matrix matrix &&
-                   _elements.SequenceEqual(matrix.GetAllElements()) &&
-                   _numberOfRows == matrix.GetNumberOfRows() &&
-                   _numberOfColumns == matrix.GetNumberOfColumns();
+            return obj is Matrix matrix
+                && _elements.SequenceEqual(matrix.GetAllElements())
+                && _numberOfRows == matrix.RowsNumber
+                && _numberOfColumns == matrix.ColumnsNumber;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_numberOfRows, _numberOfColumns, _elements);
+            return HashCode.Combine(_elements, _numberOfRows, _numberOfColumns);
         }
 
         #endregion

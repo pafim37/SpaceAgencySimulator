@@ -6,7 +6,11 @@
     public class Vector
     {
         private double[] _elements;
-        
+        private bool _isNormalize;
+        private double _magnitude;
+        private readonly int _dim;
+
+        #region constructors
         /// <summary>
         /// Constructor of the vector
         /// </summary>
@@ -14,6 +18,8 @@
         public Vector(params double[] elements)
         {
             _elements = elements;
+            _dim = elements.Length;
+            AssignFields();
         }
 
         /// <summary>
@@ -24,19 +30,40 @@
         /// <param name="z">Third component</param>
         public Vector(double x = 0, double y = 0, double z = 0)
         {
-            _elements = new double[3] {x, y, z};
+            _elements = [x, y, z];
+            _dim = 3;
+            AssignFields();
         }
 
         /// <summary>
         /// Vector zero 
         /// </summary>
         public static Vector Zero => new(0, 0, 0);
-        
+
         /// <summary>
         /// Vector unit 
         /// </summary>
         public static Vector Ones => new(1, 1, 1);
 
+        /// <summary>
+        /// Vector X = <1, 0, 0>
+        /// </summary>
+        public static Vector Ox => new(1, 0, 0);
+
+        /// <summary>
+        /// Vector Y = <0, 1, 0>
+        /// </summary>
+        public static Vector Oy => new(0, 1, 0);
+
+        /// <summary>
+        /// Vector Z = <0, 0, 1>
+        /// </summary>
+        public static Vector Oz => new(0, 0, 1);
+        
+
+        #endregion
+
+        #region properties
         /// <summary>
         /// Component x of the vector
         /// </summary>
@@ -44,18 +71,18 @@
         {
             get
             {
-                return _elements.Length > 0 ? _elements[0] : 0;
+                return _dim > 0 ? _elements[0] : 0;
             }
         }
 
         /// <summary>
         /// Component y of the vector
         /// </summary>
-        public double Y 
+        public double Y
         {
             get
             {
-                return _elements.Length > 1 ? _elements[1] : 0;
+                return _dim > 1 ? _elements[1] : 0;
             }
         }
 
@@ -66,34 +93,30 @@
         {
             get
             {
-                return _elements.Length > 2 ? _elements[2] : 0;
+                return _dim > 2 ? _elements[2] : 0;
             }
         }
+
+        /// <summary>
+        /// Returns length of the Vector
+        /// </summary>
+        public int Length => _dim;
 
         /// <summary>
         /// Magnitude of the vector
         /// </summary>
         /// <returns>Magnitude</returns>
-        public double Magnitude
-        {
-            get
-            {
-                double sum = 0;
-                for (int i = 0; i < _elements.Length; i++)
-                {
-                    sum += Math.Pow(_elements[i], 2);
-                }
-                return Math.Sqrt(sum);
-            }
-        }
+        public double Magnitude => _magnitude;
 
         /// <summary>
-        /// Returns length
+        /// Returns whether the vector is normalized
         /// </summary>
-        public int Length => _elements.Length;
+        public bool IsNormalize => _isNormalize;
+        #endregion
 
+        #region operators
         /// <summary>
-        /// 
+        /// Gets element of given index
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
@@ -220,7 +243,34 @@
         /// <param name="v1"></param>
         /// <param name="v2"></param>
         /// <returns></returns>
+        #endregion
+
+        #region static
         public static Vector CrossProduct(Vector v1, Vector v2) => new(v1.Y * v2.Z - v1.Z * v2.Y, v1.Z * v2.X - v1.X * v2.Z, v1.X * v2.Y - v1.Y * v2.X);
+        #endregion
+
+        #region public functions
+        /// <summary>
+        /// Returns vector elements
+        /// </summary>
+        /// <returns></returns>
+        public double[] GetElements()
+        {
+            return _elements;
+        }
+
+
+        /// <summary>
+        /// Normalize the vector. Has no effect if vector is currently normalized
+        /// </summary>
+        public void Normalize()
+        {
+            if (!_isNormalize)
+            {
+                _elements = _elements.Select(element => element / _magnitude).ToArray();
+                _isNormalize = true;
+            }
+        }
 
         /// <summary>
         /// Cross product of current vector
@@ -236,10 +286,17 @@
         /// <param name="v2"></param>
         /// <returns>Dot Product</returns>
         public static double DotProduct(Vector v1, Vector v2) => v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+        #endregion
 
+        #region overrides
         public override string ToString()
         {
             return $"<{X}, {Y}, {Z}>";
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         public override bool Equals(object? obj)
@@ -251,5 +308,29 @@
                    Magnitude == vector.Magnitude &&
                    Length == vector.Length;
         }
+        #endregion
+
+        #region privates
+        private double CalculateMagnitude()
+        {
+            return Math.Sqrt(_elements.Sum(element => element * element));
+        }
+
+        private bool CheckIfNormalize()
+        {
+            bool isNormalize = true;
+            foreach (var element in _elements)
+            {
+                isNormalize &= element == element / _magnitude;
+            }
+            return isNormalize;
+        }
+
+        private void AssignFields()
+        {
+            _magnitude = CalculateMagnitude();
+            _isNormalize = CheckIfNormalize();
+        }
+        #endregion
     }
 }

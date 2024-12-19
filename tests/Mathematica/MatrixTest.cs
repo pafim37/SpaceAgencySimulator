@@ -138,8 +138,8 @@ namespace Sas.Mathematica.Tests
         {
             Matrix matrix = new Matrix(_sixElements, 3, 2);
 
-            Assert.AreEqual(3, matrix.GetNumberOfRows());
-            Assert.AreEqual(2, matrix.GetNumberOfColumns());
+            Assert.AreEqual(3, matrix.RowsNumber);
+            Assert.AreEqual(2, matrix.ColumnsNumber);
         }
 
         [Test]
@@ -165,8 +165,8 @@ namespace Sas.Mathematica.Tests
 
             Matrix transpose = matrix.Transpose();
             
-            Assert.AreEqual(cols, transpose.GetNumberOfRows());
-            Assert.AreEqual(rows, transpose.GetNumberOfColumns());
+            Assert.AreEqual(cols, transpose.RowsNumber);
+            Assert.AreEqual(rows, transpose.ColumnsNumber);
             for (int i = 0; i < rows * cols; i++)
             {
                 Assert.AreEqual(matrix[i], trasposeElements[i]);

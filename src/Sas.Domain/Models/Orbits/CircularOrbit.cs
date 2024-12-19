@@ -1,5 +1,5 @@
-﻿using Sas.Mathematica.Service.Vectors;
-using Sas.Domain.Models.Orbits.Primitives;
+﻿using Sas.Domain.Models.Orbits.Primitives;
+using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Domain.Models.Orbits
 {

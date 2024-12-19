@@ -3,7 +3,7 @@ using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Converters;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Mathematica.XUnit.Tests
+namespace Sas.Mathematica.Tests
 {
     public class ReferenceSystemInlineData
     {

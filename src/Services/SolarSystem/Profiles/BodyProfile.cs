@@ -2,7 +2,6 @@
 using Sas.BodySystem.Service.Documents;
 using Sas.BodySystem.Service.DTOs;
 using Sas.Domain.Models.Bodies;
-using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.BodySystem.Service.Profiles
 {

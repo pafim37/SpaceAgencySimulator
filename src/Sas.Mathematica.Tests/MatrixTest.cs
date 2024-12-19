@@ -86,13 +86,13 @@ namespace Sas.Mathematica.Tests
         }
 
         //[Theory]
-        //[InlineData(1, new double[] {1, 4, 7})]
-        //[InlineData(2, new double[] {2, 5, 8})]
-        //[InlineData(3, new double[] {3, 6, 9})]
+        //[InlineData(1, new double[] { 1, 4, 7 })]
+        //[InlineData(2, new double[] { 2, 5, 8 })]
+        //[InlineData(3, new double[] { 3, 6, 9 })]
         //public void GetColumnReturnsColumn(int column, double[] elements)
         //{
         //    Matrix matrix = new Matrix(_nineElements, 3, 3);
-        //    matrix.GetColumn(column).Should().(elements);
+        //    matrix.GetColumn(column).Should().Be(elements);
         //}
 
         [Fact]

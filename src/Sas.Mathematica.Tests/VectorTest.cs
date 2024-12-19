@@ -199,6 +199,33 @@ namespace Sas.Mathematica.Tests
             double result = Vector.DotProduct(vector1, vector2);
             result.Should().Be(dotProduct);
         }
-    }
 
+        [Fact]
+        public void VectorReturnsIsNormalize()
+        {
+            Vector.Ox.IsNormalize.Should().Be(true);
+            Vector.Oy.IsNormalize.Should().Be(true);
+            Vector.Oz.IsNormalize.Should().Be(true);
+            Vector.Ones.IsNormalize.Should().Be(false);
+            Vector.Zero.IsNormalize.Should().Be(false);
+            Vector normalizedVector = new Vector(Math.Sqrt(2) / 2, -Math.Sqrt(2) / 2, 0);
+            normalizedVector.IsNormalize.Should().Be(true);
+            Vector denormalizedVector = new Vector(1, 1, 0);
+            denormalizedVector.IsNormalize.Should().Be(false);
+        }
+
+        [Fact]
+        public void VectorCanBeNormalized()
+        {
+            Vector vector = new Vector(1, 1, 0);
+            vector.Normalize();
+            vector.X.Should().BeApproximately(Math.Sqrt(2) / 2, 10);
+            vector.Y.Should().BeApproximately(Math.Sqrt(2) / 2, 10);
+            vector.Z.Should().Be(0);
+
+            Vector vector2 = new Vector(10, 0, 0);
+            vector2.Normalize();
+            vector2.Should().Be(Vector.Ox);
+        }
+    }
 }

@@ -268,6 +268,7 @@
             if (!_isNormalize)
             {
                 _elements = _elements.Select(element => element / _magnitude).ToArray();
+                _magnitude = CalculateMagnitude();
                 _isNormalize = true;
             }
         }
@@ -296,7 +297,7 @@
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return HashCode.Combine(X,Y,Z);
         }
 
         public override bool Equals(object? obj)
@@ -306,7 +307,8 @@
                    Y == vector.Y &&
                    Z == vector.Z &&
                    Magnitude == vector.Magnitude &&
-                   Length == vector.Length;
+                   Length == vector.Length &&
+                   GetHashCode() == vector.GetHashCode();
         }
         #endregion
 

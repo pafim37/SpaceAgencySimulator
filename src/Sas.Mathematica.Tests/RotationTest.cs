@@ -242,6 +242,22 @@ namespace Sas.Mathematica.Tests
             Assert(expected, result);
         }
 
+        [Fact]
+        public void RotationRotateVectorThrowsExceptionWhenInvalidVectorToRotate()
+        {
+            Vector invalidVectorToRotate = new([1,1,1,1]);
+            Action comparison = () => Rotation.Rotate(invalidVectorToRotate, Vector.Ox, 1);
+            comparison.Should().Throw<ArgumentException>();
+        }
+
+        [Fact]
+        public void RotationRotateVectorThrowsExceptionWhenInvalidAxis()
+        {
+            Vector invalidAxis = new([1, 1, 1, 1]);
+            Action comparison = () => Rotation.Rotate(Vector.Ox, invalidAxis, 1);
+            comparison.Should().Throw<ArgumentException>();
+        }
+
         private static void Assert(Vector expected, Vector result)
         {
             result.X.Should().BeApproximately(expected.X, Precision);

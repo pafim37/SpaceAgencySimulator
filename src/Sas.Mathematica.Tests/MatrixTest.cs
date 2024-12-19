@@ -4,26 +4,13 @@ using Sas.Mathematica.Service.Matrices;
 namespace Sas.Mathematica.Tests
 {
 
-    public class MatrixInlineData
+    public class MatrixTest
     {
         private readonly double[] _oneElement = [1];
         private readonly double[] _threeElements = [1, 2, 3];
         private readonly double[] _fourElements = [1, 2, 3, 4];
         private readonly double[] _sixElements = [1, 2, 3, 4, 5, 6];
         private readonly double[] _nineElements = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-        private static object[] TransposeMatrixData =
-        {
-            new object[] { new double[] { 1 }, 1, 1, new double[] { 1 } },
-            new object[] { new double[] { 1, 2, 3, 4, 5, 6 }, 2, 3, new double[] { 1, 4, 2, 5, 3, 6} },
-            new object[] { new double[] { 1, 2, 3, 4, 5, 6 }, 3, 2, new double[] { 1, 3, 5, 2, 4, 6 } },
-            new object[] { new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 3, 3, new double[] { 1 , 4, 7, 2, 5, 8, 3, 6, 9} }
-        };
-
-        static object[] InvertMatrixData =
-        {
-            new object[] { new double[] { 1, 1, 1, 0, 0, 1, 0, 1, 0 }, 3, 3, new double[] { 1 , -1, -1, 0, 0, 1, 0, 1, 0} }
-        };
 
         [Fact]
         public void CreateMatrixThrowsExceptionWhenElementsAreNull()
@@ -85,15 +72,32 @@ namespace Sas.Mathematica.Tests
             matrix.GetAllElements().SequenceEqual(_sixElements);
         }
 
-        //[Theory]
-        //[InlineData(1, new double[] { 1, 4, 7 })]
-        //[InlineData(2, new double[] { 2, 5, 8 })]
-        //[InlineData(3, new double[] { 3, 6, 9 })]
-        //public void GetColumnReturnsColumn(int column, double[] elements)
-        //{
-        //    Matrix matrix = new Matrix(_nineElements, 3, 3);
-        //    matrix.GetColumn(column).Should().Be(elements);
-        //}
+        [Theory]
+        [InlineData(1, new double[] { 1, 4, 7 })]
+        [InlineData(2, new double[] { 2, 5, 8 })]
+        [InlineData(3, new double[] { 3, 6, 9 })]
+        public void GetColumnReturnsColumn(int column, double[] elements)
+        {
+            Matrix matrix = new Matrix(_nineElements, 3, 3);
+            matrix.GetColumn(column).Should().BeEquivalentTo(elements);
+        }
+
+        [Fact]
+        public void GetIndexElementThrowsExceptionWhenIndexOutOfRange()
+        {
+            Matrix matrix = new([1], 1, 1);
+            Action comparison = () => { double elem = matrix[2, 2]; };
+            comparison.Should().Throw<IndexOutOfRangeException>();
+        }
+
+        [Fact]
+        public void SetIndexElementThrwosExceptionWhenIndexOutOfRange()
+        {
+            Matrix matrix = new([1], 1, 1);
+            Action comparison = () => { matrix[2, 2] = 2; };
+            comparison.Should().Throw<IndexOutOfRangeException>();
+        }
+
 
         [Fact]
         public void GetDeterminantReturnsDeterminant()
@@ -156,31 +160,35 @@ namespace Sas.Mathematica.Tests
             Assert.Throws<Exception>(() => matrix.GetDimension());
         }
 
-        //[InlineDataSource(nameof(TransposeMatrixData))]
-        //public void TransposeReturnsTransposeMatrix(double[] elements, int rows, int cols, double[] trasposeElements)
-        //{
-        //    Matrix matrix = new Matrix(elements, rows, cols);
+        [Theory]
+        [InlineData(new double[] { 1 }, 1, 1, new double[] { 1 })]
+        [InlineData(new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 3, 3, new double[] { 1, 4, 7, 2, 5, 8, 3, 6, 9 } )]
+        [InlineData(new double[] { 1, 2, 3, 4, 5, 6 }, 2, 3, new double[] { 1, 4, 2, 5, 3, 6 })]
+        [InlineData(new double[] { 1, 2, 3, 4, 5, 6 }, 3, 2, new double[] { 1, 3, 5, 2, 4, 6 })]
+        public void TransposeReturnsTransposeMatrix(double[] elements, int rows, int cols, double[] trasposeElements)
+        {
+            Matrix matrix = new(elements, rows, cols);
+            Matrix transpose = matrix.Transpose();
 
-        //    Matrix transpose = matrix.Transpose();
+            transpose.RowsNumber.Should().Be(cols);
+            transpose.ColumnsNumber.Should().Be(rows);
+            for (int i = 0; i < rows * cols; i++)
+            {
+                trasposeElements[i].Should().Be(matrix[i]);
+            }
+        }
 
-        //    Assert.AreEqual(cols, transpose.RowsNumber);
-        //    Assert.AreEqual(rows, transpose.ColumnsNumber);
-        //    for (int i = 0; i < rows * cols; i++)
-        //    {
-        //        Assert.AreEqual(matrix[i], trasposeElements[i]);
-        //    }
-        //}
+        [Theory]
+        [InlineData(new double[] { 1, 1, 1, 0, 0, 1, 0, 1, 0 }, 3, 3, new double[] { 1, -1, -1, 0, 0, 1, 0, 1, 0 } )]
+        public void InvertMatrixReturnsInvertedMatrix(double[] elements, int rows, int cols, double[] inverseElements)
+        {
+            Matrix matrix = new(elements, rows, cols);
 
-        //[MemberData(nameof(InvertMatrixData))]
-        //public void InvertMatrixReturnsInvertedMatrix(double[] elements, int rows, int cols, double[] inverseElements)
-        //{
-        //    Matrix matrix = new Matrix(elements, rows, cols);
-
-        //    Matrix invert = matrix.Invert();
-        //    for (int i = 0; i < rows * cols; i++)
-        //    {
-        //        Assert.AreEqual(matrix[i], inverseElements[i]);
-        //    }
-        //}
+            Matrix invert = matrix.Invert();
+            for (int i = 0; i < rows * cols; i++)
+            {
+                invert[i].Should().Be(inverseElements[i]);
+            }
+        }
     }
 }

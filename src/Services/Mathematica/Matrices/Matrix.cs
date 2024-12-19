@@ -137,7 +137,11 @@ namespace Sas.Mathematica.Service.Matrices
                 if (i >= 0 && i < _elements.Length) return _elements[i];
                 else throw new IndexOutOfRangeException();
             }
-            set => _elements[i] = value;
+            set
+            {
+                if (i >= 0 && i < _elements.Length) _elements[i] = value;
+                else throw new IndexOutOfRangeException();
+            }
         }
 
         /// <summary>
@@ -198,7 +202,6 @@ namespace Sas.Mathematica.Service.Matrices
             return new Vector(_elements);
         }
         #endregion
-
 
         #region Privates Methods
         /// <summary>
@@ -334,7 +337,6 @@ namespace Sas.Mathematica.Service.Matrices
 
             return result;
         }
-
         #endregion
 
         #region Overrides

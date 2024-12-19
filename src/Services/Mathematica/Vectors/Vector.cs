@@ -10,7 +10,7 @@
         private double _magnitude;
         private readonly int _dim;
 
-        #region constructors
+        #region Constructors
         /// <summary>
         /// Constructor of the vector
         /// </summary>
@@ -63,7 +63,7 @@
 
         #endregion
 
-        #region properties
+        #region Properties
         /// <summary>
         /// Component x of the vector
         /// </summary>
@@ -114,7 +114,7 @@
         public bool IsNormalize => _isNormalize;
         #endregion
 
-        #region operators
+        #region Operators
         /// <summary>
         /// Gets element of given index
         /// </summary>
@@ -245,11 +245,11 @@
         /// <returns></returns>
         #endregion
 
-        #region static
+        #region Static
         public static Vector CrossProduct(Vector v1, Vector v2) => new(v1.Y * v2.Z - v1.Z * v2.Y, v1.Z * v2.X - v1.X * v2.Z, v1.X * v2.Y - v1.Y * v2.X);
         #endregion
 
-        #region public functions
+        #region Public Functions
         /// <summary>
         /// Returns vector elements
         /// </summary>
@@ -289,7 +289,7 @@
         public static double DotProduct(Vector v1, Vector v2) => v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
         #endregion
 
-        #region overrides
+        #region Overrides
         public override string ToString()
         {
             return $"<{X}, {Y}, {Z}>";
@@ -302,17 +302,16 @@
 
         public override bool Equals(object? obj)
         {
-            return obj is Vector vector &&
-                   X == vector.X &&
-                   Y == vector.Y &&
-                   Z == vector.Z &&
-                   Magnitude == vector.Magnitude &&
-                   Length == vector.Length &&
-                   GetHashCode() == vector.GetHashCode();
+            return obj is Vector vector
+                && X == vector.X
+                && Y == vector.Y
+                && Z == vector.Z
+                && Magnitude == vector.Magnitude
+                && Length == vector.Length;
         }
         #endregion
 
-        #region privates
+        #region Privates
         private double CalculateMagnitude()
         {
             return Math.Sqrt(_elements.Sum(element => element * element));

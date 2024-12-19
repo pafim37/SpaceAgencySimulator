@@ -128,7 +128,11 @@
                 if (i >= 0 && i < _elements.Length) return _elements[i];
                 else throw new IndexOutOfRangeException();
             }
-            set => _elements[i] = value;
+            set 
+            {
+                if (i >= 0 && i < _elements.Length) _elements[i] = value;
+                else throw new IndexOutOfRangeException();
+            }
         }
 
         /// <summary>

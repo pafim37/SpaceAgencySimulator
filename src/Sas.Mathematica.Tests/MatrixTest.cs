@@ -136,15 +136,6 @@ namespace Sas.Mathematica.Tests
             Assert.False(result);
         }
 
-        //[Fact]
-        //public void MatrixReturnsItsProperties()
-        //{
-        //    Matrix matrix = new Matrix(_sixElements, 3, 2);
-
-        //    Assert.AreEqual(3, matrix.RowsNumber);
-        //    Assert.AreEqual(2, matrix.ColumnsNumber);
-        //}
-
         [Fact]
         public void GetDimensionReturnsDimensionOfSquareMatrix()
         {
@@ -189,6 +180,22 @@ namespace Sas.Mathematica.Tests
             {
                 invert[i].Should().Be(inverseElements[i]);
             }
+        }
+
+        [Fact]
+        public void MatrixGetElementByIndexThrowsExceptionWhenIndexOutOfRange()
+        {
+            Matrix matrix = new Matrix([1], 1,1);
+            Action comparison = () => { double a = matrix[2]; };
+            comparison.Should().Throw<IndexOutOfRangeException>();
+        }
+
+        [Fact]
+        public void MatrixSetElementByIndexThrowsExceptionWhenIndexOutOfRange()
+        {
+            Matrix matrix = new Matrix([1], 1, 1);
+            Action comparison = () => { matrix[2] = 2; };
+            comparison.Should().Throw<IndexOutOfRangeException>();
         }
     }
 }

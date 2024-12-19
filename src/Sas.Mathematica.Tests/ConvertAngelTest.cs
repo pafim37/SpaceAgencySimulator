@@ -5,6 +5,7 @@ namespace Sas.Mathematica.Tests
 {
     public class ConvertAngleTest
     {
+        [Theory]
         [InlineData(90)]
         [InlineData(180)]
         [InlineData(270)]

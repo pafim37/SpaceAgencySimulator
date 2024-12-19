@@ -227,5 +227,23 @@ namespace Sas.Mathematica.Tests
             vector2.Normalize();
             vector2.Should().Be(Vector.Ox);
         }
+
+        [Fact]
+        public void VectorGetElementByIndexThrowsExceptionWhenIndexOutOfRange()
+        {
+            Action comparison = () => { double t = Vector.Ones[4]; };
+            comparison.Should().Throw<IndexOutOfRangeException>();
+        }
+
+        [Fact]
+        public void VectorSetElementByIndexThrowsExceptionWhenIndexOutOfRange()
+        {
+            Action comparison = () => 
+            {
+                Vector vector = Vector.Ones;
+                vector[4] = 2;
+            };
+            comparison.Should().Throw<IndexOutOfRangeException>();
+        }
     }
 }

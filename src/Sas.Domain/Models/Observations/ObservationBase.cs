@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Sas.Domain.Models.Clocks;
+﻿using Sas.Domain.Models.Clocks;
 using Sas.Domain.Models.Observatories;
 
 namespace Sas.Domain.Models.Observations

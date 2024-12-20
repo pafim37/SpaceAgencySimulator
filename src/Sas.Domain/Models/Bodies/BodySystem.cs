@@ -1,4 +1,4 @@
-﻿using Sas.Domain.Bodies.BodyExtensions;
+﻿using Sas.Domain.Models.Bodies.BodyExtensions;
 using Sas.Domain.Models.Orbits;
 using Sas.Domain.Models.Orbits.Primitives;
 using Sas.Mathematica.Service;

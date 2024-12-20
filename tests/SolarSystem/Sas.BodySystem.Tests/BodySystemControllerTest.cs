@@ -9,7 +9,6 @@ using Sas.BodySystem.Service.Documents;
 using Sas.BodySystem.Service.DTOs;
 using Sas.Domain.Models.Bodies;
 using Sas.Mathematica.Service;
-using Sas.Mathematica.Service.Vectors;
 using Xunit;
 
 namespace Sas.BodySystem.Tests

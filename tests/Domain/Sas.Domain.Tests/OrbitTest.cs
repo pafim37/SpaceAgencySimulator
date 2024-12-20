@@ -1,6 +1,5 @@
 ﻿using Sas.Domain.Models.Orbits;
 using Sas.Mathematica.Service;
-using Sas.Mathematica.Service.Converters;
 using Sas.Mathematica.Service.Vectors;
 using Xunit;
 

@@ -1,245 +1,249 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Mathematica.Tests
 {
-    [TestFixture]
     public class VectorTest
     {
-        [Test]
+        [Fact]
         public void CreateVectorWhenPassingThreeComponents()
         {
-            Vector vector = new Vector(11, 13, 17);
-
-            Assert.IsNotNull(vector);
-            Assert.AreEqual(vector.X, 11);
-            Assert.AreEqual(vector.Y, 13);
-            Assert.AreEqual(vector.Z, 17);
+            Vector vector = new(11, 13, 17);
+            vector.X.Should().Be(11);
+            vector.Y.Should().Be(13);
+            vector.Z.Should().Be(17);
         }
 
-        [Test]
-        public void CreateVectorWhenPassingTwoComponents()
+        [Fact]
+        public void CreateVectorWhenPassingOneComponent()
         {
-            Vector vector = new Vector(11, 13);
-
-            Assert.IsNotNull(vector);
-            Assert.AreEqual(vector.X, 11);
-            Assert.AreEqual(vector.Y, 13);
-            Assert.AreEqual(vector.Z, 0);
+            Vector vector = new(37);
+            vector.X.Should().Be(37);
+            vector.Y.Should().Be(0);
+            vector.Z.Should().Be(0);
         }
 
-        [TestCase(new double[] {11, 13, 17}, 11, 13, 17)]
-        [TestCase(new double[] {11, 13, 17, 19}, 11, 13, 17)]
-        [TestCase(new double[] {11, 13}, 11, 13, 0)]
-        [TestCase(new double[] {11}, 11, 0, 0)]
+        [Theory]
+        [InlineData(new double[] { 11, 13, 17 }, 11, 13, 17)]
+        [InlineData(new double[] { 11, 13, 17, 19 }, 11, 13, 17)]
+        [InlineData(new double[] { 11, 13 }, 11, 13, 0)]
+        [InlineData(new double[] { 11 }, 11, 0, 0)]
         public void CreateVectorWhenPassingArray(double[] elements, double expectedX, double expectedY, double expectedZ)
         {
-            Vector vector = new Vector(elements);
-
-            Assert.IsNotNull(vector);
-            Assert.AreEqual(expectedX, vector.X);
-            Assert.AreEqual(expectedY, vector.Y);
-            Assert.AreEqual(expectedZ, vector.Z);
+            Vector vector = new(elements);
+            vector.X.Should().Be(expectedX);
+            vector.Y.Should().Be(expectedY);
+            vector.Z.Should().Be(expectedZ);
         }
 
-        [Test]
+        [Fact]
         public void CreateVectorZero()
         {
             Vector vector = Vector.Zero;
-
-            Assert.IsNotNull(vector);
-            Assert.AreEqual(0, vector.X);
-            Assert.AreEqual(0, vector.Y);
-            Assert.AreEqual(0, vector.Z);
+            vector.X.Should().Be(0);
+            vector.Y.Should().Be(0);
+            vector.Z.Should().Be(0);
         }
-        
-        [Test]
+
+        [Fact]
         public void CreateVectorOne()
         {
             Vector vector = Vector.Ones;
-
-            Assert.IsNotNull(vector);
-            Assert.AreEqual(1, vector.X);
-            Assert.AreEqual(1, vector.Y);
-            Assert.AreEqual(1, vector.Z);
+            vector.X.Should().Be(1);
+            vector.Y.Should().Be(1);
+            vector.Z.Should().Be(1);
         }
 
-        [TestCase(new double[] { 2 }, 2)]
-        [TestCase(new double[] { 3, 4 }, 5)]
-        [TestCase(new double[] { -6, -8 }, 10)]
+        [Theory]
+        [InlineData(new double[] { 2 }, 2)]
+        [InlineData(new double[] { 3, 4 }, 5)]
+        [InlineData(new double[] { -6, -8 }, 10)]
         public void VectorReturnsMagnitude(double[] elements, double magnitude)
         {
-            Vector vector = new Vector(elements);
-
-            Assert.IsNotNull(vector);
-            Assert.AreEqual(magnitude, vector.Magnitude);
+            Vector vector = new(elements);
+            vector.Magnitude.Should().Be(magnitude);
         }
 
-        [TestCase(new double[] {0, 0, 0, 0}, 4)]
-        [TestCase(new double[] {0, 0, 0}, 3)]
-        [TestCase(new double[] {0, 0}, 2)]
-        [TestCase(new double[] { 0 }, 1)]
+        [Theory]
+        [InlineData(new double[] { 0, 0, 0, 0 }, 4)]
+        [InlineData(new double[] { 0, 0, 0 }, 3)]
+        [InlineData(new double[] { 0, 0 }, 2)]
+        [InlineData(new double[] { 0 }, 1)]
         public void VectorReturnLength(double[] elements, int length)
         {
-            Vector vector = new Vector(elements);
-
-            Assert.IsNotNull(vector);
-            Assert.AreEqual(length, vector.Length);
+            Vector vector = new(elements);
+            vector.Length.Should().Be(length);
         }
 
-        [TestCase(new double[] { 11, 13, 17, 19 }, 11, 13, 17, 19)]
+        [Theory]
+        [InlineData(new double[] { 11, 13, 17, 19 }, 11, 13, 17, 19)]
         public void GetElementsAreAccesibleByBrackets(double[] elements, double expectedX, double expectedY, double expectedZ, double expectedT)
         {
-            Vector vector = new Vector(elements);
-
-            Assert.IsNotNull(vector);
-            Assert.AreEqual(expectedX, vector[0]);
-            Assert.AreEqual(expectedY, vector[1]);
-            Assert.AreEqual(expectedZ, vector[2]);
-            Assert.AreEqual(expectedT, vector[3]);
+            Vector vector = new(elements);
+            vector[0].Should().Be(expectedX);
+            vector[1].Should().Be(expectedY);
+            vector[2].Should().Be(expectedZ);
+            vector[3].Should().Be(expectedT);
         }
 
-        [TestCase(new double[] { 1, 3, 5, 7, 9 }, new double[] { 2, 4, 6 }, new double[] { 3, 7, 11, 7, 9 })]
-        [TestCase(new double[] { 2, 4, 6 }, new double[] { 1, 3, 5, 7, 9 }, new double[] { 3, 7, 11, 7, 9 })]
-        [TestCase(new double[] { 1, 1, 1, 1, 1 }, new double[] { 2, 2, 2, 2, 2 }, new double[] { 3, 3, 3, 3, 3 })]
+        [Theory]
+        [InlineData(new double[] { 1, 3, 5, 7, 9 }, new double[] { 2, 4, 6 }, new double[] { 3, 7, 11, 7, 9 })]
+        [InlineData(new double[] { 2, 4, 6 }, new double[] { 1, 3, 5, 7, 9 }, new double[] { 3, 7, 11, 7, 9 })]
+        [InlineData(new double[] { 1, 1, 1, 1, 1 }, new double[] { 2, 2, 2, 2, 2 }, new double[] { 3, 3, 3, 3, 3 })]
         public void AddTwoVectorsReturnsSumVectors(double[] elements1, double[] elements2, double[] expectedElements)
         {
-            Vector vector1 = new Vector(elements1);
-            Vector vector2 = new Vector(elements2);
-            Vector vector3 = new Vector(expectedElements);
+            Vector vector1 = new(elements1);
+            Vector vector2 = new(elements2);
+            Vector vector3 = new(expectedElements);
 
             Vector result = vector1 + vector2;
 
-            Assert.AreEqual(result[0], vector3[0]);      
-            Assert.AreEqual(result[1], vector3[1]);      
-            Assert.AreEqual(result[2], vector3[2]);      
-            Assert.AreEqual(result[3], vector3[3]);      
-            Assert.AreEqual(result[4], vector3[4]); 
-            
-
+            result.Should().Be(vector3);
         }
 
-        [TestCase(new double[] { 1, 3, 5, 7, 9 }, new double[] { 2, 4, 6 }, new double[] { -1, -1, -1, 7, 9 })]
-        [TestCase(new double[] { 2, 4, 6 }, new double[] { 1, 3, 5, 7, 9 }, new double[] { 1, 1, 1, 7, 9 })]
-        [TestCase(new double[] { 1, 1, 1, 1, 1 }, new double[] { 2, 2, 2, 2, 2 }, new double[] { -1, -1, -1, -1, -1 })]
+        [Theory]
+        [InlineData(new double[] { 1, 3, 5, 7, 9 }, new double[] { 2, 4, 6 }, new double[] { -1, -1, -1, 7, 9 })]
+        [InlineData(new double[] { 2, 4, 6 }, new double[] { 1, 3, 5, 7, 9 }, new double[] { 1, 1, 1, 7, 9 })]
+        [InlineData(new double[] { 1, 1, 1, 1, 1 }, new double[] { 2, 2, 2, 2, 2 }, new double[] { -1, -1, -1, -1, -1 })]
         public void SubtractionTwoVectorsReturnsVectors(double[] elements1, double[] elements2, double[] expected)
         {
-            Vector vector1 = new Vector(elements1);
-            Vector vector2 = new Vector(elements2);
-            Vector vector3 = new Vector(expected);
+            Vector vector1 = new(elements1);
+            Vector vector2 = new(elements2);
+            Vector vector3 = new(expected);
 
             Vector result = vector1 - vector2;
 
-            Assert.AreEqual(result[0], vector3[0]);
-            Assert.AreEqual(result[1], vector3[1]);
-            Assert.AreEqual(result[2], vector3[2]);
-            Assert.AreEqual(result[3], vector3[3]);
-            Assert.AreEqual(result[4], vector3[4]);
+            result.Should().Be(vector3);
         }
 
-        [TestCase(new double[] { 1, 3, 5, 7, 9 }, new double[] { 2, 4, 6 }, new double[] { 2, 12, 30, 7, 9 })]
-        [TestCase(new double[] { 2, -4, -6 }, new double[] { 1, -3, 5, 7, 9 }, new double[] { 2, 12, -30, 7, 9 })]
-        [TestCase(new double[] { 1, 1, 1, 1, 1 }, new double[] { 2, 2, 2, 2, 2 }, new double[] { 2, 2, 2, 2, 2 })]
+        [Theory]
+        [InlineData(new double[] { 1, 3, 5, 7, 9 }, new double[] { 2, 4, 6 }, new double[] { 2, 12, 30, 7, 9 })]
+        [InlineData(new double[] { 2, -4, -6 }, new double[] { 1, -3, 5, 7, 9 }, new double[] { 2, 12, -30, 7, 9 })]
+        [InlineData(new double[] { 1, 1, 1, 1, 1 }, new double[] { 2, 2, 2, 2, 2 }, new double[] { 2, 2, 2, 2, 2 })]
         public void MultipliationTwoVectorsReturnsVectors(double[] elements1, double[] elements2, double[] expected)
         {
-            Vector vector1 = new Vector(elements1);
-            Vector vector2 = new Vector(elements2);
-            Vector vector3 = new Vector(expected);
+            Vector vector1 = new(elements1);
+            Vector vector2 = new(elements2);
+            Vector vector3 = new(expected);
 
             Vector result = vector1 * vector2;
-
-            Assert.AreEqual(result[0], vector3[0]);
-            Assert.AreEqual(result[1], vector3[1]);
-            Assert.AreEqual(result[2], vector3[2]);
-            Assert.AreEqual(result[3], vector3[3]);
-            Assert.AreEqual(result[4], vector3[4]);
+            result.Should().Be(vector3);
         }
 
-        [TestCase(new double[] { 1, 3, 5, 7, 9 }, 2, new double[] { 2, 6, 10, 14, 18 })]
+        [Theory]
+        [InlineData(new double[] { 1, 3, 5, 7, 9 }, 2, new double[] { 2, 6, 10, 14, 18 })]
         public void MultipliationByRightScalarReturnsVectors(double[] elements, double scalar, double[] expected)
         {
-            Vector vector1 = new Vector(elements);
-            Vector vector3 = new Vector(expected);
+            Vector vector1 = new(elements);
+            Vector vector3 = new(expected);
 
             Vector result = vector1 * scalar;
-
-            Assert.AreEqual(result[0], vector3[0]);
-            Assert.AreEqual(result[1], vector3[1]);
-            Assert.AreEqual(result[2], vector3[2]);
-            Assert.AreEqual(result[3], vector3[3]);
-            Assert.AreEqual(result[4], vector3[4]);
+            result.Should().Be(vector3);
         }
 
-        [TestCase(new double[] { 1, 3, 5, 7, 9 }, 2, new double[] { 2, 6, 10, 14, 18 })]
+        [Theory]
+        [InlineData(new double[] { 1, 3, 5, 7, 9 }, 2, new double[] { 2, 6, 10, 14, 18 })]
         public void MultipliationByLeftScalarReturnsVectors(double[] elements, double scalar, double[] expected)
         {
-            Vector vector1 = new Vector(elements);
-            Vector vector3 = new Vector(expected);
+            Vector vector1 = new(elements);
+            Vector vector3 = new(expected);
 
             Vector result = scalar * vector1;
-
-            Assert.AreEqual(result[0], vector3[0]);
-            Assert.AreEqual(result[1], vector3[1]);
-            Assert.AreEqual(result[2], vector3[2]);
-            Assert.AreEqual(result[3], vector3[3]);
-            Assert.AreEqual(result[4], vector3[4]);
+            result.Should().Be(vector3);
         }
 
-        [TestCase(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, new double[] { -3, 6, -3 })]
+        [Theory]
+        [InlineData(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, new double[] { -3, 6, -3 })]
         public void CrossProcuctReturnsVectors(double[] elements1, double[] elements2, double[] expectedElements)
         {
-            Vector vector1 = new Vector(elements1);
-            Vector vector2 = new Vector(elements2);
-            Vector expectedVector = new Vector(expectedElements);
+            Vector vector1 = new(elements1);
+            Vector vector2 = new(elements2);
+            Vector expectedVector = new(expectedElements);
 
             Vector result = vector1.CrossProduct(vector2);
-
-            Assert.AreEqual(result[0], expectedVector[0]);
-            Assert.AreEqual(result[1], expectedVector[1]);
-            Assert.AreEqual(result[2], expectedVector[2]);
+            result.Should().Be(expectedVector);
         }
 
-        [TestCase(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, new double[] { -3, 6, -3 })]
+        [Theory]
+        [InlineData(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, new double[] { -3, 6, -3 })]
         public void CrossProcuctReturnsVectors2(double[] elements1, double[] elements2, double[] expectedElements)
         {
-            Vector vector1 = new Vector(elements1);
-            Vector vector2 = new Vector(elements2);
-            Vector expectedVector = new Vector(expectedElements);
+            Vector vector1 = new(elements1);
+            Vector vector2 = new(elements2);
+            Vector expectedVector = new(expectedElements);
 
             Vector result = Vector.CrossProduct(vector1, vector2);
-
-            Assert.AreEqual(result[0], expectedVector[0]);
-            Assert.AreEqual(result[1], expectedVector[1]);
-            Assert.AreEqual(result[2], expectedVector[2]);
-            Assert.AreEqual(new Vector(elements1), vector1);
-            Assert.AreEqual(new Vector(elements2), vector2);
+            result.Should().Be(expectedVector);
         }
 
-        [TestCase(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, new double[] { -3, 6, -3 })]
-        public void CrossProcuctAreTheSame(double[] elements1, double[] elements2, double[] expectedElements)
+        [Theory]
+        [InlineData(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 })]
+        public void CrossProcuctAreTheSame(double[] elements1, double[] elements2)
         {
-            Vector vector1 = new Vector(elements1);
-            Vector vector2 = new Vector(elements2);
+            Vector vector1 = new(elements1);
+            Vector vector2 = new(elements2);
 
             Vector result1 = Vector.CrossProduct(vector1, vector2);
             Vector result2 = vector1.CrossProduct(vector2);
 
-            Assert.AreEqual(result1, result2);
+            result1.Should().Be(result2);
         }
 
-
-        [TestCase(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, 56)]
-        public void DotProcuctReturnsScalar(double[] elements1, double[] elements2, double dotProduct)
+        [Theory]
+        [InlineData(new double[] { 2, 3, 4 }, new double[] { 5, 6, 7 }, 56)]
+        public void DotProductReturnsScalar(double[] elements1, double[] elements2, double dotProduct)
         {
-            Vector vector1 = new Vector(elements1);
-            Vector vector2 = new Vector(elements2);
+            Vector vector1 = new(elements1);
+            Vector vector2 = new(elements2);
 
             double result = Vector.DotProduct(vector1, vector2);
+            result.Should().Be(dotProduct);
+        }
 
-            Assert.AreEqual(result, dotProduct);
-            Assert.AreEqual(new Vector(elements1), vector1);
-            Assert.AreEqual(new Vector(elements2), vector2);
+        [Fact]
+        public void VectorReturnsIsNormalize()
+        {
+            Vector.Ox.IsNormalize.Should().Be(true);
+            Vector.Oy.IsNormalize.Should().Be(true);
+            Vector.Oz.IsNormalize.Should().Be(true);
+            Vector.Ones.IsNormalize.Should().Be(false);
+            Vector.Zero.IsNormalize.Should().Be(false);
+            Vector normalizedVector = new Vector(Math.Sqrt(2) / 2, -Math.Sqrt(2) / 2, 0);
+            normalizedVector.IsNormalize.Should().Be(true);
+            Vector denormalizedVector = new Vector(1, 1, 0);
+            denormalizedVector.IsNormalize.Should().Be(false);
+        }
 
+        [Fact]
+        public void VectorCanBeNormalized()
+        {
+            Vector vector = new Vector(1, 1, 0);
+            vector.Normalize();
+            vector.X.Should().BeApproximately(Math.Sqrt(2) / 2, 10);
+            vector.Y.Should().BeApproximately(Math.Sqrt(2) / 2, 10);
+            vector.Z.Should().Be(0);
+
+            Vector vector2 = new Vector(10, 0, 0);
+            vector2.Normalize();
+            vector2.Should().Be(Vector.Ox);
+        }
+
+        [Fact]
+        public void VectorGetElementByIndexThrowsExceptionWhenIndexOutOfRange()
+        {
+            Action comparison = () => { double t = Vector.Ones[4]; };
+            comparison.Should().Throw<IndexOutOfRangeException>();
+        }
+
+        [Fact]
+        public void VectorSetElementByIndexThrowsExceptionWhenIndexOutOfRange()
+        {
+            Action comparison = () => 
+            {
+                Vector vector = Vector.Ones;
+                vector[4] = 2;
+            };
+            comparison.Should().Throw<IndexOutOfRangeException>();
         }
     }
 }

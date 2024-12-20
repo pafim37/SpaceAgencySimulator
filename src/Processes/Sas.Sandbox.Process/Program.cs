@@ -5,6 +5,7 @@ using Sas.Astronomy.Service.DAL;
 using Sas.Astronomy.Service.Data;
 using Sas.BodySystem.Service.DAL;
 using Sas.BodySystem.Service.Data;
+using Sas.BodySystem.Service.Hubs;
 using Sas.BodySystem.Service.Settings;
 
 namespace Sas.Sandbox.Process
@@ -34,12 +35,27 @@ namespace Sas.Sandbox.Process
             builder.Services.AddSingleton<IBodyContext, BodyContext>();
             builder.Services.AddScoped<IBodyRepository, BodyRepository>();
 
+            // SignalR
+            builder.Services.AddSignalR();
+
+            // CORS
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder.WithOrigins("http://localhost:3000")
-                                      .AllowAnyHeader()
-                                      .AllowAnyMethod());
+                //options.AddPolicy("AllowSpecificOrigin",
+                //    builder => builder.WithOrigins("http://localhost:3000")
+                //                      .AllowAnyHeader()
+                //                      .AllowAnyMethod());
+                //options.AddPolicy("AllowSignalR",
+                //    builder => builder.WithOrigins("http://localhost:5000")
+                //                      .AllowAnyHeader()
+                //                      .AllowAnyMethod());
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+                });
             });
 
             // Controllers
@@ -60,7 +76,9 @@ namespace Sas.Sandbox.Process
 
             app.MapControllers();
 
-            app.UseCors("AllowSpecificOrigin");
+            app.MapHub<BodySystemHub>("/hub/body-system");
+
+            app.UseCors(); // "AllowSpecificOrigin");
 
             app.Run();
         }

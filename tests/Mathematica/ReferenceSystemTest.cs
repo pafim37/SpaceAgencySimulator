@@ -3,14 +3,14 @@ using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Converters;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Mathematica.XUnit.Tests
+namespace Sas.Mathematica.Tests
 {
-    public class ReferenceSystemTest
+    public class ReferenceSystemInlineData
     {
-        public static IEnumerable<object[]> ReferenceSystemPhiDataTest =>
+        public static IEnumerable<object[]> ReferenceSystemPhiDataInlineData =>
             new List<object[]>
             {
-                new object[] { new Vector(1, 0), ConvertAngle.DegToRad(0) }, 
+                new object[] { new Vector(1, 0), ConvertAngle.DegToRad(0) },
                 new object[] { new Vector(1, 1), ConvertAngle.DegToRad(45) },
                 new object[] { new Vector(0, 1), ConvertAngle.DegToRad(90) },
                 new object[] { new Vector(-1, 1), ConvertAngle.DegToRad(90 + 45) },
@@ -20,7 +20,7 @@ namespace Sas.Mathematica.XUnit.Tests
                 new object[] { new Vector(1, -1), ConvertAngle.DegToRad(180 + 90 + 45) },
             };
 
-        public static IEnumerable<object[]> ReferenceSystemThetaDataTest =>
+        public static IEnumerable<object[]> ReferenceSystemThetaDataInlineData =>
             new List<object[]>
             {
                 new object[] { new Vector(1, 1, 0), ConvertAngle.DegToRad(0) },
@@ -75,7 +75,7 @@ namespace Sas.Mathematica.XUnit.Tests
         }
 
         [Theory]
-        [MemberData(nameof(ReferenceSystemPhiDataTest))]
+        [MemberData(nameof(ReferenceSystemPhiDataInlineData))]
         public void ReferenceSystemReturnsCorrectPhi(Vector point, double phi)
         {
             // Assign
@@ -89,7 +89,7 @@ namespace Sas.Mathematica.XUnit.Tests
         }
 
         [Theory]
-        [MemberData(nameof(ReferenceSystemThetaDataTest))]
+        [MemberData(nameof(ReferenceSystemThetaDataInlineData))]
         public void ReferenceSystemReturnsCorrectTheta(
             Vector point, double th)
         {

@@ -1,7 +1,7 @@
 ﻿using Sas.Domain.Models.Bodies;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Domain.Bodies.BodyExtensions
+namespace Sas.Domain.Models.Bodies.BodyExtensions
 {
     public static class BodyExtension
     {

@@ -1,9 +1,8 @@
 ﻿using Sas.Domain.Exceptions;
-using Sas.Domain.Models.Bodies;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Domain.Models.Orbits
+namespace Sas.Body.Service.Models.Domain.Orbits
 {
     public static class OrbitFactory
     {
@@ -17,12 +16,12 @@ namespace Sas.Domain.Models.Orbits
             else throw new UnknownOrbitTypeException($"Cannot predict orbit type. Unsupported value of eccentricity = {e}");
         }
 
-        public static Orbit CalculateOrbit(Body body, double u)
+        public static Orbit CalculateOrbit(BodyDomain body, double u)
         {
             return CalculateOrbit(body.Position, body.Velocity, u);
         }
 
-        public static Orbit CalculateOrbit(Body smallBody, Body massiveBody, double G = Constants.G)
+        public static Orbit CalculateOrbit(BodyDomain smallBody, BodyDomain massiveBody, double G = Constants.G)
         {
             double u = G * (smallBody.Mass + massiveBody.Mass);
             return CalculateOrbit(smallBody.Position, smallBody.Velocity, u);

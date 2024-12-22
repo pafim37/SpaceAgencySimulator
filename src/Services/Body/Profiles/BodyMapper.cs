@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Sas.Body.Service.DataTransferObject;
-using Sas.Body.Service.Models;
+using Sas.Body.Service.Models.Domain;
+using Sas.Body.Service.Models.Entities;
 
 namespace Sas.Body.Service.Profiles
 {
@@ -24,7 +25,6 @@ namespace Sas.Body.Service.Profiles
                 .ReverseMap()
                 .ForMember(e => e.PositionId, d => d.Ignore())
                 .ForMember(e => e.VelocityId, d => d.Ignore());
-
         }
     }
 }

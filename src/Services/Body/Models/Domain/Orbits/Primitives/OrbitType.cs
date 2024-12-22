@@ -1,4 +1,4 @@
-﻿namespace Sas.Domain.Models.Orbits.Primitives
+﻿namespace Sas.Body.Service.Models.Domain.Orbits.Primitives
 {
     public enum OrbitType
     {

@@ -1,4 +1,4 @@
-﻿namespace Sas.Body.Service.Models
+﻿namespace Sas.Body.Service.Models.Entities
 {
     public class Entity
     {

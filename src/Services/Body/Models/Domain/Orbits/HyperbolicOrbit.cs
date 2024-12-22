@@ -1,7 +1,7 @@
-﻿using Sas.Domain.Models.Orbits.Primitives;
+﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Domain.Models.Orbits
+namespace Sas.Body.Service.Models.Domain.Orbits
 {
     public class HyperbolicOrbit : Orbit
     {

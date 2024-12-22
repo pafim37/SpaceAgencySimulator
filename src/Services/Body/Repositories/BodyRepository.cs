@@ -1,25 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sas.Body.Service.Contexts;
-using Sas.Body.Service.Models;
+using Sas.Body.Service.Models.Entities;
 
 namespace Sas.Body.Service.Repositories
 {
     public class BodyRepository(BodyContext context) : IBodyRepository
     {
-        public async Task CreateBodyAsync(BodyEntity bodyEntity)
+        public async Task CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken)
         {
-            await context.AddAsync(bodyEntity).ConfigureAwait(false);
-            await context.SaveChangesAsync().ConfigureAwait(false);
+            await context.AddAsync(bodyEntity, cancellationToken).ConfigureAwait(false);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<BodyEntity>> GetAllBodiesAsync()
+        public async Task<IEnumerable<BodyEntity>> GetAllBodiesAsync(CancellationToken cancellationToken)
         {
-            return await context.Bodies.ToListAsync().ConfigureAwait(false);
+            return await context.Bodies.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<BodyEntity?> GetBodyByNameAsync(string name)
+        public async Task<BodyEntity?> GetBodyByNameAsync(string name, CancellationToken cancellationToken)
         {
-            return await context.Bodies.FirstOrDefaultAsync(b => b.Name == name).ConfigureAwait(false);
+            return await context.Bodies.FirstOrDefaultAsync(b => b.Name == name, cancellationToken).ConfigureAwait(false);
         }
     }
 }

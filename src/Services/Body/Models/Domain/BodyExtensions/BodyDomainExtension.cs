@@ -1,16 +1,15 @@
-﻿using Sas.Domain.Models.Bodies;
-using Sas.Mathematica.Service.Vectors;
+﻿using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Domain.Models.Bodies.BodyExtensions
+namespace Sas.Body.Service.Models.Domain.BodyExtensions
 {
-    public static class BodyExtension
+    public static class BodyDomainExtension
     {
         /// <summary>
         /// Returns position related to given body 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>The relative position</returns>
-        public static Vector GetPositionRelatedTo(this Body body, Body other)
+        public static Vector GetPositionRelatedTo(this BodyDomain body, BodyDomain other)
         {
             ArgumentNullException.ThrowIfNull(other, nameof(other));
             return body.Position - other.Position;
@@ -21,7 +20,7 @@ namespace Sas.Domain.Models.Bodies.BodyExtensions
         /// </summary>
         /// <param name="body"></param>
         /// <returns>The relative velocity</returns>
-        public static Vector GetVelocityRelatedTo(this Body body, Body other)
+        public static Vector GetVelocityRelatedTo(this BodyDomain body, BodyDomain other)
         {
             ArgumentNullException.ThrowIfNull(other, nameof(other));
             return body.Velocity - other.Velocity;
@@ -32,7 +31,7 @@ namespace Sas.Domain.Models.Bodies.BodyExtensions
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
-        public static double GetSphereOfInfluenceRelatedTo(this Body body, Body other)
+        public static double GetSphereOfInfluenceRelatedTo(this BodyDomain body, BodyDomain other)
         {
             ArgumentNullException.ThrowIfNull(other, nameof(other));
             double distance = (body.Position - other.Position).Magnitude;

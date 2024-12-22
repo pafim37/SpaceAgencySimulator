@@ -1,8 +1,9 @@
-﻿using Sas.Mathematica.Service.Vectors;
+﻿using Sas.Body.Service.DataTransferObject;
+using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Domain.Models.Bodies
+namespace Sas.Body.Service.Models.Domain
 {
-    public class Body
+    public class BodyDomain
     {
         #region properties
         /// <summary>
@@ -40,7 +41,7 @@ namespace Sas.Domain.Models.Bodies
         /// <param name="position"></param>
         /// <param name="velocity"></param>
         /// <param name="radius"></param>
-        public Body(string name, double mass, Vector position, Vector velocity, double radius = 0)
+        public BodyDomain(string name, double mass, Vector position, Vector velocity, double radius = 0)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(mass, nameof(mass));
             ArgumentOutOfRangeException.ThrowIfNegative(mass, nameof(radius));
@@ -56,7 +57,7 @@ namespace Sas.Domain.Models.Bodies
         /// Parameterless constructor - needed for mapping
         /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public Body()
+        public BodyDomain()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
         }

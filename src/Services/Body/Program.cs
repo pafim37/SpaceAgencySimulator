@@ -12,9 +12,11 @@ namespace Sas.Body.Service
 
             builder.Services.AddControllers();
 
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddDbContext<BodyContext>(options =>
                 options.UseSqlServer(builder.Configuration["ConnectionStrings:Default"]),
                 ServiceLifetime.Scoped);
+
 
             var app = builder.Build();
 

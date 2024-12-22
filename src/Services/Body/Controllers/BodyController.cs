@@ -1,26 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sas.Body.Service.Contexts;
+using Sas.Body.Service.DataTransferObject;
+using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Controllers
 {
     [ApiController]
     [Route("body")]
-    public class BodyController(BodyContext context) : ControllerBase
+    public class BodyController(BodyContext context, IMapper mapper) : ControllerBase
     {
         private readonly BodyContext context = context;
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await context.Bodies
-                .ToListAsync().ConfigureAwait(false));
+            var bodies = await context.Bodies.ToListAsync().ConfigureAwait(false);
+            return Ok(mapper.Map<IEnumerable<BodyDto>>(bodies));
         }
 
         [HttpGet("{name}")]
         public async Task<IActionResult> GetByName(string name)
         {
-            return Ok(await context.Bodies.FirstOrDefaultAsync(body => body.Name == name).ConfigureAwait(false));
+            var body = await context.Bodies.FirstOrDefaultAsync(body => body.Name == name).ConfigureAwait(false);
+            return Ok(mapper.Map<Vector>(body.Position));
         }
 
         [HttpPost]

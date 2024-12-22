@@ -42,8 +42,8 @@ namespace Sas.Domain.Models.Bodies
         /// <param name="radius"></param>
         public Body(string name, double mass, Vector position, Vector velocity, double radius = 0)
         {
-            IsNotNegative(mass);
-            IsNotNegative(radius);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(mass, nameof(mass));
+            ArgumentOutOfRangeException.ThrowIfNegative(mass, nameof(radius));
 
             Name = name;
             Mass = mass;
@@ -59,16 +59,6 @@ namespace Sas.Domain.Models.Bodies
         public Body()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-        }
-        #endregion
-
-        #region private methods
-        private void IsNotNegative(double value)
-        {
-            if (value < 0)
-            {
-                throw new ArgumentOutOfRangeException($"Negative number name of {nameof(value)}");
-            }
         }
         #endregion
     }

@@ -1,6 +1,7 @@
 
 using Sas.Body.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Sas.Body.Service.Repositories;
 
 namespace Sas.Body.Service
 {
@@ -9,6 +10,8 @@ namespace Sas.Body.Service
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddScoped<IBodyRepository, BodyRepository>();
 
             builder.Services.AddControllers();
 

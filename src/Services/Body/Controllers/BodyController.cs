@@ -1,35 +1,38 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Sas.Body.Service.Contexts;
 using Sas.Body.Service.DataTransferObject;
-using Sas.Mathematica.Service.Vectors;
+using Sas.Body.Service.Models;
+using Sas.Body.Service.Repositories;
 
 namespace Sas.Body.Service.Controllers
 {
     [ApiController]
     [Route("body")]
-    public class BodyController(BodyContext context, IMapper mapper) : ControllerBase
+    public class BodyController(IBodyRepository bodyRepository, IMapper mapper) : ControllerBase
     {
-        private readonly BodyContext context = context;
-
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var bodies = await context.Bodies.ToListAsync().ConfigureAwait(false);
+            IEnumerable<BodyEntity> bodies = await bodyRepository.GetAllBodiesAsync().ConfigureAwait(false);
             return Ok(mapper.Map<IEnumerable<BodyDto>>(bodies));
         }
 
         [HttpGet("{name}")]
         public async Task<IActionResult> GetByName(string name)
         {
-            var body = await context.Bodies.FirstOrDefaultAsync(body => body.Name == name).ConfigureAwait(false);
-            return Ok(mapper.Map<Vector>(body.Position));
+            BodyEntity? bodyEntity = await bodyRepository.GetBodyByNameAsync(name).ConfigureAwait(false);
+            if (bodyEntity == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<BodyDto>(bodyEntity));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create([FromBody] BodyDto body)
         {
+            BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
+            await bodyRepository.CreateBodyAsync(bodyDb).ConfigureAwait(false);
             return Created();
         }
 

@@ -7,5 +7,7 @@ namespace Sas.Body.Service.Repositories
         public Task<IEnumerable<BodyEntity>> GetAllBodiesAsync(CancellationToken cancellationToken);
         public Task<BodyEntity?> GetBodyByNameAsync(string name, CancellationToken cancellationToken);
         public Task CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken);
+        public Task UpdateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken);
+        public Task DeleteBodyAsync(string name, CancellationToken cancellationToken);
     }
 }

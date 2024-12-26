@@ -12,7 +12,7 @@ namespace Sas.Body.Service.Models.Domain
         private const double TwoBodyProblemMassRatioLimit = 0.03;
         private const string BarycentrumName = "Barycentrum";
         private readonly List<BodyDomain> _bodies;
-        private readonly List<OrbitHolder> _orbitsDescription;
+        private readonly List<Orbit> _orbits;
         private readonly double _G; // gravitational constant
         private BodyDomain barycenter;
         #endregion
@@ -41,7 +41,7 @@ namespace Sas.Body.Service.Models.Domain
         /// <summary>
         /// Gets list of orbits in current body system
         /// </summary>
-        public List<OrbitHolder> OrbitsDescription => _orbitsDescription;
+        public List<Orbit> Orbits => _orbits;
         #endregion
 
         #region public methods
@@ -70,7 +70,7 @@ namespace Sas.Body.Service.Models.Domain
         public BodySystem(IEnumerable<BodyDomain> bodies, double gravitationalConst = Constants.G)
         {
             _bodies = bodies.ToList();
-            _orbitsDescription = [];
+            _orbits = [];
             _G = gravitationalConst;
             barycenter = GetBarycenter();
             UpdateBodySystem();
@@ -113,7 +113,7 @@ namespace Sas.Body.Service.Models.Domain
             {
                 body.Position -= barycenter.Position;
             }
-            foreach (OrbitHolder orbit in _orbitsDescription)
+            foreach (Orbit orbit in _orbits)
             {
                 orbit.Center -= barycenter.Position;
             }
@@ -124,35 +124,29 @@ namespace Sas.Body.Service.Models.Domain
             Vector velocity = surroundedBody.GetVelocityRelatedTo(resultBody);
             double u = _G * (surroundedBody.Mass + resultBody.Mass);
             Orbit orbit = OrbitFactory.CalculateOrbit(position, velocity, u);
+            orbit.Name = surroundedBody.Name;
             Vector center = Vector.Zero;
             double rotationAngle = 0;
             if (orbit.OrbitType == OrbitType.Elliptic)
             {
                 rotationAngle = orbit.RotationAngle;
-                center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis!.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
+                orbit.Center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis!.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Hyperbolic)
             {
                 rotationAngle = -orbit.RotationAngle;
-                center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis!.Value + Math.Cos(rotationAngle) * resultBody.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
+                orbit.Center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis!.Value + Math.Cos(rotationAngle) * resultBody.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Circular)
             {
-                center = new Vector(resultBody.Position.X, resultBody.Position.Y, 0);
+                orbit.Center = new Vector(resultBody.Position.X, resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Parabolic)
             {
                 rotationAngle = orbit.RotationAngle;
-                center = new Vector(resultBody.Position.Y, resultBody.Position.X, 0);
+                orbit.Center = new Vector(resultBody.Position.Y, resultBody.Position.X, 0);
             }
-            OrbitHolder orbitHolder = new()
-            {
-                Name = surroundedBody.Name,
-                Orbit = orbit,
-                Center = center,
-                Rotation = rotationAngle
-            };
-            _orbitsDescription.Add(orbitHolder);
+            _orbits.Add(orbit);
         }
         private BodyDomain GetBarycenter()
         {

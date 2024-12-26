@@ -33,10 +33,26 @@ namespace Sas.Body.Service.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BodyDto body)
         {
+            ArgumentException.ThrowIfNullOrEmpty(body.Name);
             BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
             await bodyRepository.CreateBodyAsync(bodyDb, cancellationTokenSource.Token).ConfigureAwait(false);
             return Created();
         }
 
+        [HttpPatch]
+        public async Task<IActionResult> Patch([FromBody] BodyDto body)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(body.Name);
+            BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
+            await bodyRepository.UpdateBodyAsync(bodyDb, cancellationTokenSource.Token).ConfigureAwait(false);
+            return Ok();
+        }
+
+        [HttpDelete("{name}")]
+        public async Task<IActionResult> Delete(string name)
+        {
+            await bodyRepository.DeleteBodyAsync(name, cancellationTokenSource.Token).ConfigureAwait(false);
+            return NoContent();
+        }
     }
 }

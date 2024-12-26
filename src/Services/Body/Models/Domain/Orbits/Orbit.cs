@@ -32,6 +32,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         public OrbitType OrbitType => _type;
 
         /// <summary>
+        /// Name of the body on the current orbit
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Semi major axis
         /// </summary>
         public double? SemiMajorAxis => GetSemiMajorAxis();
@@ -40,6 +45,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         /// Semi minor axis
         /// </summary>
         public double? SemiMinorAxis => GetSemiMinorAxis();
+
+        /// <summary>
+        /// Center of the orbit
+        /// </summary>
+        public Vector Center { get; set; }
 
         /// <summary>
         /// Semi latus rectum

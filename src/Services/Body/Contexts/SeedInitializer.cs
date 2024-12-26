@@ -36,7 +36,7 @@ namespace Sas.Body.Service.Contexts
             VectorEntity earthPosition = new()
             {
                 Id = 3,
-                X = 1,
+                X = 50,
                 Y = 0,
                 Z = 0,
             };
@@ -59,14 +59,44 @@ namespace Sas.Body.Service.Contexts
                 Radius = 0
             };
 
+            VectorEntity venusPosition = new()
+            {
+                Id = 5,
+                X = 0,
+                Y = 50,
+                Z = 0,
+            };
+
+            VectorEntity venusVelocity = new()
+            {
+                Id = 6,
+                X = -1,
+                Y = 0,
+                Z = 0,
+            };
+
+            BodyEntity venusBody = new()
+            {
+                Id = 3,
+                Name = "Venus",
+                Mass = 1,
+                PositionId = venusPosition.Id,
+                VelocityId = venusVelocity.Id,
+                Radius = 0
+            };
+
             modelBuilder.Entity<VectorEntity>().HasData(sunPosition);
             modelBuilder.Entity<VectorEntity>().HasData(sunVelocity);
 
             modelBuilder.Entity<VectorEntity>().HasData(earthPosition);
             modelBuilder.Entity<VectorEntity>().HasData(earthVelocity);
 
+            modelBuilder.Entity<VectorEntity>().HasData(venusPosition);
+            modelBuilder.Entity<VectorEntity>().HasData(venusVelocity);
+
             modelBuilder.Entity<BodyEntity>().HasData(sunBody);
             modelBuilder.Entity<BodyEntity>().HasData(earthBody);
+            modelBuilder.Entity<BodyEntity>().HasData(venusBody);
         }
     }
 }

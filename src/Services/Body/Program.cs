@@ -1,9 +1,7 @@
-
-using Sas.Body.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Sas.Body.Service.Repositories;
+using Sas.Body.Service.Contexts;
 using Sas.Body.Service.Controllers;
-using Sas.Body.Service.Handlers;
+using Sas.Body.Service.Repositories;
 
 namespace Sas.Body.Service
 {
@@ -23,7 +21,11 @@ namespace Sas.Body.Service
                 options.UseSqlServer(builder.Configuration["ConnectionStrings:Default"]),
                 ServiceLifetime.Scoped);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                 .AddJsonOptions(options =>
+                 {
+                     options.JsonSerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals;
+                 });
 
             var app = builder.Build();
 

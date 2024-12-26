@@ -14,31 +14,32 @@ namespace Sas.Body.Service.Models.Domain
         private readonly List<BodyDomain> _bodies;
         private readonly List<OrbitHolder> _orbitsDescription;
         private readonly double _G; // gravitational constant
+        private BodyDomain barycenter;
         #endregion
 
         #region properties
         /// <summary>
         /// Center of mass of the system (Barycentrum)
         /// </summary>
-        public BodyDomain Barycentrum => GetBarycenter();
+        public BodyDomain Barycentrum => barycenter;
 
         /// <summary>
-        /// G * (M + m1 + m2 + ...)
+        /// Gets gravitational parameter defined as G * (M + m1 + m2 + ...)
         /// </summary>
         public double U => GetU();
 
         /// <summary>
-        /// G * (M + m1 + m2 + ...)
+        /// Gets gravitational constant
         /// </summary>
         public double G => _G;
 
         /// <summary>
-        /// Returns list of bodies in current system
+        /// Gets list of bodies in current body system
         /// </summary>
         public List<BodyDomain> Bodies => _bodies;
 
         /// <summary>
-        /// Returns list of orbits in current system
+        /// Gets list of orbits in current body system
         /// </summary>
         public List<OrbitHolder> OrbitsDescription => _orbitsDescription;
         #endregion
@@ -51,15 +52,17 @@ namespace Sas.Body.Service.Models.Domain
         public void AddBody(BodyDomain body)
         {
             _bodies.Add(body);
-            Update();
+            barycenter = GetBarycenter();
+            UpdateBodySystem();
         }
 
         /// <summary>
-        /// Update state of the Solar System
+        /// UpdateBodySystem state of the Solar System
         /// </summary>
-        public void Update()
+        public void UpdateBodySystem()
         {
             FindOrbits();
+            CalibrateBarycenterToZero();
         }
         #endregion
 
@@ -67,15 +70,10 @@ namespace Sas.Body.Service.Models.Domain
         public BodySystem(IEnumerable<BodyDomain> bodies, double gravitationalConst = Constants.G)
         {
             _bodies = bodies.ToList();
-            _orbitsDescription = new();
+            _orbitsDescription = [];
             _G = gravitationalConst;
-            Update();
-        }
-
-        public BodySystem()
-        {
-            _bodies = new();
-            _orbitsDescription = new();
+            barycenter = GetBarycenter();
+            UpdateBodySystem();
         }
         #endregion
 
@@ -105,11 +103,8 @@ namespace Sas.Body.Service.Models.Domain
                 {
                     AddOrbitToSystem(currentSurroundedBody, centerBody);
                 }
-                else
-                {
-                    AddOrbitToSystem(sortBodies[^1], Barycentrum);
-                }
             }
+            AddOrbitToSystem(sortBodies[^1], barycenter);
         }
         public void CalibrateBarycenterToZero()
         {
@@ -117,6 +112,10 @@ namespace Sas.Body.Service.Models.Domain
             foreach (BodyDomain body in _bodies)
             {
                 body.Position -= barycenter.Position;
+            }
+            foreach (OrbitHolder orbit in _orbitsDescription)
+            {
+                orbit.Center -= barycenter.Position;
             }
         }
         private void AddOrbitToSystem(BodyDomain surroundedBody, BodyDomain resultBody)
@@ -132,14 +131,14 @@ namespace Sas.Body.Service.Models.Domain
                 rotationAngle = orbit.RotationAngle;
                 center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis!.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
             }
-            else if (orbit.OrbitType == OrbitType.Circular)
-            {
-                center = new Vector(resultBody.Position.X, resultBody.Position.Y, 0);
-            }
             else if (orbit.OrbitType == OrbitType.Hyperbolic)
             {
                 rotationAngle = -orbit.RotationAngle;
                 center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis!.Value + Math.Cos(rotationAngle) * resultBody.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
+            }
+            else if (orbit.OrbitType == OrbitType.Circular)
+            {
+                center = new Vector(resultBody.Position.X, resultBody.Position.Y, 0);
             }
             else if (orbit.OrbitType == OrbitType.Parabolic)
             {

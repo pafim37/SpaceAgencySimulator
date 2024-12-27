@@ -1,9 +1,8 @@
 using FluentAssertions;
-using Sas.Domain.Models.Bodies;
+using Sas.Body.Service.Models.Domain;
 using Sas.Mathematica.Service.Vectors;
-using Xunit;
 
-namespace Sas.Domain.Tests
+namespace Sas.Body.Service.Test
 {
     public class BodyTest
     {
@@ -17,7 +16,7 @@ namespace Sas.Domain.Tests
             Vector velocity = Vector.Ones;
 
             // Act
-            Body body = new(name, mass, position, velocity);
+            BodyDomain body = new(name, mass, position, velocity);
 
             // Assert
             body.Name.Should().Be(name);
@@ -38,7 +37,7 @@ namespace Sas.Domain.Tests
             double radius = 10;
 
             // Act
-            Body body = new(name, mass, position, velocity, radius);
+            BodyDomain body = new(name, mass, position, velocity, radius);
 
             // Assert
             body.Name.Should().Be(name);
@@ -58,7 +57,7 @@ namespace Sas.Domain.Tests
 
             Action action = () =>
             {
-                new Body("Planet", negativeMass, position, velocity);
+                new BodyDomain("Planet", negativeMass, position, velocity);
             };
 
             // Act & Assert
@@ -75,7 +74,7 @@ namespace Sas.Domain.Tests
 
             Action action = () =>
             {
-                new Body("Planet", 0, position, velocity, negativeRadius);
+                new BodyDomain("Planet", 0, position, velocity, negativeRadius);
             };
 
             // Act & Assert
@@ -86,7 +85,7 @@ namespace Sas.Domain.Tests
         public void ParameterlessConstructorCreatesBody()
         {
             // Arrange & Act
-            Body body = new Body();
+            BodyDomain body = new BodyDomain();
 
             // Assert
             body.Should().NotBeNull();

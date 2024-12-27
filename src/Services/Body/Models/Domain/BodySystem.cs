@@ -1,6 +1,7 @@
 ﻿using Sas.Body.Service.Models.Domain.BodyExtensions;
 using Sas.Body.Service.Models.Domain.Orbits;
 using Sas.Body.Service.Models.Domain.Orbits.Primitives;
+using Sas.Domain.Exceptions;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
@@ -123,7 +124,15 @@ namespace Sas.Body.Service.Models.Domain
             Vector position = surroundedBody.GetPositionRelatedTo(resultBody);
             Vector velocity = surroundedBody.GetVelocityRelatedTo(resultBody);
             double u = _G * (surroundedBody.Mass + resultBody.Mass);
-            Orbit orbit = OrbitFactory.CalculateOrbit(position, velocity, u);
+            Orbit orbit;
+            try
+            {
+                orbit = OrbitFactory.CalculateOrbit(position, velocity, u);
+            }
+            catch (UnknownOrbitTypeException)
+            {
+                return;
+            }
             orbit.Name = surroundedBody.Name;
             Vector center = Vector.Zero;
             double rotationAngle = 0;

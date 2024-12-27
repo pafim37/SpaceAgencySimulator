@@ -1,9 +1,9 @@
-﻿using Sas.Domain.Models.Bodies;
-using Sas.Domain.Models.Bodies.BodyExtensions;
+﻿using Sas.Body.Service.Models.Domain;
+using Sas.Body.Service.Models.Domain.BodyExtensions;
 using Sas.Mathematica.Service.Vectors;
 using Xunit;
 
-namespace Sas.Domain.Tests
+namespace Sas.Body.Service.Test
 {
     public class BodyExtensionTest
     {
@@ -13,7 +13,7 @@ namespace Sas.Domain.Tests
             // Arrange
             Vector position = Vector.Zero;
             Vector velocity = Vector.Zero;
-            Body body = new Body("Planet", 10, position, velocity);
+            BodyDomain body = new BodyDomain("Planet", 10, position, velocity);
 
             // Act & Assert
             _ = Assert.Throws<ArgumentNullException>(() => body.GetPositionRelatedTo(null));
@@ -26,8 +26,8 @@ namespace Sas.Domain.Tests
         {
             // Arrange 
             Vector position = new Vector(10, 10, 10);
-            Body sun = new Body("Sun", 100, Vector.Zero, Vector.Zero);
-            Body earth = new Body("Earth", 1, position, Vector.Zero);
+            BodyDomain sun = new BodyDomain("Sun", 100, Vector.Zero, Vector.Zero);
+            BodyDomain earth = new BodyDomain("Earth", 1, position, Vector.Zero);
 
             // Act & Assert
             Vector expected = new Vector(10, 10, 10);
@@ -42,8 +42,8 @@ namespace Sas.Domain.Tests
         {
             // Arrange 
             Vector velocity = new Vector(10, 10, 10);
-            Body sun = new Body("Sun", 100, Vector.Zero, Vector.Zero);
-            Body earth = new Body("Earth", 1, Vector.Zero, velocity);
+            BodyDomain sun = new BodyDomain("Sun", 100, Vector.Zero, Vector.Zero);
+            BodyDomain earth = new BodyDomain("Earth", 1, Vector.Zero, velocity);
 
             // Act & Assert
             Vector expected = new Vector(10, 10, 10);

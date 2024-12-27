@@ -16,17 +16,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits
             else throw new UnknownOrbitTypeException($"Cannot predict orbit type. Unsupported value of eccentricity = {e}");
         }
 
-        public static Orbit CalculateOrbit(BodyDomain body, double u)
-        {
-            return CalculateOrbit(body.Position, body.Velocity, u);
-        }
-
-        public static Orbit CalculateOrbit(BodyDomain smallBody, BodyDomain massiveBody, double G = Constants.G)
-        {
-            double u = G * (smallBody.Mass + massiveBody.Mass);
-            return CalculateOrbit(smallBody.Position, smallBody.Velocity, u);
-        }
-
         private static double GetEccentricity(Vector position, Vector velocity, double u)
         {
             double r = position.Magnitude;

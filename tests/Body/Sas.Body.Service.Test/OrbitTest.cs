@@ -1,5 +1,4 @@
-using FluentAssertions;
-using Sas.Body.Service.Models.Domain.Orbits.Helper;
+﻿using Sas.Body.Service.Models.Domain.Orbits;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
@@ -7,112 +6,44 @@ namespace Sas.Body.Service.Test
 {
     public class OrbitTest
     {
-        private const int Segments = 4;
-        private const int SemiMajorAxis = 50;
-        private const int SemiMinorAxis = 25;
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(2 * Constants.PI)]
-        public void GetEllipticOrbitPointsReturnsPoint(double rotation)
+        [Fact]
+        public void OrbitReturnsOrbitalElementsForEarthInApoapsis()
         {
-            var points = GetEllipticOrbitPoints.GetPoints(
-                semiMajorAxis: SemiMajorAxis,
-                semiMinorAxis: SemiMinorAxis,
-                center: Vector.Zero,
-                rotation: rotation,
-                segments: Segments
-                );
+            // Arrange
+            Vector position = new Vector(Constants.EarthApoapsis, 0, 0);
+            Vector velocity = new Vector(0, Constants.EarthMinVelocity, 0);
+            double u = Constants.G * (Constants.SolarMass + Constants.EarthMass);
 
-            points.Should().HaveCount(Segments + 1);
+            // Act
+            Orbit orbit = OrbitFactory.CalculateOrbit(position, velocity, u);
 
-            points[0].X.Should().Be(SemiMajorAxis);
-            points[0].Y.Should().Be(0);
-            points[0].Z.Should().Be(0);
-
-            points[1].X.Should().Be(0);
-            points[1].Y.Should().Be(SemiMinorAxis);
-            points[1].Z.Should().Be(0);
-
-            points[2].X.Should().Be(-SemiMajorAxis);
-            points[2].Y.Should().Be(0);
-            points[2].Z.Should().Be(0);
-
-            points[3].X.Should().Be(0);
-            points[3].Y.Should().Be(-SemiMinorAxis);
-            points[3].Z.Should().Be(0);
-
-            points[4].X.Should().Be(SemiMajorAxis);
-            points[4].Y.Should().Be(0);
-            points[4].Z.Should().Be(0);
+            // Assert
+            Assert.Equal(149588585873.2210, orbit.SemiMajorAxis!.Value, 4);
+            Assert.Equal(0.01677, orbit.Eccentricity, 4);
+            Assert.Equal(3.1416, orbit.MeanAnomaly, 4);
+            Assert.Equal(double.NaN, orbit.ArgumentOfPeriapsis, 4);
+            Assert.Equal(0, orbit.Inclination, 4);
+            Assert.Equal(double.NaN, orbit.AscendingNode, 4);
+            Assert.Equal(3.1416, orbit.TrueAnomaly, 4);
+            Assert.Equal(3.1416, orbit.EccentricAnomaly, 4);
+            Assert.Equal(31555285.4183, orbit.Period!.Value, 4);
         }
 
         [Fact]
-        public void GetEllipticOrbitPointsTranslatePoint()
+        public void OrbitReturnsOrbitalElements()
         {
-            var points = GetEllipticOrbitPoints.GetPoints(
-                semiMajorAxis: SemiMajorAxis,
-                semiMinorAxis: SemiMinorAxis,
-                center: 10 * Vector.Ones,
-                rotation: 0,
-                segments: Segments
-                );
+            Vector position = new Vector(5000, 10000, 2100);
+            Vector velocity = new Vector(-5.922, 1.926, 3.246);
+            double u = 398600;
 
-            points.Should().HaveCount(Segments + 1);
+            Orbit orbit = OrbitFactory.CalculateOrbit(position, velocity, u);
 
-            points[0].X.Should().Be(SemiMajorAxis + 10);
-            points[0].Y.Should().Be(10);
-            points[0].Z.Should().Be(10);
-
-            points[1].X.Should().Be(10);
-            points[1].Y.Should().Be(SemiMinorAxis + 10);
-            points[1].Z.Should().Be(10);
-
-            points[2].X.Should().Be(-SemiMajorAxis + 10);
-            points[2].Y.Should().Be(10);
-            points[2].Z.Should().Be(10);
-
-            points[3].X.Should().Be(10);
-            points[3].Y.Should().Be(-SemiMinorAxis + 10);
-            points[3].Z.Should().Be(10);
-
-            points[4].X.Should().Be(SemiMajorAxis + 10);
-            points[4].Y.Should().Be(10);
-            points[4].Z.Should().Be(10);
-        }
-
-        [Fact]
-        public void GetEllipticOrbitPointsRotatePoint()
-        {
-            var points = GetEllipticOrbitPoints.GetPoints(
-                semiMajorAxis: SemiMajorAxis,
-                semiMinorAxis: SemiMinorAxis,
-                center: Vector.Zero,
-                rotation: Math.PI / 2,
-                segments: Segments
-                );
-
-            points.Should().HaveCount(Segments + 1);
-
-            points[0].X.Should().Be(0);
-            points[0].Y.Should().Be(SemiMajorAxis);
-            points[0].Z.Should().Be(0);
-
-            points[1].X.Should().Be(-SemiMinorAxis);
-            points[1].Y.Should().Be(0);
-            points[1].Z.Should().Be(0);
-
-            points[2].X.Should().Be(0);
-            points[2].Y.Should().Be(-SemiMajorAxis);
-            points[2].Z.Should().Be(0);
-
-            points[3].X.Should().Be(SemiMinorAxis);
-            points[3].Y.Should().Be(0);
-            points[3].Z.Should().Be(0);
-
-            points[4].X.Should().Be(0);
-            points[4].Y.Should().Be(SemiMajorAxis);
-            points[4].Z.Should().Be(0);
+            Assert.Equal(19198.3565, orbit.SemiMajorAxis!.Value, 4);
+            Assert.Equal(0.4095, orbit.Eccentricity, 4);
+            Assert.Equal(0.5302, orbit.Inclination, 4);
+            Assert.Equal(0.7810, orbit.AscendingNode, 4);
+            Assert.Equal(0.5261, orbit.ArgumentOfPeriapsis, 4);
+            Assert.Equal(6.1307, orbit.TrueAnomaly, 4);
         }
     }
 }

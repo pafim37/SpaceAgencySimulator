@@ -9,6 +9,7 @@
         private bool _isNormalize;
         private double _magnitude;
         private readonly int _dim;
+        private readonly int precision = 13;
 
         #region Constructors
         /// <summary>
@@ -71,7 +72,7 @@
         {
             get
             {
-                return _dim > 0 ? _elements[0] : 0;
+                return _dim > 0 ? Math.Round(_elements[0], precision) : 0;
             }
         }
 
@@ -82,7 +83,7 @@
         {
             get
             {
-                return _dim > 1 ? _elements[1] : 0;
+                return _dim > 1 ? Math.Round(_elements[1], precision) : 0;
             }
         }
 
@@ -93,7 +94,7 @@
         {
             get
             {
-                return _dim > 2 ? _elements[2] : 0;
+                return _dim > 2 ? Math.Round(_elements[2], precision) : 0;
             }
         }
 

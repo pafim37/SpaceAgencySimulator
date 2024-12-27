@@ -27,10 +27,17 @@ namespace Sas.Body.Service
                      options.JsonSerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals;
                  });
 
+            // CORS
+            builder.Services.AddCors(o => o.AddPolicy("SasPolicy", builder =>
+            {
+                builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+            }));
+
             var app = builder.Build();
 
             app.UseHttpsRedirection();
 
+            app.UseCors("SasPolicy");
             app.UseAuthorization();
 
             app.MapControllers();

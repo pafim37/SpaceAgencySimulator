@@ -42,9 +42,8 @@ namespace Sas.Body.Service.Controllers
         [HttpPatch]
         public async Task<IActionResult> Patch([FromBody] BodyDto body)
         {
-            ArgumentException.ThrowIfNullOrEmpty(body.Name);
-            BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
-            await bodyRepository.UpdateBodyAsync(bodyDb, cancellationTokenSource.Token).ConfigureAwait(false);
+            ArgumentException.ThrowIfNullOrWhiteSpace(body.Name);
+            await bodyRepository.UpdateBodyAsync(body, cancellationTokenSource.Token).ConfigureAwait(false);
             return Ok();
         }
 

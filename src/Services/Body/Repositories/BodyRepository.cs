@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Sas.Body.Service.Contexts;
+using Sas.Body.Service.DataTransferObject;
 using Sas.Body.Service.Exceptions;
 using Sas.Body.Service.Models.Entities;
 
 namespace Sas.Body.Service.Repositories
 {
-    public class BodyRepository(BodyContext context) : IBodyRepository
+    public class BodyRepository(BodyContext context, IMapper mapper) : IBodyRepository
     {
         public async Task CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken)
         {
@@ -18,16 +20,16 @@ namespace Sas.Body.Service.Repositories
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task UpdateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken)
+        public async Task UpdateBodyAsync(BodyDto dataToUpdate, CancellationToken cancellationToken)
         {
-            BodyEntity? bodyToUpdate = await GetBodyByNameAsync(bodyEntity.Name, cancellationToken).ConfigureAwait(false) 
-                ?? throw new NoBodyInDatabaseException($"There is no body in database with name = {bodyEntity.Name}");
-            bodyToUpdate.Name = bodyEntity.Name;
-            bodyToUpdate.Mass = bodyEntity.Mass == 0.0 ? bodyToUpdate.Mass : bodyEntity.Mass;
-            bodyToUpdate.Position = bodyEntity.Position ?? bodyToUpdate.Position;
-            bodyToUpdate.Velocity = bodyEntity.Velocity ?? bodyToUpdate.Velocity;
-            bodyToUpdate.Radius = bodyEntity.Radius;
-            context.Update(bodyToUpdate);
+            ArgumentException.ThrowIfNullOrWhiteSpace(dataToUpdate.Name, nameof(dataToUpdate));
+            BodyEntity? bodyEntity = await GetBodyByNameAsync(dataToUpdate.Name, cancellationToken).ConfigureAwait(false) 
+                ?? throw new NoBodyInDatabaseException($"There is no body in database with name = {dataToUpdate.Name}");
+            bodyEntity.Mass = dataToUpdate.Mass ?? bodyEntity.Mass;
+            bodyEntity.Position = mapper.Map<VectorEntity>(dataToUpdate.Position) ?? bodyEntity.Position;
+            bodyEntity.Velocity = mapper.Map<VectorEntity>(dataToUpdate.Velocity) ?? bodyEntity.Velocity;
+            bodyEntity.Radius = dataToUpdate.Radius ?? bodyEntity.Radius;
+            context.Update(bodyEntity);
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Mathematica.Tests
@@ -12,6 +13,28 @@ namespace Sas.Mathematica.Tests
             vector.X.Should().Be(11);
             vector.Y.Should().Be(13);
             vector.Z.Should().Be(17);
+        }
+
+        [Fact]
+        public void VectorRoundComponentsWith13Precision()
+        {
+            int precision = 13;
+            double pi = Math.Round(Constants.PI, precision);
+            Vector vector = new(pi, pi, pi);
+            vector.X.Should().Be(pi);
+            vector.Y.Should().Be(pi);
+            vector.Z.Should().Be(pi);
+        }
+
+        [Fact]
+        public void VectorNotRoundComponentsWith14Precision()
+        {
+            int precision = 14;
+            double pi = Math.Round(Constants.PI, precision);
+            Vector vector = new(pi, pi, pi);
+            vector.X.Should().NotBe(pi);
+            vector.Y.Should().NotBe(pi);
+            vector.Z.Should().NotBe(pi);
         }
 
         [Fact]
@@ -217,11 +240,12 @@ namespace Sas.Mathematica.Tests
         [Fact]
         public void VectorCanBeNormalized()
         {
-            Vector vector = new Vector(1, 1, 0);
+            Vector vector = new Vector(1, 0, 1);
+            double value = Math.Round(Math.Sqrt(2) / 2, 13);
             vector.Normalize();
-            vector.X.Should().BeApproximately(Math.Sqrt(2) / 2, 10);
-            vector.Y.Should().BeApproximately(Math.Sqrt(2) / 2, 10);
-            vector.Z.Should().Be(0);
+            vector.X.Should().Be(value);
+            vector.Y.Should().Be(0);
+            vector.Z.Should().Be(value);
 
             Vector vector2 = new Vector(10, 0, 0);
             vector2.Normalize();

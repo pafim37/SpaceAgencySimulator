@@ -33,7 +33,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(360),
-                new Vector([Math.Sqrt(2) / 2, Math.Sqrt(2) / 2, 0]),
+                Vector.Ox,
             };
         }
         public static IEnumerable<object[]> RotationOYAroundOZTestData()
@@ -61,7 +61,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(360),
-                new Vector([-Math.Sqrt(2) / 2, Math.Sqrt(2) / 2, 0]),
+                Vector.Oy,
             };
         }
 
@@ -70,12 +70,12 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(45),
-                new Vector([Math.Sqrt(2) / 2, 0, -Math.Sqrt(2) / 2]),
+                new Vector([Math.Sqrt(2) / 2, 0, Math.Sqrt(2) / 2]),
             };
             yield return new object[]
             {
                 ConvertAngle.DegToRad(90),
-                -1 * Vector.Oz,
+                1 * Vector.Oz,
             };
             yield return new object[]
             {
@@ -85,12 +85,12 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(270),
-                Vector.Oz,
+                -1 * Vector.Oz,
             };
             yield return new object[]
             {
                 ConvertAngle.DegToRad(360),
-                new Vector([Math.Sqrt(2) / 2, 0, -Math.Sqrt(2) / 2]),
+                Vector.Ox,
             };
         }
 
@@ -119,7 +119,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(360),
-                new Vector([Math.Sqrt(2) / 2, 0, Math.Sqrt(2) / 2]),
+                Vector.Oz,
             };
         }
 
@@ -148,7 +148,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(360),
-                new Vector([0, Math.Sqrt(2) / 2, Math.Sqrt(2) / 2]),
+                Vector.Oy,
             };
         }
 
@@ -162,7 +162,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(90),
-                -1 * Vector.Oz,
+                -1 * Vector.Oy,
             };
             yield return new object[]
             {
@@ -177,7 +177,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(360),
-                new Vector([0, -Math.Sqrt(2) / 2, Math.Sqrt(2) / 2]),
+                Vector.Oz,
             };
         }
 
@@ -260,9 +260,9 @@ namespace Sas.Mathematica.Tests
 
         private static void Assert(Vector expected, Vector result)
         {
-            result.X.Should().BeApproximately(expected.X, Precision);
-            result.Y.Should().BeApproximately(expected.Y, Precision);
-            result.Z.Should().BeApproximately(expected.Z, Precision);
+            result.X.Should().Be(expected.X);
+            result.Y.Should().Be(expected.Y);
+            result.Z.Should().Be(expected.Z);
         }
     }
 }

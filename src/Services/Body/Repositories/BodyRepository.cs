@@ -12,7 +12,7 @@ namespace Sas.Body.Service.Repositories
             BodyEntity? bodyToUpdate = await GetBodyByNameAsync(bodyEntity.Name, cancellationToken).ConfigureAwait(false);
             if (bodyToUpdate is not null)
             {
-                throw new BodyAlreadyExistsException("Body with existing name already exists");
+                throw new BodyAlreadyExistsException($"Body with name = {bodyEntity.Name} already exists");
             }
             await context.AddAsync(bodyEntity, cancellationToken).ConfigureAwait(false);
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

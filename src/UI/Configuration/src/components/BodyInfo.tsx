@@ -10,13 +10,13 @@ interface IBodyInfo {
   key: string;
   body: BodyType;
   setBodies: React.Dispatch<React.SetStateAction<BodyType[]>>;
+  color: string;
 }
 
 const BodyInfo = (props: IBodyInfo) => {
-  const color = "#30c9b0";
-
   const [isOpenConfirmationDialog, setIsOpenConfirmationDialog] =
     useState<boolean>(false);
+  const color = props.color;
 
   const openConfirmationDialog = () => {
     setIsOpenConfirmationDialog(true);

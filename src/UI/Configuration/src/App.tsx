@@ -17,9 +17,9 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 const App = () => {
   const [bodies, setBodies] = useState<BodyType[]>([]);
+  const [fetchedBodies, setFetchedBodies] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [openSnackbarAlert, setOpenSnackbarAlert] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
   const [openNestedList, setOpenNestedList] = useState<boolean[]>([]);
 
   useEffect(() => {
@@ -27,9 +27,13 @@ const App = () => {
       const currBodies: Array<BodyType> = await axiosGetBodies();
       if (currBodies === undefined) {
         setOpenSnackbarAlert(true);
-        setMessage("Cannot fetch bodies from the server");
       } else {
         setBodies(currBodies);
+        setFetchedBodies(
+          currBodies.map((body) => {
+            return body.name;
+          })
+        );
         setOpenNestedList(Array(currBodies.length).fill(false));
         setIsLoading(false);
       }
@@ -62,7 +66,14 @@ const App = () => {
                   {openNestedList[index] ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
                 <Collapse in={openNestedList[index]} timeout="auto">
-                  <BodyInfo key={body.name} body={body} setBodies={setBodies} />
+                  <BodyInfo
+                    key={body.name}
+                    body={body}
+                    setBodies={setBodies}
+                    color={
+                      fetchedBodies.includes(body.name) ? "#30c9b0" : "#d32f2f"
+                    }
+                  />
                 </Collapse>
               </Paper>
             ))}
@@ -83,7 +94,7 @@ const App = () => {
             <SnackbarAlert
               openSnackbarAlert={openSnackbarAlert}
               setOpenSnackbarAlert={setOpenSnackbarAlert}
-              message={message}
+              message={"Cannot fetch bodies from the server"}
             />
           ) : (
             <></>

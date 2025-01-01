@@ -13,7 +13,7 @@ import SnackbarAlert from "../alerts/SnackbarAlert";
 
 interface IEditBodyDialog {
   body: BodyType;
-  setBody: Dispatch<SetStateAction<BodyType>>;
+  setBody: Dispatch<SetStateAction<BodyType[]>>;
 }
 
 export default function EditBodyDialog(props: IEditBodyDialog) {
@@ -33,11 +33,15 @@ export default function EditBodyDialog(props: IEditBodyDialog) {
     setOpen(false);
   };
 
-  const handleSubmit = () => {
+  const update = () => {
     const message = validate(editableBody);
     if (message === "") {
-      // TODO: add try catch
-      axiosUpdateBody(props.body);
+      axiosUpdateBody(editableBody);
+      props.setBody((prev: BodyType[]) =>
+        prev.map((body) =>
+          body.name === editableBody.name ? (editableBody as BodyType) : body
+        )
+      );
       handleClose();
     } else {
       setErrorMessage(message);
@@ -89,7 +93,7 @@ export default function EditBodyDialog(props: IEditBodyDialog) {
           <Button variant="outlined" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained" onClick={update}>
             Update
           </Button>
         </DialogActions>

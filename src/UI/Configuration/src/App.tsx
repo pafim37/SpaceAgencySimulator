@@ -55,29 +55,39 @@ const App = () => {
           <Box display="flex" justifyContent={"flex-end"} sx={{ p: 2 }}>
             <AddBodyDialog setBodies={setBodies} />
           </Box>
-          <List>
-            {bodies.map((body: BodyType, index) => (
-              <Paper elevation={1} key={index} sx={{ p: 1, m: 1 }}>
-                <ListItemButton
-                  key={index}
-                  onClick={() => handleNestedList(index)}
-                >
-                  <Typography>{body.name}</Typography>
-                  {openNestedList[index] ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={openNestedList[index]} timeout="auto">
-                  <BodyInfo
-                    key={body.name}
-                    body={body}
-                    setBodies={setBodies}
-                    color={
-                      fetchedBodies.includes(body.name) ? "#30c9b0" : "#d32f2f"
-                    }
-                  />
-                </Collapse>
-              </Paper>
-            ))}
-          </List>
+          <Box
+            sx={{
+              maxHeight: "calc(90vh - 100px)",
+              overflow: "auto",
+              borderRadius: 2,
+            }}
+          >
+            <List>
+              {bodies.map((body: BodyType, index) => (
+                <Paper elevation={1} key={index} sx={{ p: 1, m: 1 }}>
+                  <ListItemButton
+                    key={index}
+                    onClick={() => handleNestedList(index)}
+                  >
+                    <Typography color="#30cb0">{body.name}</Typography>
+                    {openNestedList[index] ? <ExpandLess /> : <ExpandMore />}
+                  </ListItemButton>
+                  <Collapse in={openNestedList[index]} timeout="auto">
+                    <BodyInfo
+                      key={body.name}
+                      body={body}
+                      setBodies={setBodies}
+                      color={
+                        fetchedBodies.includes(body.name)
+                          ? "#30c9b0"
+                          : "#d32f2f"
+                      }
+                    />
+                  </Collapse>
+                </Paper>
+              ))}
+            </List>
+          </Box>
         </Paper>
       ) : (
         <>

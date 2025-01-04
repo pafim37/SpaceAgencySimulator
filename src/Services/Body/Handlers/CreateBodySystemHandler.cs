@@ -28,6 +28,7 @@ namespace Sas.Body.Service.Handlers
                 );
             }
             BodySystem bodySystem = new(bodyDomains, request.G);
+            bodySystem.UpdateBodySystem();
             return bodySystem;
         }
     }

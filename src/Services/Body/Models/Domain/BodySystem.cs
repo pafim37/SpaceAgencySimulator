@@ -15,14 +15,14 @@ namespace Sas.Body.Service.Models.Domain
         private readonly List<BodyDomain> _bodies;
         private readonly List<Orbit> _orbits;
         private readonly double _G; // gravitational constant
-        private BodyDomain barycenter;
+        private BodyDomain? barycenter;
         #endregion
 
         #region properties
         /// <summary>
         /// Center of mass of the system (Barycentrum)
         /// </summary>
-        public BodyDomain Barycentrum => barycenter;
+        public BodyDomain? Barycentrum => barycenter;
 
         /// <summary>
         /// Gets gravitational parameter defined as G * (M + m1 + m2 + ...)
@@ -74,7 +74,6 @@ namespace Sas.Body.Service.Models.Domain
             _orbits = [];
             _G = gravitationalConst;
             barycenter = GetBarycenter();
-            UpdateBodySystem();
         }
         #endregion
 
@@ -85,7 +84,7 @@ namespace Sas.Body.Service.Models.Domain
             for (int i = 0; i < sortBodies.Count - 1; i++)
             {
                 BodyDomain currentSurroundedBody = sortBodies[i];
-                BodyDomain centerBody = new();
+                BodyDomain? centerBody = null;
                 double distance = double.MaxValue;
                 for (int j = i + 1; j < sortBodies.Count; j++)
                 {
@@ -100,23 +99,25 @@ namespace Sas.Body.Service.Models.Domain
                         }
                     }
                 }
-                if (currentSurroundedBody.Mass / centerBody.Mass < TwoBodyProblemMassRatioLimit)
+                if (centerBody != null && currentSurroundedBody.Mass / centerBody.Mass < TwoBodyProblemMassRatioLimit)
                 {
                     AddOrbitToSystem(currentSurroundedBody, centerBody);
                 }
             }
-            AddOrbitToSystem(sortBodies[^1], barycenter);
         }
         public void CalibrateBarycenterToZero()
         {
-            BodyDomain barycenter = GetBarycenter();
-            foreach (BodyDomain body in _bodies)
+            BodyDomain? barycenter = GetBarycenter();
+            if (barycenter != null)
             {
-                body.Position -= barycenter.Position;
-            }
-            foreach (Orbit orbit in _orbits)
-            {
-                orbit.Center -= barycenter.Position;
+                foreach (BodyDomain body in _bodies)
+                {
+                    body.Position -= barycenter.Position;
+                }
+                foreach (Orbit orbit in _orbits)
+                {
+                    orbit.Center -= barycenter.Position;
+                }
             }
         }
         private void AddOrbitToSystem(BodyDomain surroundedBody, BodyDomain resultBody)
@@ -157,16 +158,27 @@ namespace Sas.Body.Service.Models.Domain
             }
             _orbits.Add(orbit);
         }
-        private BodyDomain GetBarycenter()
+        private BodyDomain? GetBarycenter()
         {
-            Vector position = Vector.Zero;
-            foreach (BodyDomain body in _bodies)
+            if (_bodies.Count > 1)
             {
-                position += body.Mass * body.Position;
+                Vector position = Vector.Zero;
+                foreach (BodyDomain body in _bodies)
+                {
+                    position += body.Mass * body.Position;
+                }
+                double totalMass = _bodies.Sum(body => body.Mass);
+                position = 1 / totalMass * position;
+                return new BodyDomain(BarycentrumName, totalMass, position, Vector.Zero);
             }
-            double totalMass = _bodies.Sum(body => body.Mass);
-            position = 1 / totalMass * position;
-            return new BodyDomain(BarycentrumName, totalMass, position, Vector.Zero);
+            else if (_bodies.Count == 1)
+            {
+                return _bodies[0];
+            }
+            else
+            {
+                return null;
+            }
         }
         private double GetU()
         {

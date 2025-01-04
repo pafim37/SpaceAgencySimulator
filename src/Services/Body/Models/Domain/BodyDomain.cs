@@ -1,5 +1,4 @@
-﻿using Sas.Body.Service.DataTransferObject;
-using Sas.Mathematica.Service.Vectors;
+﻿using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain
 {
@@ -53,14 +52,6 @@ namespace Sas.Body.Service.Models.Domain
             Radius = radius;
         }
 
-        /// <summary>
-        /// Parameterless constructor - needed for mapping
-        /// </summary>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public BodyDomain()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        {
-        }
         #endregion
     }
 }

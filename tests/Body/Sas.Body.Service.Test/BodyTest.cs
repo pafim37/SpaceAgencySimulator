@@ -80,15 +80,5 @@ namespace Sas.Body.Service.Test
             // Act & Assert
             action.Should().Throw<ArgumentOutOfRangeException>();
         }
-
-        [Fact]
-        public void ParameterlessConstructorCreatesBody()
-        {
-            // Arrange & Act
-            BodyDomain body = new BodyDomain();
-
-            // Assert
-            body.Should().NotBeNull();
-        }
     }
 }

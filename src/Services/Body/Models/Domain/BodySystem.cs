@@ -1,5 +1,6 @@
 ﻿using Sas.Body.Service.Models.Domain.BodyExtensions;
 using Sas.Body.Service.Models.Domain.Orbits;
+using Sas.Body.Service.Models.Domain.Orbits.Points;
 using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Domain.Exceptions;
 using Sas.Mathematica.Service;
@@ -64,6 +65,35 @@ namespace Sas.Body.Service.Models.Domain
         {
             FindOrbits();
             CalibrateBarycenterToZero();
+            CalculateOrbitPoints();
+        }
+        // TODO: add comment
+        public void CalibrateBarycenterToZero()
+        {
+            BodyDomain? barycenter = this.barycenter;
+            if (barycenter != null)
+            {
+                foreach (BodyDomain body in _bodies)
+                {
+                    body.Position -= barycenter.Position;
+                }
+                foreach (Orbit orbit in _orbits)
+                {
+                    orbit.Center -= barycenter.Position;
+                }
+                barycenter.Position -= barycenter.Position;
+            }
+        }
+        // TODO: add comment
+        public void CalculateOrbitPoints()
+        {
+            foreach (var orbit in _orbits)
+            {
+                if (orbit.OrbitType == OrbitType.Elliptic)
+                {
+                    orbit.Points = GetEllipticOrbitPoints.GetPoints(orbit.SemiMajorAxis!.Value, orbit.SemiMinorAxis!.Value, orbit.Center, orbit.RotationAngle);
+                }
+            }
         }
         #endregion
 
@@ -105,21 +135,7 @@ namespace Sas.Body.Service.Models.Domain
                 }
             }
         }
-        public void CalibrateBarycenterToZero()
-        {
-            BodyDomain? barycenter = GetBarycenter();
-            if (barycenter != null)
-            {
-                foreach (BodyDomain body in _bodies)
-                {
-                    body.Position -= barycenter.Position;
-                }
-                foreach (Orbit orbit in _orbits)
-                {
-                    orbit.Center -= barycenter.Position;
-                }
-            }
-        }
+
         private void AddOrbitToSystem(BodyDomain surroundedBody, BodyDomain resultBody)
         {
             Vector position = surroundedBody.GetPositionRelatedTo(resultBody);

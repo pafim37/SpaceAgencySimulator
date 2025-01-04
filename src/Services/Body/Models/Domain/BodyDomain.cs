@@ -51,7 +51,6 @@ namespace Sas.Body.Service.Models.Domain
             Velocity = velocity;
             Radius = radius;
         }
-
         #endregion
     }
 }

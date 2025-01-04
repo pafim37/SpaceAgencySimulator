@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -6,10 +6,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { axiosCreateBody } from "../axiosBase/axiosBody";
+import { useCreateBodyRequest } from "../axiosBase/axiosBody";
 import BodyDialogContent from "./BodyDialogContent";
 import SnackbarAlert from "../alerts/SnackbarAlert";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import useBodyValidate from "../helpers/BodyValidate";
 
 interface IAddBodyDialog {
   setBodies: Dispatch<SetStateAction<BodyType[]>>;
@@ -21,9 +22,15 @@ export default function AddBodyDialog(props: IAddBodyDialog) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [newBody, setNewBody] = useState<BodyType>();
-
+  const createBodyRequest = useCreateBodyRequest();
+  const { validateBody, validateErrors } = useBodyValidate();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  useEffect(() => {
+    validateBody(newBody);
+    // eslint-disable-next-line
+  }, [newBody]);
 
   const handleOpenDialog = async () => {
     const body: BodyType = {
@@ -50,30 +57,17 @@ export default function AddBodyDialog(props: IAddBodyDialog) {
     setOpenDialog(false);
   };
 
-  const handleSubmit = () => {
-    const message = validate(newBody);
-    if (message === "") {
-      axiosCreateBody(newBody);
-      props.setBodies((prev: BodyType[]) => [...prev, newBody as BodyType]);
-      handleCloseDialog();
+  const handleSubmit = async () => {
+    if (validateErrors.length === 0) {
+      const isSuccess = await createBodyRequest(newBody);
+      if (isSuccess) {
+        props.setBodies((prev: BodyType[]) => [...prev, newBody as BodyType]);
+        handleCloseDialog();
+      }
     } else {
-      setErrorMessage(message);
+      setErrorMessage(validateErrors.join(" "));
       setOpenSnackbar(true);
     }
-  };
-
-  const validate = (newBody: BodyType) => {
-    let messages = "";
-    if (!newBody.name.trim()) {
-      messages += "Name is required. ";
-    }
-    if (newBody.mass < 0) {
-      messages += "Mass must be higher than 0. ";
-    }
-    if (newBody.radius < 0) {
-      messages += "Radius must be higher than 0. ";
-    }
-    return messages;
   };
 
   return (

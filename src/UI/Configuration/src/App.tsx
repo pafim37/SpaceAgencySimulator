@@ -10,8 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import BodyInfo from "./components/BodyInfo";
-import { axiosGetBodies } from "./axiosBase/axiosBody";
-import SnackbarAlert from "./alerts/SnackbarAlert";
+import { useGetBodiesRequest } from "./axiosBase/axiosBody";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
@@ -19,27 +18,26 @@ const App = () => {
   const [bodies, setBodies] = useState<BodyType[]>([]);
   const [fetchedBodies, setFetchedBodies] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [openSnackbarAlert, setOpenSnackbarAlert] = useState<boolean>(false);
   const [openNestedList, setOpenNestedList] = useState<boolean[]>([]);
+  const getBodiesRequest = useGetBodiesRequest();
 
   useEffect(() => {
-    const fetchBodies = async () => {
-      const currBodies: Array<BodyType> = await axiosGetBodies();
-      if (currBodies === undefined) {
-        setOpenSnackbarAlert(true);
-      } else {
-        setBodies(currBodies);
-        setFetchedBodies(
-          currBodies.map((body) => {
-            return body.name;
-          })
-        );
-        setOpenNestedList(Array(currBodies.length).fill(false));
-        setIsLoading(false);
-      }
-    };
+    setIsLoading(true);
     fetchBodies();
+    setIsLoading(false);
+    // eslint-disable-next-line
   }, []);
+
+  const fetchBodies = async () => {
+    const currBodies: Array<BodyType> = await getBodiesRequest();
+    setBodies(currBodies);
+    setFetchedBodies(
+      currBodies.map((body) => {
+        return body.name;
+      })
+    );
+    setOpenNestedList(Array(currBodies.length).fill(false));
+  };
 
   const handleNestedList = (index: number) => {
     const newNestedList = [...openNestedList];
@@ -63,7 +61,7 @@ const App = () => {
             }}
           >
             <List>
-              {bodies.map((body: BodyType, index) => (
+              {bodies.map((body: BodyType, index: number) => (
                 <Paper elevation={1} key={index} sx={{ p: 1, m: 1 }}>
                   <ListItemButton
                     key={index}
@@ -100,15 +98,6 @@ const App = () => {
           >
             <Skeleton variant="rectangular" width={"85%"} height={"90vh"} />
           </Box>
-          {openSnackbarAlert ? (
-            <SnackbarAlert
-              openSnackbarAlert={openSnackbarAlert}
-              setOpenSnackbarAlert={setOpenSnackbarAlert}
-              message={"Cannot fetch bodies from the server"}
-            />
-          ) : (
-            <></>
-          )}
         </>
       )}
     </>

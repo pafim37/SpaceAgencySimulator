@@ -12,7 +12,7 @@ interface IBodyDialogContent {
 export default function BodyDialogContent(props: IBodyDialogContent) {
   const handleName = (event) => {
     const { name, value } = event.target;
-    props.setBody((prevValues) => {
+    props.setBody((prevValues: BodyType) => {
       const updatedValues = { ...prevValues };
       set(updatedValues, name, value);
       return updatedValues;
@@ -32,14 +32,12 @@ export default function BodyDialogContent(props: IBodyDialogContent) {
   const validateAndUpdate = (event, regex: RegExp) => {
     const { name, value } = event.target;
     if (regex.test(value)) {
-      if (value === "" || value === "-") {
-        updateBody(name, value);
+      const normalizedValue = value.replace(",", ".");
+      const floatValue = parseFloat(normalizedValue);
+      if (isNaN(floatValue)) {
+        updateBody(name, normalizedValue);
       } else {
-        const normalizedValue = value.replace(",", ".");
-        const floatValue = parseFloat(normalizedValue);
-        if (!isNaN(floatValue)) {
-          updateBody(name, floatValue);
-        }
+        updateBody(name, floatValue);
       }
     }
   };

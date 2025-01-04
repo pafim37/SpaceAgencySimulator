@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Sas.Body.Service.DataTransferObject;
+using Sas.Body.Service.Exceptions;
 using Sas.Body.Service.Models.Entities;
 using Sas.Body.Service.Repositories;
 
@@ -19,6 +20,13 @@ namespace Sas.Body.Service.Controllers
             return Ok(mapper.Map<IEnumerable<BodyDto>>(bodies));
         }
 
+        [HttpGet("/names")]
+        public async Task<IActionResult> GetAllNames()
+        {
+            IEnumerable<string> names = await bodyRepository.GetAllBodiesNamesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+            return Ok(names);
+        }
+
         [HttpGet("{name}")]
         public async Task<IActionResult> GetByName(string name)
         {
@@ -35,23 +43,59 @@ namespace Sas.Body.Service.Controllers
         {
             ArgumentException.ThrowIfNullOrEmpty(body.Name);
             BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
-            await bodyRepository.CreateBodyAsync(bodyDb, cancellationTokenSource.Token).ConfigureAwait(false);
+            try
+            {
+                await bodyRepository.CreateBodyAsync(bodyDb, cancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (BodyAlreadyExistsException e)
+            {
+                return StatusCode(409, new { message = e.Message });
+            }
             return Created();
         }
 
         [HttpPatch]
         public async Task<IActionResult> Patch([FromBody] BodyDto body)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(body.Name);
-            await bodyRepository.UpdateBodyAsync(body, cancellationTokenSource.Token).ConfigureAwait(false);
+            try
+            {
+                ArgumentException.ThrowIfNullOrWhiteSpace(body.Name);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(422, new { message = e.Message });
+            }
+            try
+            {
+                await bodyRepository.UpdateBodyAsync(body, cancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (NoBodyInDatabaseException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { message = e.Message });
+            }
             return Ok();
         }
 
         [HttpDelete("{name}")]
         public async Task<IActionResult> Delete(string name)
         {
-            await bodyRepository.DeleteBodyAsync(name, cancellationTokenSource.Token).ConfigureAwait(false);
-            return NoContent();
+            try
+            {
+                await bodyRepository.DeleteBodyAsync(name, cancellationTokenSource.Token).ConfigureAwait(false);
+                return NoContent();
+            }
+            catch (NoBodyInDatabaseException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { message = e.Message });
+            }
         }
     }
 }

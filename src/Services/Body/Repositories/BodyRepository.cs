@@ -14,7 +14,7 @@ namespace Sas.Body.Service.Repositories
             BodyEntity? bodyToUpdate = await GetBodyByNameAsync(bodyEntity.Name, cancellationToken).ConfigureAwait(false);
             if (bodyToUpdate is not null)
             {
-                throw new BodyAlreadyExistsException($"Body with name = {bodyEntity.Name} already exists");
+                throw new BodyAlreadyExistsException($"Body with name {bodyEntity.Name} already exists");
             }
             await context.AddAsync(bodyEntity, cancellationToken).ConfigureAwait(false);
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -23,7 +23,7 @@ namespace Sas.Body.Service.Repositories
         public async Task UpdateBodyAsync(BodyDto dataToUpdate, CancellationToken cancellationToken)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(dataToUpdate.Name, nameof(dataToUpdate));
-            BodyEntity? bodyEntity = await GetBodyByNameAsync(dataToUpdate.Name, cancellationToken).ConfigureAwait(false) 
+            BodyEntity? bodyEntity = await GetBodyByNameAsync(dataToUpdate.Name, cancellationToken).ConfigureAwait(false)
                 ?? throw new NoBodyInDatabaseException($"There is no body in database with name = {dataToUpdate.Name}");
             bodyEntity.Mass = dataToUpdate.Mass ?? bodyEntity.Mass;
             bodyEntity.Position = mapper.Map<VectorEntity>(dataToUpdate.Position) ?? bodyEntity.Position;
@@ -41,6 +41,10 @@ namespace Sas.Body.Service.Repositories
                 context.Bodies.Remove(body);
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             }
+            else
+            {
+                throw new NoBodyInDatabaseException($"There is no body in database with name = {name}");
+            }
         }
 
         public async Task<IEnumerable<BodyEntity>> GetAllBodiesAsync(CancellationToken cancellationToken)
@@ -51,6 +55,12 @@ namespace Sas.Body.Service.Repositories
         public async Task<BodyEntity?> GetBodyByNameAsync(string name, CancellationToken cancellationToken)
         {
             return await context.Bodies.FirstOrDefaultAsync(b => b.Name == name, cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<string>> GetAllBodiesNamesAsync(CancellationToken cancellationToken)
+        {
+            IEnumerable<BodyEntity> bodies = await GetAllBodiesAsync(cancellationToken).ConfigureAwait(false);
+            return bodies.Select(b => b.Name);
         }
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -6,10 +6,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { axiosUpdateBody } from "../axiosBase/axiosBody";
 import BodyDialogContent from "./BodyDialogContent";
 import EditIcon from "@mui/icons-material/Edit";
 import SnackbarAlert from "../alerts/SnackbarAlert";
+import { useUpdateBodyRequest } from "../axiosBase/axiosBody";
+import useBodyValidate from "../helpers/BodyValidate";
 
 interface IEditBodyDialog {
   body: BodyType;
@@ -21,6 +22,13 @@ export default function EditBodyDialog(props: IEditBodyDialog) {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [editableBody, setEditableBody] = useState<BodyType>(props.body);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const { validateBody, validateErrors } = useBodyValidate();
+  const updateBodyRequest = useUpdateBodyRequest();
+
+  useEffect(() => {
+    validateBody(editableBody);
+    // eslint-disable-next-line
+  }, [editableBody]);
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -34,33 +42,20 @@ export default function EditBodyDialog(props: IEditBodyDialog) {
   };
 
   const update = () => {
-    const message = validate(editableBody);
-    if (message === "") {
-      axiosUpdateBody(editableBody);
-      props.setBody((prev: BodyType[]) =>
-        prev.map((body) =>
-          body.name === editableBody.name ? (editableBody as BodyType) : body
-        )
-      );
-      handleClose();
+    if (validateErrors.length === 0) {
+      const isSuccess = updateBodyRequest(editableBody);
+      if (isSuccess) {
+        props.setBody((prev: BodyType[]) =>
+          prev.map((body) =>
+            body.name === editableBody.name ? (editableBody as BodyType) : body
+          )
+        );
+        handleClose();
+      }
     } else {
-      setErrorMessage(message);
+      setErrorMessage(validateErrors.join(" "));
       setOpenSnackbar(true);
     }
-  };
-
-  const validate = (newBody: BodyType) => {
-    let messages = "";
-    if (!newBody.name.trim()) {
-      messages += "Name is required. ";
-    }
-    if (newBody.mass < 0) {
-      messages += "Mass must be higher than 0. ";
-    }
-    if (newBody.radius < 0) {
-      messages += "Radius must be higher than 0. ";
-    }
-    return messages;
   };
 
   return (

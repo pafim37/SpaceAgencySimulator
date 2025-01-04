@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axiosBody from "../axiosBase/axiosBody";
+import { useDeleteBodyRequest } from "../axiosBase/axiosBody";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Paper, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -16,6 +16,7 @@ interface IBodyInfo {
 const BodyInfo = (props: IBodyInfo) => {
   const [isOpenConfirmationDialog, setIsOpenConfirmationDialog] =
     useState<boolean>(false);
+  const deleteBodyRequest = useDeleteBodyRequest();
   const color = props.color;
 
   const openConfirmationDialog = () => {
@@ -23,10 +24,12 @@ const BodyInfo = (props: IBodyInfo) => {
   };
 
   const removeBody = () => {
-    axiosBody.delete(props.body.name);
-    props.setBodies((prev: BodyType[]) =>
-      prev.filter((b) => b.name !== props.body.name)
-    );
+    const isSucess = deleteBodyRequest(props.body.name);
+    if (isSucess) {
+      props.setBodies((prev: BodyType[]) =>
+        prev.filter((b) => b.name !== props.body.name)
+      );
+    }
   };
 
   return (

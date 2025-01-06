@@ -11,7 +11,7 @@ namespace Sas.Body.Service.Handlers
     {
         public async Task<BodySystem> Handle(CreateBodySystem request, CancellationToken cancellationToken)
         {
-            IEnumerable<BodyEntity> bodiesDto = await bodyRepository.GetAllBodiesAsync(cancellationToken).ConfigureAwait(false);
+            IEnumerable<BodyEntity> bodiesDto = await bodyRepository.GetAllEnabledBodiesAsync(cancellationToken).ConfigureAwait(false);
             List<BodyDomain> bodyDomains = [];
             foreach (BodyEntity bodyEntity in bodiesDto)
             {

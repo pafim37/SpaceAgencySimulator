@@ -12,6 +12,7 @@ namespace Sas.Body.Service.Profiles
                 .ForMember(d => d.Name, e => e.MapFrom(s => s.Name))
                 .ForMember(d => d.Mass, e => e.MapFrom(s => s.Mass))
                 .ForMember(d => d.Radius, e => e.MapFrom(s => s.Radius))
+                .ForMember(d => d.Enabled, e => e.MapFrom(s => s.Enabled))
                 .ForMember(d => d.Position, e => e.MapFrom(s => s.Position))
                 .ForMember(d => d.Velocity, e => e.MapFrom(s => s.Velocity))
                 .ReverseMap()

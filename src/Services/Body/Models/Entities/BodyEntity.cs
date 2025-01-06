@@ -7,6 +7,7 @@ namespace Sas.Body.Service.Models.Entities
         public required string Name { get; set; }
         public double Mass { get; set; }
         public double Radius { get; set; }
+        public bool Enabled { get; set; }
 
         [ForeignKey(nameof(PositionId))]
         public int PositionId { get; set; }

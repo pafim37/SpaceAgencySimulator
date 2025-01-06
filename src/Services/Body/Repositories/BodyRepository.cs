@@ -24,7 +24,7 @@ namespace Sas.Body.Service.Repositories
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(dataToUpdate.Name, nameof(dataToUpdate));
             BodyEntity? bodyEntity = await GetBodyByNameAsync(dataToUpdate.Name, cancellationToken).ConfigureAwait(false)
-                ?? throw new NoBodyInDatabaseException($"There is no body in database with name = {dataToUpdate.Name}");
+                ?? throw new NoBodyInDatabaseException($"There is no body in database with name {dataToUpdate.Name}");
             bodyEntity.Mass = dataToUpdate.Mass ?? bodyEntity.Mass;
             bodyEntity.Position = mapper.Map<VectorEntity>(dataToUpdate.Position) ?? bodyEntity.Position;
             bodyEntity.Velocity = mapper.Map<VectorEntity>(dataToUpdate.Velocity) ?? bodyEntity.Velocity;
@@ -43,7 +43,7 @@ namespace Sas.Body.Service.Repositories
             }
             else
             {
-                throw new NoBodyInDatabaseException($"There is no body in database with name = {name}");
+                throw new NoBodyInDatabaseException($"There is no body in database with name {name}");
             }
         }
 
@@ -61,6 +61,27 @@ namespace Sas.Body.Service.Repositories
         {
             IEnumerable<BodyEntity> bodies = await GetAllBodiesAsync(cancellationToken).ConfigureAwait(false);
             return bodies.Select(b => b.Name);
+        }
+
+        public async Task<IEnumerable<BodyEntity>> GetAllEnabledBodiesAsync(CancellationToken cancellationToken)
+        {
+            return await context.Bodies.Where(body => body.Enabled).ToListAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task ChangeBodyStateAsync(string name, bool newState, CancellationToken cancellationToken)
+        {
+            BodyEntity? bodyToUpdate = await GetBodyByNameAsync(name, cancellationToken).ConfigureAwait(false)
+                ?? throw new NoBodyInDatabaseException($"There is no body in database with name {name}");
+            if (bodyToUpdate.Enabled == newState)
+            {
+                return;
+            }
+            else 
+            {
+                bodyToUpdate.Enabled = newState;
+                context.Update(bodyToUpdate);
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }

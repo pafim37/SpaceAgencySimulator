@@ -80,6 +80,20 @@ namespace Sas.Body.Service.Controllers
             return Ok();
         }
 
+        [HttpPost("{name}")]
+        public async Task<IActionResult> ChangeState(string name, [FromBody] bool newState)
+        {
+            try
+            {
+                await bodyRepository.ChangeBodyStateAsync(name, newState, cancellationTokenSource.Token);
+            }
+            catch (NoBodyInDatabaseException e)
+            {
+                return NotFound(e.Message);
+            }
+            return Ok();
+        }
+
         [HttpDelete("{name}")]
         public async Task<IActionResult> Delete(string name)
         {

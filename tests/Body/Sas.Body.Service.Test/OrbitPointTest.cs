@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Sas.Body.Service.Models.Domain.Orbits.Helper;
+using Sas.Body.Service.Models.Domain.Orbits.Points;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 

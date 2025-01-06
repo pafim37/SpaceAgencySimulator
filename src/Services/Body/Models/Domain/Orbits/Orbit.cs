@@ -1,4 +1,5 @@
-﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
+﻿using Sas.Body.Service.Models.Domain.Orbits.Points;
+using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
@@ -111,6 +112,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         /// The angle by which the orbit is rotated.
         /// </summary>
         public double RotationAngle => _rotation;
+
+        /// <summary>
+        /// Returns points of the orbit in the space.
+        /// </summary>
+        public List<Point> Points { get; set; }
         #endregion
 
         #region constructors

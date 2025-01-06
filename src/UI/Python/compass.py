@@ -8,6 +8,16 @@ class Compass():
         self.arrow_y = Entity(model="cube", scale=(1,0.05,0.05), position=(3,1.5,0), rotation=(0, 0, -90), color=color.green)
         self.arrow_z = Entity(model="cube", scale=(1,0.05,0.05), position=(3,1.5,0), rotation=(0, -90, 0), color=color.red)
 
+    def turn_off(self):
+        self.arrow_x.enabled = False
+        self.arrow_y.enabled = False
+        self.arrow_z.enabled = False
+
+    def turn_on(self):
+        self.arrow_x.enabled = True
+        self.arrow_y.enabled = True
+        self.arrow_z.enabled = True
+
     def update(self, camera):
         x = math.radians(camera.rotation[0])
         y = math.radians(camera.rotation[1])

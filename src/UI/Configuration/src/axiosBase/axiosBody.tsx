@@ -97,4 +97,21 @@ export const useDeleteBodyRequest = () => {
   return deleteBodyRequest;
 };
 
+export const useChangeStateBodyRequest = () => {
+  const { showSnackbar } = useSnackbar();
+  const changeStateBodyRequest = async (
+    bodyname: string,
+    newState: boolean
+  ) => {
+    try {
+      axiosBody.post(bodyname, newState);
+      return true;
+    } catch (error) {
+      showSnackbar(`Error occured: ${error.message}`, "error");
+      return false;
+    }
+  };
+  return changeStateBodyRequest;
+};
+
 export default axiosBody;

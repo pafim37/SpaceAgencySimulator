@@ -37,6 +37,7 @@ export default function AddBodyDialog(props: IAddBodyDialog) {
       name: "",
       mass: 1,
       radius: 1,
+      enabled: true,
       position: {
         x: 50,
         y: 0,

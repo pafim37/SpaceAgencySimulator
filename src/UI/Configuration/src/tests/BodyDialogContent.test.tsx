@@ -7,6 +7,7 @@ const bodyMock: BodyType = {
   name: "Planet",
   mass: 6,
   radius: 7,
+  enabled: true,
   position: { x: 1, y: 2, z: 3 },
   velocity: { x: 4, y: 5, z: 6 },
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AddBodyDialog from "./dialogs/AddBodyDialog";
 import {
   Box,
+  Checkbox,
   Collapse,
   List,
   ListItemButton,
@@ -9,8 +10,12 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import BodyInfo from "./components/BodyInfo";
-import { useGetBodiesRequest } from "./axiosBase/axiosBody";
+import {
+  useGetBodiesRequest,
+  useChangeStateBodyRequest,
+} from "./axiosBase/axiosBody";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
@@ -20,6 +25,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [openNestedList, setOpenNestedList] = useState<boolean[]>([]);
   const getBodiesRequest = useGetBodiesRequest();
+  const changeStateBodyRequest = useChangeStateBodyRequest();
 
   useEffect(() => {
     setIsLoading(true);
@@ -27,6 +33,10 @@ const App = () => {
     setIsLoading(false);
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    console.log(bodies);
+  }, [bodies]);
 
   const fetchBodies = async () => {
     const currBodies: Array<BodyType> = await getBodiesRequest();
@@ -43,6 +53,17 @@ const App = () => {
     const newNestedList = [...openNestedList];
     newNestedList[index] = !newNestedList[index];
     setOpenNestedList(newNestedList);
+  };
+
+  const handleEnableCheckbox = (event: React.ChangeEvent, bodyname: string) => {
+    const isSuccess = changeStateBodyRequest(bodyname, event.target.checked);
+    if (isSuccess) {
+      setBodies((prev: BodyType[]) =>
+        prev.map((body) =>
+          body.name === bodyname ? { ...body, enabled: !body.enabled } : body
+        )
+      );
+    }
   };
 
   return (
@@ -62,14 +83,30 @@ const App = () => {
           >
             <List>
               {bodies.map((body: BodyType, index: number) => (
-                <Paper elevation={1} key={index} sx={{ p: 1, m: 1 }}>
-                  <ListItemButton
-                    key={index}
-                    onClick={() => handleNestedList(index)}
-                  >
-                    <Typography color="#30cb0">{body.name}</Typography>
-                    {openNestedList[index] ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
+                <Paper elevation={1} key={body.name} sx={{ p: 1, m: 1 }}>
+                  <Grid container>
+                    <Checkbox
+                      checked={body.enabled}
+                      onChange={(event: React.ChangeEvent) =>
+                        handleEnableCheckbox(event, body.name)
+                      }
+                    />
+                    <ListItemButton
+                      key={body.name}
+                      onClick={() => handleNestedList(index)}
+                    >
+                      <Typography
+                        color={
+                          fetchedBodies.includes(body.name)
+                            ? "#30c9b0"
+                            : "#d32f2f"
+                        }
+                      >
+                        {body.name}
+                      </Typography>
+                      {openNestedList[index] ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                  </Grid>
                   <Collapse in={openNestedList[index]} timeout="auto">
                     <BodyInfo
                       key={body.name}

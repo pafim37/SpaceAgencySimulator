@@ -4,9 +4,6 @@ from types import SimpleNamespace
 
 import ursina as urs
 class HttpClient:
-    def __init__(self):
-        url = "lol"
-
     @staticmethod
     def get_body_system():
         url = "http://localhost:5000/body-system/1"

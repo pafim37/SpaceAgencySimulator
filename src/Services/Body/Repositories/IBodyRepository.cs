@@ -13,5 +13,6 @@ namespace Sas.Body.Service.Repositories
         public Task UpdateBodyAsync(BodyDto bodyEntity, CancellationToken cancellationToken);
         public Task ChangeBodyStateAsync(string name, bool newState, CancellationToken cancellationToken);
         public Task DeleteBodyAsync(string name, CancellationToken cancellationToken);
+        public Task SaveDatabaseAndSendNotification(CancellationToken cancellationToken);
     }
 }

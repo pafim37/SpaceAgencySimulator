@@ -18,6 +18,7 @@ import {
 } from "./axiosBase/axiosBody";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import useNotification from "./notifications/UseNotification";
 
 const App = () => {
   const [bodies, setBodies] = useState<BodyType[]>([]);
@@ -28,9 +29,7 @@ const App = () => {
   const changeStateBodyRequest = useChangeStateBodyRequest();
 
   useEffect(() => {
-    setIsLoading(true);
     fetchBodies();
-    setIsLoading(false);
     // eslint-disable-next-line
   }, []);
 
@@ -39,6 +38,7 @@ const App = () => {
   }, [bodies]);
 
   const fetchBodies = async () => {
+    setIsLoading(true);
     const currBodies: Array<BodyType> = await getBodiesRequest();
     setBodies(currBodies);
     setFetchedBodies(
@@ -47,7 +47,10 @@ const App = () => {
       })
     );
     setOpenNestedList(Array(currBodies.length).fill(false));
+    setIsLoading(false);
   };
+
+  useNotification({ onDatabaseChanged: fetchBodies });
 
   const handleNestedList = (index: number) => {
     const newNestedList = [...openNestedList];

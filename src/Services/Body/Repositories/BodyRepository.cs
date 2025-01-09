@@ -4,10 +4,11 @@ using Sas.Body.Service.Contexts;
 using Sas.Body.Service.DataTransferObject;
 using Sas.Body.Service.Exceptions;
 using Sas.Body.Service.Models.Entities;
+using Sas.Body.Service.Notifications;
 
 namespace Sas.Body.Service.Repositories
 {
-    public class BodyRepository(BodyContext context, IMapper mapper) : IBodyRepository
+    public class BodyRepository(BodyContext context, NotificationService notificationService, IMapper mapper) : IBodyRepository
     {
         public async Task CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken)
         {
@@ -17,7 +18,7 @@ namespace Sas.Body.Service.Repositories
                 throw new BodyAlreadyExistsException($"Body with name {bodyEntity.Name} already exists");
             }
             await context.AddAsync(bodyEntity, cancellationToken).ConfigureAwait(false);
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task UpdateBodyAsync(BodyDto dataToUpdate, CancellationToken cancellationToken)
@@ -30,7 +31,7 @@ namespace Sas.Body.Service.Repositories
             bodyEntity.Velocity = mapper.Map<VectorEntity>(dataToUpdate.Velocity) ?? bodyEntity.Velocity;
             bodyEntity.Radius = dataToUpdate.Radius ?? bodyEntity.Radius;
             context.Update(bodyEntity);
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task DeleteBodyAsync(string name, CancellationToken cancellationToken)
@@ -39,7 +40,7 @@ namespace Sas.Body.Service.Repositories
             if (body != null)
             {
                 context.Bodies.Remove(body);
-                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -76,12 +77,18 @@ namespace Sas.Body.Service.Repositories
             {
                 return;
             }
-            else 
+            else
             {
                 bodyToUpdate.Enabled = newState;
                 context.Update(bodyToUpdate);
-                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
             }
+        }
+
+        public async Task SaveDatabaseAndSendNotification(CancellationToken cancellationToken)
+        {
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await notificationService.SendBodyDatabaseChangedNotification(cancellationToken);
         }
     }
 }

@@ -52,7 +52,7 @@ namespace Sas.Body.Service.Controllers
             {
                 return StatusCode(409, new { message = e.Message });
             }
-            return Created();
+            return Created("/", body);
         }
 
         [HttpPatch]
@@ -68,7 +68,8 @@ namespace Sas.Body.Service.Controllers
             }
             try
             {
-                await bodyRepository.UpdateBodyAsync(body, cancellationTokenSource.Token).ConfigureAwait(false);
+                BodyEntity updatedBody = await bodyRepository.UpdateBodyAsync(body, cancellationTokenSource.Token).ConfigureAwait(false);
+                return Ok(updatedBody);
             }
             catch (NoBodyInDatabaseException e)
             {
@@ -78,7 +79,6 @@ namespace Sas.Body.Service.Controllers
             {
                 return StatusCode(500, new { message = e.Message });
             }
-            return Ok();
         }
 
         [HttpPost("{name}")]
@@ -86,13 +86,13 @@ namespace Sas.Body.Service.Controllers
         {
             try
             {
-                await bodyRepository.ChangeBodyStateAsync(name, newState, cancellationTokenSource.Token);
+                BodyEntity body = await bodyRepository.ChangeBodyStateAsync(name, newState, cancellationTokenSource.Token);
+                return Ok(body);
             }
             catch (NoBodyInDatabaseException e)
             {
                 return NotFound(e.Message);
             }
-            return Ok();
         }
 
         [HttpDelete("{name}")]

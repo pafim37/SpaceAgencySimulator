@@ -35,13 +35,17 @@ const BodyListPanel = (props: IMainPanel) => {
     }
   };
 
-  const handleEnableCheckbox = (event: React.ChangeEvent, bodyname: string) => {
-    const isSuccess = changeStateBodyRequest(bodyname, event.target.checked);
-    if (isSuccess) {
+  const handleEnableCheckbox = async (
+    event: React.ChangeEvent,
+    bodyname: string
+  ) => {
+    const updatedBody = await changeStateBodyRequest(
+      bodyname,
+      event.target.checked
+    );
+    if (updatedBody !== undefined) {
       props.setBodies((prev: BodyType[]) =>
-        prev.map((body) =>
-          body.name === bodyname ? { ...body, enabled: !body.enabled } : body
-        )
+        prev.map((body) => (body.name === bodyname ? updatedBody : body))
       );
     }
   };

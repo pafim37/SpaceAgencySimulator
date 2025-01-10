@@ -23,11 +23,11 @@ const BodyInfo = (props: IBodyInfo) => {
     setIsOpenConfirmationDialog(true);
   };
 
-  const removeBody = () => {
-    const isSucess = deleteBodyRequest(props.body.name);
-    if (isSucess) {
+  const removeBody = async () => {
+    const deletedBody: BodyType = await deleteBodyRequest(props.body.name);
+    if (deletedBody !== undefined) {
       props.setBodies((prev: BodyType[]) =>
-        prev.filter((b) => b.name !== props.body.name)
+        prev.filter((b) => b.name !== deletedBody.name)
       );
     }
   };

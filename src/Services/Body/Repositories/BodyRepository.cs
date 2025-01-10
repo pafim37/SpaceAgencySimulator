@@ -8,7 +8,7 @@ using Sas.Body.Service.Notifications;
 
 namespace Sas.Body.Service.Repositories
 {
-    public class BodyRepository(BodyContext context, NotificationService notificationService, IMapper mapper) : IBodyRepository
+    public class BodyRepository(BodyContext context, NotificationClient notificationService, IMapper mapper) : IBodyRepository
     {
         public async Task CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken)
         {

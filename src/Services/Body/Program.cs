@@ -30,8 +30,7 @@ namespace Sas.Body.Service
 
             builder.Services.AddSingleton(provider =>
             {
-                var hubUrl = "http://localhost:6443/notification";
-                return new NotificationService(hubUrl);
+                return new NotificationClient();
             });
 
             // CORS
@@ -44,8 +43,8 @@ namespace Sas.Body.Service
 
             using (var scope = app.Services.CreateScope())
             {
-                var signalRClient = scope.ServiceProvider.GetRequiredService<NotificationService>();
-                await signalRClient.StartConnectionAsync();
+                var signalRClient = scope.ServiceProvider.GetRequiredService<NotificationClient>();
+                signalRClient.StartConnection();
             }
 
             app.UseHttpsRedirection();

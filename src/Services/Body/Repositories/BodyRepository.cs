@@ -84,6 +84,11 @@ namespace Sas.Body.Service.Repositories
                 await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
             }
         }
+        public async Task CreateRangeBodyAsync(List<BodyEntity> bodyEntities, CancellationToken cancellationToken)
+        {
+            await context.AddRangeAsync(bodyEntities, cancellationToken).ConfigureAwait(false);
+            await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+        }
 
         public async Task SaveDatabaseAndSendNotification(CancellationToken cancellationToken)
         {

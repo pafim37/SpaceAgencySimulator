@@ -114,4 +114,40 @@ export const useChangeStateBodyRequest = () => {
   return changeStateBodyRequest;
 };
 
+export const useCreateBodyDefaultsRequest = () => {
+  const { showSnackbar } = useSnackbar();
+  const ceateBodyDefaultsRequest = async (names: string[]) => {
+    try {
+      await axiosBody.post("/defaults", names);
+      names.map((name) =>
+        showSnackbar(`The ${name} was created successfully`, "success")
+      );
+      return true;
+    } catch (error) {
+      const statusCode = error.response?.status;
+      if (statusCode === 409) {
+        showSnackbar(`Error occured: ${error.response.data.message}`, "error");
+      } else {
+        showSnackbar(`Error occured: ${error.message}`, "error");
+      }
+      return false;
+    }
+  };
+  return ceateBodyDefaultsRequest;
+};
+
+export const useGetBodySupportedNames = () => {
+  const { showSnackbar } = useSnackbar();
+  const getBodySupportedNames = async () => {
+    try {
+      const response = await axiosBody.get("supported-names");
+      return response.data;
+    } catch (error) {
+      showSnackbar(`Error occured: ${error.message}`, "error");
+      return [];
+    }
+  };
+  return getBodySupportedNames;
+};
+
 export default axiosBody;

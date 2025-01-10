@@ -41,10 +41,10 @@ export default function EditBodyDialog(props: IEditBodyDialog) {
     setOpen(false);
   };
 
-  const update = () => {
+  const update = async () => {
     if (validateErrors.length === 0) {
-      const isSuccess = updateBodyRequest(editableBody);
-      if (isSuccess) {
+      const updatedBody: BodyType = await updateBodyRequest(editableBody);
+      if (updatedBody !== undefined) {
         props.setBody((prev: BodyType[]) =>
           prev.map((body) =>
             body.name === editableBody.name ? (editableBody as BodyType) : body

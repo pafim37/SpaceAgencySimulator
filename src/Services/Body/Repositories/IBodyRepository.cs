@@ -9,11 +9,11 @@ namespace Sas.Body.Service.Repositories
         public Task<IEnumerable<string>> GetAllBodiesNamesAsync(CancellationToken cancellationToken);
         public Task<IEnumerable<BodyEntity>> GetAllEnabledBodiesAsync(CancellationToken cancellation);
         public Task<BodyEntity?> GetBodyByNameAsync(string name, CancellationToken cancellationToken);
-        public Task CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken);
-        public Task CreateRangeBodyAsync(List<BodyEntity> bodyEntities, CancellationToken cancellationToken);
-        public Task UpdateBodyAsync(BodyDto bodyEntity, CancellationToken cancellationToken);
-        public Task ChangeBodyStateAsync(string name, bool newState, CancellationToken cancellationToken);
-        public Task DeleteBodyAsync(string name, CancellationToken cancellationToken);
+        public Task<BodyEntity> CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken);
+        public Task<List<BodyEntity>> CreateRangeBodyAsync(List<BodyEntity> bodyEntities, CancellationToken cancellationToken);
+        public Task<BodyEntity> UpdateBodyAsync(BodyDto bodyEntity, CancellationToken cancellationToken);
+        public Task<BodyEntity> ChangeBodyStateAsync(string name, bool newState, CancellationToken cancellationToken);
+        public Task<BodyEntity> DeleteBodyAsync(string name, CancellationToken cancellationToken);
         public Task SaveDatabaseAndSendNotification(CancellationToken cancellationToken);
     }
 }

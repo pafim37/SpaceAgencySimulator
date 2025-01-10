@@ -10,7 +10,7 @@ namespace Sas.Body.Service.Repositories
 {
     public class BodyRepository(BodyContext context, NotificationClient notificationService, IMapper mapper) : IBodyRepository
     {
-        public async Task CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken)
+        public async Task<BodyEntity> CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken)
         {
             BodyEntity? bodyToUpdate = await GetBodyByNameAsync(bodyEntity.Name, cancellationToken).ConfigureAwait(false);
             if (bodyToUpdate is not null)
@@ -19,9 +19,10 @@ namespace Sas.Body.Service.Repositories
             }
             await context.AddAsync(bodyEntity, cancellationToken).ConfigureAwait(false);
             await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+            return bodyEntity;
         }
 
-        public async Task UpdateBodyAsync(BodyDto dataToUpdate, CancellationToken cancellationToken)
+        public async Task<BodyEntity> UpdateBodyAsync(BodyDto dataToUpdate, CancellationToken cancellationToken)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(dataToUpdate.Name, nameof(dataToUpdate));
             BodyEntity? bodyEntity = await GetBodyByNameAsync(dataToUpdate.Name, cancellationToken).ConfigureAwait(false)
@@ -32,15 +33,17 @@ namespace Sas.Body.Service.Repositories
             bodyEntity.Radius = dataToUpdate.Radius ?? bodyEntity.Radius;
             context.Update(bodyEntity);
             await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+            return bodyEntity;
         }
 
-        public async Task DeleteBodyAsync(string name, CancellationToken cancellationToken)
+        public async Task<BodyEntity> DeleteBodyAsync(string name, CancellationToken cancellationToken)
         {
             BodyEntity? body = await GetBodyByNameAsync(name, cancellationToken).ConfigureAwait(false);
             if (body != null)
             {
                 context.Bodies.Remove(body);
                 await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+                return body;
             }
             else
             {
@@ -69,25 +72,28 @@ namespace Sas.Body.Service.Repositories
             return await context.Bodies.Where(body => body.Enabled).ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task ChangeBodyStateAsync(string name, bool newState, CancellationToken cancellationToken)
+        public async Task<BodyEntity> ChangeBodyStateAsync(string name, bool newState, CancellationToken cancellationToken)
         {
             BodyEntity? bodyToUpdate = await GetBodyByNameAsync(name, cancellationToken).ConfigureAwait(false)
                 ?? throw new NoBodyInDatabaseException($"There is no body in database with name {name}");
             if (bodyToUpdate.Enabled == newState)
             {
-                return;
+                return bodyToUpdate;
             }
             else
             {
                 bodyToUpdate.Enabled = newState;
                 context.Update(bodyToUpdate);
                 await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+                return bodyToUpdate;
             }
         }
-        public async Task CreateRangeBodyAsync(List<BodyEntity> bodyEntities, CancellationToken cancellationToken)
+        
+        public async Task<List<BodyEntity>> CreateRangeBodyAsync(List<BodyEntity> bodyEntities, CancellationToken cancellationToken)
         {
             await context.AddRangeAsync(bodyEntities, cancellationToken).ConfigureAwait(false);
             await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+            return bodyEntities;
         }
 
         public async Task SaveDatabaseAndSendNotification(CancellationToken cancellationToken)

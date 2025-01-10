@@ -60,8 +60,8 @@ export default function AddBodyDialog(props: IAddBodyDialog) {
 
   const handleSubmit = async () => {
     if (validateErrors.length === 0) {
-      const isSuccess = await createBodyRequest(newBody);
-      if (isSuccess) {
+      const createdBody: BodyType = await createBodyRequest(newBody);
+      if (createdBody !== undefined) {
         props.setBodies((prev: BodyType[]) => [...prev, newBody as BodyType]);
         handleCloseDialog();
       }

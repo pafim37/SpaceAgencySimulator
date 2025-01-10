@@ -56,9 +56,9 @@ const TopPanelButtons = (props: ITopPanelButtons) => {
   };
 
   const sendRequest = async () => {
-    const isSuccess = await createBodyDefaultsRequest(namesToCreate);
-    if (isSuccess) {
-      setNamesToCreate([]);
+    const result = await createBodyDefaultsRequest(namesToCreate);
+    if (result !== undefined) {
+      setNamesToCreate(result);
     }
   };
 
@@ -72,6 +72,7 @@ const TopPanelButtons = (props: ITopPanelButtons) => {
                 variant="outlined"
                 onClick={sendRequest}
                 style={{ backgroundColor: "#1fb89f", color: "black" }}
+                disabled={namesToCreate.length < 1}
               >
                 Create default bodies ({namesToCreate.length})
               </Button>

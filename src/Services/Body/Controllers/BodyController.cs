@@ -12,7 +12,7 @@ namespace Sas.Body.Service.Controllers
     [Route("body")]
     public class BodyController(IBodyRepository bodyRepository, NotificationClient notificationService, IMapper mapper) : ControllerBase
     {
-        private const string SignalRClientId = "X-SAS-SignalRClientId";
+        private const string SignalRClientIdHeaderName = "X-SAS-SignalRClientId";
         private readonly CancellationTokenSource cancellationTokenSource = new();
         private readonly List<string> supportedBodyNames = new List<string>() { "Sun", "Earth", "Mars", "Moon", "Player" };
 
@@ -42,7 +42,7 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BodyDto body, [FromHeader(Name = SignalRClientId)] string? signalRConnectionId)
+        public async Task<IActionResult> Create([FromBody] BodyDto body, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             ArgumentException.ThrowIfNullOrEmpty(body.Name);
             BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
@@ -63,7 +63,7 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpPatch]
-        public async Task<IActionResult> Patch([FromBody] BodyDto body, [FromHeader(Name = SignalRClientId)] string? signalRConnectionId)
+        public async Task<IActionResult> Patch([FromBody] BodyDto body, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpPost("{name}")]
-        public async Task<IActionResult> ChangeState(string name, [FromBody] bool newState, [FromHeader(Name = SignalRClientId)] string? signalRConnectionId)
+        public async Task<IActionResult> ChangeState(string name, [FromBody] bool newState, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpDelete("{name}")]
-        public async Task<IActionResult> Delete(string name, [FromHeader(Name = SignalRClientId)] string? signalRConnectionId)
+        public async Task<IActionResult> Delete(string name, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpPost("defaults")]
-        public async Task<IActionResult> Create([FromBody] List<string> bodynames, [FromHeader(Name = SignalRClientId)] string? signalRConnectionId)
+        public async Task<IActionResult> Create([FromBody] List<string> bodynames, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             IEnumerable<string> currentNames = await bodyRepository.GetAllBodiesNamesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
             IEnumerable<string> newNames = bodynames.Except(currentNames);

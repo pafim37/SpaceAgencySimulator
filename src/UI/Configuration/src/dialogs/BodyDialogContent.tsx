@@ -32,7 +32,7 @@ export default function BodyDialogContent(props: IBodyDialogContent) {
     });
 
     setErrorForm({
-      name: "Name cannot be empty",
+      name: props.body.name === "" ? "Name cannot be empty" : "",
       mass: "",
       radius: "",
       position: {

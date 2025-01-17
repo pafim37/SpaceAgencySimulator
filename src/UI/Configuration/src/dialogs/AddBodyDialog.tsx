@@ -42,7 +42,7 @@ export default function BodyDialog(props: IBodyDialog) {
       },
     } as BodyStringType);
     setIsLoading(false);
-  }, []);
+  }, [props]);
 
   const handleOpenDialog = async () => {
     setOpenDialog(true);

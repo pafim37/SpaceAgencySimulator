@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useConnectionId } from "../providers/ConnectionIdContext";
 import * as signalR from "@microsoft/signalr";
 
 interface INotification {
   onDatabaseChanged: () => void;
 }
 const useNotification = ({ onDatabaseChanged }: INotification) => {
+  const { setConnectionId } = useConnectionId();
   const [connection, setConnection] = useState(null);
 
   useEffect(() => {
@@ -21,9 +23,10 @@ const useNotification = ({ onDatabaseChanged }: INotification) => {
       connection
         .start()
         .then(() => {
-          connection
-            .invoke("GetConnectionId")
-            .then((id) => console.log("Connection Id", id));
+          connection.invoke("GetConnectionId").then((id) => {
+            console.log("Connection Id", id);
+            setConnectionId(id);
+          });
           console.log("Connected!");
         })
         .catch((e) => console.log("Connection failed", e));

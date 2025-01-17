@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import BodyInfo from "./BodyInfo";
-import { useChangeStateBodyRequest } from "../axiosBase/axiosBody";
+import { useChangeStateBodyRequest } from "../axiosBase/useChangeStateBodyRequest";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 interface IMainPanel {

@@ -9,7 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import BodyDialogContent from "./BodyDialogContent";
 import EditIcon from "@mui/icons-material/Edit";
 import SnackbarAlert from "../alerts/SnackbarAlert";
-import { useUpdateBodyRequest } from "../axiosBase/axiosBody";
+import { useUpdateBodyRequest } from "../axiosBase/useUpdateBodyRequest";
 import useBodyValidate from "../helpers/BodyValidate";
 
 interface IEditBodyDialog {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Paper, Skeleton, Typography } from "@mui/material";
-import { useGetBodiesRequest } from "./axiosBase/axiosBody";
+import { useGetBodiesRequest } from "./axiosBase/useGetBodiesRequest";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import useNotification from "./notifications/UseNotification";
 import TopPanelButtons from "./components/TopPanelButtons";

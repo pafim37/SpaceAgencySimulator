@@ -40,7 +40,7 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BodyDto body)
+        public async Task<IActionResult> Create([FromBody] NewBodyDto body)
         {
             ArgumentException.ThrowIfNullOrEmpty(body.Name);
             BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
@@ -156,8 +156,8 @@ namespace Sas.Body.Service.Controllers
                     Enabled = true,
                     Mass = 1,
                     Radius = 1,
-                    Position = new VectorEntity { X = 0, Y = 0, Z = 0 },
-                    Velocity = new VectorEntity { X = 0, Y = 0, Z = 0 },
+                    Position = new VectorEntity { X = 50, Y = 0, Z = 0 },
+                    Velocity = new VectorEntity { X = 0, Y = 1, Z = 0 },
                 };
             }
             if (names.Contains("Moon"))

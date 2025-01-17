@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import AddBodyDialog from "./../dialogs/AddBodyDialog";
+import BodyDialog from "./../dialogs/BodyDialog";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   useCreateBodyDefaultsRequest,
@@ -128,7 +128,11 @@ const TopPanelButtons = (props: ITopPanelButtons) => {
       ) : (
         <></>
       )}
-      <AddBodyDialog setBodies={props.setBodies} />
+      <BodyDialog
+        isModificationDialog={false}
+        body={undefined}
+        setBodies={props.setBodies}
+      />
     </Box>
   );
 };

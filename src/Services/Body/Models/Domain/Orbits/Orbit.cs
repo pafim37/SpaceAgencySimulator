@@ -116,7 +116,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         /// <summary>
         /// Returns points of the orbit in the space.
         /// </summary>
-        public List<Point> Points { get; set; }
+        public List<Point>? Points { get; set; }
         #endregion
 
         #region constructors

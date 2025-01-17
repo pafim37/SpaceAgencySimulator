@@ -29,6 +29,11 @@ namespace Sas.Body.Service.Models.Domain
         /// Radius of the body
         /// </summary>
         public double Radius { get; set; }
+
+        /// <summary>
+        /// Name of the revolving body
+        /// </summary>
+        public string? ParentName { get; set; }
         #endregion
 
         #region constructors

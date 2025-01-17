@@ -1,5 +1,4 @@
 ﻿using Sas.Domain.Exceptions;
-using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.Orbits

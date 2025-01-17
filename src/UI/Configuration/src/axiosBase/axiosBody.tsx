@@ -52,7 +52,7 @@ export const useGetBodyRequest = () => {
 export const useCreateBodyRequest = () => {
   let data: BodyType = undefined;
   const { showSnackbar } = useSnackbar();
-  const ceateBodyRequest = async (body: BodyType) => {
+  const ceateBodyRequest = async (body: NewBodyType) => {
     return await axiosBody
       .post("/", body)
       .then((response) => {

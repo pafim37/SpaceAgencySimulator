@@ -3,7 +3,7 @@ import { useDeleteBodyRequest } from "../axiosBase/axiosBody";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Paper, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import BodyDialog from "../dialogs/BodyDialog";
+import EditBodyDialog from "../dialogs/EditBodyDialog";
 import ConfirmationDialog from "../dialogs/ConfirmationDialog";
 
 interface IBodyInfo {
@@ -86,11 +86,7 @@ const BodyInfo = (props: IBodyInfo) => {
         >
           <Typography>Delete body</Typography>
         </Button>
-        <BodyDialog
-          isModificationDialog={true}
-          body={props.body}
-          setBodies={props.setBodies}
-        />
+        <EditBodyDialog body={props.body} setBodies={props.setBodies} />
       </Grid>
       {isOpenConfirmationDialog ? (
         <ConfirmationDialog

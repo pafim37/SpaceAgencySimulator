@@ -47,15 +47,13 @@ export default function BodyDialogContent(props: IBodyDialogContent) {
       },
     });
     setIsLoading(false);
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     props.setIsValidBodyForm(areAllFieldsEmpty(errorForm));
+    // eslint-disable-next-line
   }, [errorForm]);
-
-  useEffect(() => {
-    console.log("UE", bodyForm);
-  }, [bodyForm]);
 
   function areAllFieldsEmpty(obj: any): boolean {
     if (obj === undefined) return false;
@@ -112,7 +110,6 @@ export default function BodyDialogContent(props: IBodyDialogContent) {
       return regex.test(normalizedValue) ? "" : "Value must be a valid float";
     } else {
       const regex = /^(-)?(\d+)$/;
-      console.log(regex.test(normalizedValue), normalizedValue);
       return regex.test(normalizedValue) ? "" : "Value must be a positive";
     }
   };

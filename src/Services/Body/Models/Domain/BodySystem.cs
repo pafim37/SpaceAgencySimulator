@@ -1,8 +1,7 @@
 ﻿using Sas.Body.Service.Models.Domain.BodyExtensions;
 using Sas.Body.Service.Models.Domain.Orbits;
+using Sas.Body.Service.Models.Domain.Orbits.Helpers;
 using Sas.Body.Service.Models.Domain.Orbits.Points;
-using Sas.Body.Service.Models.Domain.Orbits.Primitives;
-using Sas.Domain.Exceptions;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
@@ -11,195 +10,175 @@ namespace Sas.Body.Service.Models.Domain
     public class BodySystem
     {
         #region fields
-        private const double TwoBodyProblemMassRatioLimit = 0.03;
+        private readonly List<BodyDomain> bodies;
+        private readonly List<Orbit> orbits;
+        private readonly double g; // gravitational constant
         private const string BarycentrumName = "Barycentrum";
-        private readonly List<BodyDomain> _bodies;
-        private readonly List<Orbit> _orbits;
-        private readonly double _G; // gravitational constant
         private BodyDomain? barycenter;
         #endregion
 
         #region properties
         /// <summary>
-        /// Center of mass of the system (Barycentrum)
+        /// Gets gravitational constant.
+        /// </summary>
+        public double G => g;
+
+        /// <summary>
+        /// Gets center of mass of the system (Barycentrum).
         /// </summary>
         public BodyDomain? Barycentrum => barycenter;
 
         /// <summary>
-        /// Gets gravitational parameter defined as G * (M + m1 + m2 + ...)
+        /// Gets list of bodies in current body system.
         /// </summary>
-        public double U => GetU();
+        public List<BodyDomain> Bodies => bodies;
 
         /// <summary>
-        /// Gets gravitational constant
+        /// Gets list of orbits in current body system.
         /// </summary>
-        public double G => _G;
-
-        /// <summary>
-        /// Gets list of bodies in current body system
-        /// </summary>
-        public List<BodyDomain> Bodies => _bodies;
-
-        /// <summary>
-        /// Gets list of orbits in current body system
-        /// </summary>
-        public List<Orbit> Orbits => _orbits;
-        #endregion
-
-        #region public methods
-        /// <summary>
-        /// Adds a new body to the system
-        /// </summary>
-        /// <param name="body"></param>
-        public void AddBody(BodyDomain body)
-        {
-            _bodies.Add(body);
-            barycenter = GetBarycenter();
-            UpdateBodySystem();
-        }
-
-        /// <summary>
-        /// UpdateBodySystem state of the Solar System
-        /// </summary>
-        public void UpdateBodySystem()
-        {
-            FindOrbits();
-            CalibrateBarycenterToZero();
-            CalculateOrbitPoints();
-        }
-        // TODO: add comment
-        public void CalibrateBarycenterToZero()
-        {
-            BodyDomain? barycenter = this.barycenter;
-            if (barycenter != null)
-            {
-                foreach (BodyDomain body in _bodies)
-                {
-                    body.Position -= barycenter.Position;
-                }
-                foreach (Orbit orbit in _orbits)
-                {
-                    orbit.Center -= barycenter.Position;
-                }
-                barycenter.Position -= barycenter.Position;
-            }
-        }
-        // TODO: add comment
-        public void CalculateOrbitPoints()
-        {
-            foreach (var orbit in _orbits)
-            {
-                if (orbit.OrbitType == OrbitType.Elliptic)
-                {
-                    orbit.Points = GetEllipticOrbitPoints.GetPoints(orbit.SemiMajorAxis!.Value, orbit.SemiMinorAxis!.Value, orbit.Center, orbit.RotationAngle);
-                }
-            }
-        }
+        public List<Orbit> Orbits => orbits;
         #endregion
 
         #region constructors
         public BodySystem(IEnumerable<BodyDomain> bodies, double gravitationalConst = Constants.G)
         {
-            _bodies = bodies.ToList();
-            _orbits = [];
-            _G = gravitationalConst;
-            barycenter = GetBarycenter();
+            this.bodies = bodies.ToList();
+            orbits = [];
+            g = gravitationalConst;
         }
         #endregion
 
-        #region private methods
-        private void FindOrbits()
+        #region public methods
+        /// <summary>
+        /// Adds a new body to the system.
+        /// </summary>
+        /// <param name="body"></param>
+        public void AddBody(BodyDomain body)
         {
-            List<BodyDomain> sortBodies = _bodies.OrderBy(x => x.Mass).ToList();
+            bodies.Add(body);
+        }
+
+        /// <summary>
+        /// It finds barycenter, establishes hierarchy between bodies and finds orbits. 
+        /// </summary>
+        public void UpdateBodySystem()
+        {
+            barycenter = FindBarycenter();
+            EstablishHierarchy();
+            FindOrbits();
+        }
+
+        /// <summary>
+        /// It updates body system, calibrates barycenter to zero and caluculates orbits points
+        /// </summary>
+        public void FullUpdate()
+        {
+            UpdateBodySystem();
+            CalibrateBarycenterToZero();
+            CalculateOrbitPoints();
+        }
+
+        /// <summary>
+        /// Finds parents of the bodies.
+        /// </summary>
+        public void EstablishHierarchy()
+        {
+            List<BodyDomain> sortBodies = [.. bodies.OrderBy(x => x.Mass)];
             for (int i = 0; i < sortBodies.Count - 1; i++)
             {
-                BodyDomain currentSurroundedBody = sortBodies[i];
-                BodyDomain? centerBody = null;
+                BodyDomain body = sortBodies[i];
+                string? parent = null;
                 double distance = double.MaxValue;
                 for (int j = i + 1; j < sortBodies.Count; j++)
                 {
-                    BodyDomain currentCenterBody = sortBodies[j];
+                    BodyDomain other = sortBodies[j];
+                    double relativeDistance = body.GetPositionRelatedTo(other).Magnitude;
+                    double influenceRadius = other.GetSphereOfInfluenceRelatedTo(body);
+                    if (relativeDistance < distance && influenceRadius >= relativeDistance)
                     {
-                        double relativeDistance = currentSurroundedBody.GetPositionRelatedTo(currentCenterBody).Magnitude;
-                        double influence = currentCenterBody.GetSphereOfInfluenceRelatedTo(currentSurroundedBody);
-                        if (relativeDistance < distance && influence >= relativeDistance)
-                        {
-                            distance = relativeDistance;
-                            centerBody = currentCenterBody;
-                        }
+                        distance = relativeDistance;
+                        parent = other.Name;
                     }
                 }
-                if (centerBody != null && currentSurroundedBody.Mass / centerBody.Mass < TwoBodyProblemMassRatioLimit)
-                {
-                    AddOrbitToSystem(currentSurroundedBody, centerBody);
-                }
+                body.ParentName = parent;
             }
         }
 
-        private void AddOrbitToSystem(BodyDomain surroundedBody, BodyDomain resultBody)
+        /// <summary>
+        /// Finds orbits of the bodies.
+        /// </summary>
+        public void FindOrbits()
         {
-            Vector position = surroundedBody.GetPositionRelatedTo(resultBody);
-            Vector velocity = surroundedBody.GetVelocityRelatedTo(resultBody);
-            double u = _G * (surroundedBody.Mass + resultBody.Mass);
-            Orbit orbit;
-            try
+            foreach (BodyDomain body in bodies)
             {
-                orbit = OrbitFactory.CalculateOrbit(position, velocity, u);
+                if (body.ParentName is null) continue;
+                BodyDomain? other = bodies.FirstOrDefault(b => b.Name == body.ParentName);
+                if (other is null) continue;
+                Orbit? orbit = CalculateOrbitFactory.Calculate(body, other, g);
+                if (orbit == null) continue;
+                orbits.Add(orbit);
             }
-            catch (UnknownOrbitTypeException)
-            {
-                return;
-            }
-            orbit.Name = surroundedBody.Name;
-            Vector center = Vector.Zero;
-            double rotationAngle = 0;
-            if (orbit.OrbitType == OrbitType.Elliptic)
-            {
-                rotationAngle = orbit.RotationAngle;
-                orbit.Center = new Vector(resultBody.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis!.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
-            }
-            else if (orbit.OrbitType == OrbitType.Hyperbolic)
-            {
-                rotationAngle = -orbit.RotationAngle;
-                orbit.Center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis!.Value + Math.Cos(rotationAngle) * resultBody.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + resultBody.Position.Y, 0);
-            }
-            else if (orbit.OrbitType == OrbitType.Circular)
-            {
-                orbit.Center = new Vector(resultBody.Position.X, resultBody.Position.Y, 0);
-            }
-            else if (orbit.OrbitType == OrbitType.Parabolic)
-            {
-                rotationAngle = orbit.RotationAngle;
-                orbit.Center = new Vector(resultBody.Position.Y, resultBody.Position.X, 0);
-            }
-            _orbits.Add(orbit);
         }
-        private BodyDomain? GetBarycenter()
+
+        /// <summary>
+        /// Calibrate barycenter to zero. It changes position of bodies and orbits.
+        /// </summary>
+        public void CalibrateBarycenterToZero()
         {
-            if (_bodies.Count > 1)
+            if (barycenter != null)
             {
+                foreach (BodyDomain body in bodies)
+                {
+                    body.Position -= barycenter.Position;
+                    body.Velocity -= barycenter.Velocity;
+                }
+                foreach (Orbit orbit in orbits)
+                {
+                    orbit.Center -= barycenter.Position;
+                }
+                barycenter.Position = Vector.Zero;
+                barycenter.Velocity = Vector.Zero;
+            }
+        }
+        #endregion
+
+        public void CalculateOrbitPoints()
+        {
+            foreach (var orbit in orbits)
+            {
+                orbit.Points = GetOrbitPointsFactory.GetPoints(orbit);
+            }
+        }
+
+        #region private methods
+        private BodyDomain? FindBarycenter()
+        {
+            if (bodies.Count > 1)
+            {
+                double maxMass = bodies.Max(b => b.Mass);
+                IEnumerable<BodyDomain> mostMassiveBodies = bodies.Where(b => b.Mass == maxMass);
                 Vector position = Vector.Zero;
-                foreach (BodyDomain body in _bodies)
+                Vector velocity = Vector.Zero;
+                foreach (var body in mostMassiveBodies)
+                {
+                    velocity += body.Velocity;
+                }
+                foreach (BodyDomain body in bodies)
                 {
                     position += body.Mass * body.Position;
                 }
-                double totalMass = _bodies.Sum(body => body.Mass);
+                double totalMass = bodies.Sum(body => body.Mass);
                 position = 1 / totalMass * position;
-                return new BodyDomain(BarycentrumName, totalMass, position, Vector.Zero);
+                return new BodyDomain(BarycentrumName, totalMass, position, velocity);
             }
-            else if (_bodies.Count == 1)
+            else if (bodies.Count == 1)
             {
-                return _bodies[0];
+                return new BodyDomain(BarycentrumName, bodies[0].Mass, bodies[0].Position, bodies[0].Velocity);
             }
             else
             {
                 return null;
             }
-        }
-        private double GetU()
-        {
-            double totalMass = _bodies.Sum(body => body.Mass);
-            return totalMass * _G;
         }
         #endregion
     }

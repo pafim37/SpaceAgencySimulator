@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import { SnackbarProvider } from "./providers/SnackbarContext";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ConnectionIdProvider } from "./providers/ConnectionIdContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -15,8 +16,10 @@ const darkTheme = createTheme({
 
 root.render (
     <ThemeProvider theme={darkTheme}>
-      <SnackbarProvider>
-        <App />
-      </SnackbarProvider>
+      <ConnectionIdProvider>
+        <SnackbarProvider>
+          <App />
+        </SnackbarProvider>
+      </ConnectionIdProvider>
     </ThemeProvider>
   );

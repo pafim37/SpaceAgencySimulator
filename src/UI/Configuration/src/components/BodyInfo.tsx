@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDeleteBodyRequest } from "../axiosBase/axiosBody";
+import { useDeleteBodyRequest } from "../axiosBase/useDeleteBodyRequest";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Paper, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";

@@ -56,9 +56,11 @@ const TopPanelButtons = (props: ITopPanelButtons) => {
   };
 
   const sendRequest = async () => {
-    const result = await createBodyDefaultsRequest(namesToCreate);
+    const result: string[] = await createBodyDefaultsRequest(namesToCreate);
     if (result !== undefined) {
-      setNamesToCreate(result);
+      setNamesToCreate((prev: string[]) =>
+        prev.filter((name) => !result.some((r) => r === name))
+      );
     }
   };
 
@@ -74,7 +76,13 @@ const TopPanelButtons = (props: ITopPanelButtons) => {
                 style={{ backgroundColor: "#1fb89f", color: "black" }}
                 disabled={namesToCreate.length < 1}
               >
-                Create default bodies ({namesToCreate.length})
+                Create default bodies ({namesToCreate.length} /{" "}
+                {
+                  supportedNames.filter(
+                    (sn) => !props.currentBodyNames.some((cbn) => cbn === sn)
+                  ).length
+                }
+                )
               </Button>
               <Button
                 onClick={() => {

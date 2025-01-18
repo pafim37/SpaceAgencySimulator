@@ -10,10 +10,8 @@ import {
 import Grid from "@mui/material/Grid2";
 import AddBodyDialog from "./../dialogs/AddBodyDialog";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import {
-  useCreateBodyDefaultsRequest,
-  useGetBodySupportedNames,
-} from "./../axiosBase/axiosBody";
+import { useCreateBodyDefaultsRequest } from "./../axiosBase/useCreateBodyDefaultsRequest";
+import { useGetBodySupportedNames } from "./../axiosBase/useGetBodySupportedNames";
 
 interface ITopPanelButtons {
   currentBodyNames: string[];

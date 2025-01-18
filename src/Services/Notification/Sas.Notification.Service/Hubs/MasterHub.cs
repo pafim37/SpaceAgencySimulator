@@ -9,9 +9,14 @@ namespace Sas.Notification.Service.Hubs
             return Context.ConnectionId;
         }
 
-        public async Task SendBodyDatabaseChangedNotification()
+        public async Task SendBodyDatabaseChangedNotificationToAll()
         {
             await Clients.All.SendAsync("BodyDatabaseChanged");
+        }
+
+        public async Task SendBodyDatabaseChangedNotificationExcept(string except)
+        {
+            await Clients.AllExcept(except).SendAsync("BodyDatabaseChanged");
         }
     }
 }

@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useCreateBodyRequest } from "../axiosBase/axiosBody";
+import { useCreateBodyRequest } from "../axiosBase/useCreateBodyRequest";
 import BodyDialogContent from "./BodyDialogContent";
 import SnackbarAlert from "../alerts/SnackbarAlert";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";

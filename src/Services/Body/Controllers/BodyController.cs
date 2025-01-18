@@ -3,14 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Sas.Body.Service.DataTransferObject;
 using Sas.Body.Service.Exceptions;
 using Sas.Body.Service.Models.Entities;
+using Sas.Body.Service.Notifications;
 using Sas.Body.Service.Repositories;
 
 namespace Sas.Body.Service.Controllers
 {
     [ApiController]
     [Route("body")]
-    public class BodyController(IBodyRepository bodyRepository, IMapper mapper) : ControllerBase
+    public class BodyController(IBodyRepository bodyRepository, NotificationClient notificationService, IMapper mapper) : ControllerBase
     {
+        private const string SignalRClientIdHeaderName = "X-SAS-SignalRClientId";
         private readonly CancellationTokenSource cancellationTokenSource = new();
         private readonly List<string> supportedBodyNames = new List<string>() { "Sun", "Earth", "Mars", "Moon", "Player" };
 
@@ -40,23 +42,28 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BodyDto body)
+        public async Task<IActionResult> Create([FromBody] BodyDto body, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             ArgumentException.ThrowIfNullOrEmpty(body.Name);
             BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
             try
             {
                 await bodyRepository.CreateBodyAsync(bodyDb, cancellationTokenSource.Token).ConfigureAwait(false);
+                await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
+                return Created("/", body);
             }
             catch (BodyAlreadyExistsException e)
             {
                 return StatusCode(409, new { message = e.Message });
             }
-            return Created("/", body);
+            catch (Exception e)
+            {
+                return StatusCode(500, new { message = e.Message });
+            }
         }
 
         [HttpPatch]
-        public async Task<IActionResult> Patch([FromBody] BodyDto body)
+        public async Task<IActionResult> Patch([FromBody] BodyDto body, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             try
             {
@@ -69,6 +76,7 @@ namespace Sas.Body.Service.Controllers
             try
             {
                 BodyEntity updatedBody = await bodyRepository.UpdateBodyAsync(body, cancellationTokenSource.Token).ConfigureAwait(false);
+                await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
                 return Ok(updatedBody);
             }
             catch (NoBodyInDatabaseException e)
@@ -82,26 +90,32 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpPost("{name}")]
-        public async Task<IActionResult> ChangeState(string name, [FromBody] bool newState)
+        public async Task<IActionResult> ChangeState(string name, [FromBody] bool newState, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             try
             {
                 BodyEntity body = await bodyRepository.ChangeBodyStateAsync(name, newState, cancellationTokenSource.Token);
+                await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
                 return Ok(body);
             }
             catch (NoBodyInDatabaseException e)
             {
                 return NotFound(e.Message);
             }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { message = e.Message });
+            }
         }
 
         [HttpDelete("{name}")]
-        public async Task<IActionResult> Delete(string name)
+        public async Task<IActionResult> Delete(string name, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             try
             {
-                await bodyRepository.DeleteBodyAsync(name, cancellationTokenSource.Token).ConfigureAwait(false);
-                return NoContent();
+                BodyEntity body = await bodyRepository.DeleteBodyAsync(name, cancellationTokenSource.Token).ConfigureAwait(false);
+                await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
+                return Ok(body);
             }
             catch (NoBodyInDatabaseException e)
             {
@@ -120,7 +134,7 @@ namespace Sas.Body.Service.Controllers
         }
 
         [HttpPost("defaults")]
-        public async Task<IActionResult> Create([FromBody] List<string> bodynames)
+        public async Task<IActionResult> Create([FromBody] List<string> bodynames, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {
             IEnumerable<string> currentNames = await bodyRepository.GetAllBodiesNamesAsync(cancellationTokenSource.Token).ConfigureAwait(false);
             IEnumerable<string> newNames = bodynames.Except(currentNames);
@@ -131,6 +145,7 @@ namespace Sas.Body.Service.Controllers
             }
             IEnumerable<BodyEntity> bodies = CreateBodyEntitiesFromNames(bodynames);
             await bodyRepository.CreateRangeBodyAsync(bodies.ToList(), cancellationTokenSource.Token).ConfigureAwait(false);
+            await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
             return Created("/", bodies);
         }
 

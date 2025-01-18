@@ -15,6 +15,7 @@ const App = () => {
   useEffect(() => {
     setIsLoading(true);
     fetchBodies();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {

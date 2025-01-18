@@ -24,8 +24,10 @@ namespace Sas.Body.Service.Repositories
         public async Task<BodyEntity> UpdateBodyAsync(BodyDto dataToUpdate, CancellationToken cancellationToken)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(dataToUpdate.Name, nameof(dataToUpdate));
-            BodyEntity? bodyEntity = await GetBodyByNameAsync(dataToUpdate.Name, cancellationToken).ConfigureAwait(false)
+            ArgumentNullException.ThrowIfNull(dataToUpdate.Id);
+            BodyEntity? bodyEntity = await GetBodyById(dataToUpdate.Id.Value, cancellationToken).ConfigureAwait(false)
                 ?? throw new NoBodyInDatabaseException($"There is no body in database with name {dataToUpdate.Name}");
+            bodyEntity.Name = dataToUpdate.Name;
             bodyEntity.Mass = dataToUpdate.Mass ?? bodyEntity.Mass;
             bodyEntity.Position = mapper.Map<VectorEntity>(dataToUpdate.Position) ?? bodyEntity.Position;
             bodyEntity.Velocity = mapper.Map<VectorEntity>(dataToUpdate.Velocity) ?? bodyEntity.Velocity;
@@ -93,6 +95,11 @@ namespace Sas.Body.Service.Repositories
             await context.AddRangeAsync(bodyEntities, cancellationToken).ConfigureAwait(false);
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return bodyEntities;
+        }
+
+        public async Task<BodyEntity?> GetBodyById(int id, CancellationToken cancellationToken)
+        {
+            return await context.Bodies.FirstOrDefaultAsync(b => b.Id == id, cancellationToken).ConfigureAwait(false);
         }
     }
 }

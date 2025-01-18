@@ -86,7 +86,7 @@ const BodyInfo = (props: IBodyInfo) => {
         >
           <Typography>Delete body</Typography>
         </Button>
-        <EditBodyDialog body={props.body} setBody={props.setBodies} />
+        <EditBodyDialog body={props.body} setBodies={props.setBodies} />
       </Grid>
       {isOpenConfirmationDialog ? (
         <ConfirmationDialog

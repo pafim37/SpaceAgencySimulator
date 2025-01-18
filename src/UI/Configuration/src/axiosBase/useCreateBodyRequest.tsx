@@ -6,7 +6,7 @@ export const useCreateBodyRequest = () => {
   const { showSnackbar } = useSnackbar();
   const { connectionId } = useConnectionId();
   const axiosBody = axiosBase("body/", connectionId);
-  const createBodyRequest = async (body: BodyType) => {
+  const createBodyRequest = async (body: NewBodyType) => {
     return await axiosBody
       .post("/", body)
       .then((response) => {

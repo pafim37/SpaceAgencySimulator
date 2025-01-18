@@ -4,54 +4,48 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useCreateBodyRequest } from "../axiosBase/useCreateBodyRequest";
 import BodyDialogContent from "./BodyDialogContent";
+import { useCreateBodyRequest } from "../axiosBase/useCreateBodyRequest";
 import SnackbarAlert from "../alerts/SnackbarAlert";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import useBodyValidate from "../helpers/BodyValidate";
 
-interface IAddBodyDialog {
+interface IBodyDialog {
   setBodies: Dispatch<SetStateAction<BodyType[]>>;
 }
 
-export default function AddBodyDialog(props: IAddBodyDialog) {
+export default function BodyDialog(props: IBodyDialog) {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [bodyForm, setBodyForm] = useState<BodyStringType>();
+  const [isValidBodyForm, setIsValidBodyForm] = useState<boolean>(false);
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [newBody, setNewBody] = useState<BodyType>();
-  const createBodyRequest = useCreateBodyRequest();
-  const { validateBody, validateErrors } = useBodyValidate();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const createBodyRequest = useCreateBodyRequest();
 
   useEffect(() => {
-    validateBody(newBody);
-    // eslint-disable-next-line
-  }, [newBody]);
-
-  const handleOpenDialog = async () => {
-    const body: BodyType = {
+    setBodyForm({
       name: "",
-      mass: 1,
-      radius: 1,
-      enabled: true,
+      mass: "1",
+      radius: "1",
       position: {
-        x: 50,
-        y: 0,
-        z: 0,
+        x: "50",
+        y: "0",
+        z: "0",
       },
       velocity: {
-        x: 0,
-        y: 1,
-        z: 0,
+        x: "0",
+        y: "1",
+        z: "0",
       },
-    };
-    setNewBody(body);
-    setOpenDialog(true);
+    } as BodyStringType);
     setIsLoading(false);
+  }, [props]);
+
+  const handleOpenDialog = async () => {
+    setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
@@ -59,14 +53,34 @@ export default function AddBodyDialog(props: IAddBodyDialog) {
   };
 
   const handleSubmit = async () => {
-    if (validateErrors.length === 0) {
-      const createdBody: BodyType = await createBodyRequest(newBody);
+    if (isValidBodyForm) {
+      const bodyToSend: NewBodyType = {
+        enabled: true,
+        name: bodyForm.name,
+        mass: parseFloat(bodyForm.mass),
+        radius: parseFloat(bodyForm.radius),
+        position: {
+          x: parseFloat(bodyForm.position.x),
+          y: parseFloat(bodyForm.position.y),
+          z: parseFloat(bodyForm.position.z),
+        },
+        velocity: {
+          x: parseFloat(bodyForm.velocity.x),
+          y: parseFloat(bodyForm.velocity.y),
+          z: parseFloat(bodyForm.velocity.z),
+        },
+      };
+      const createdBody: BodyType = await createBodyRequest(bodyToSend);
       if (createdBody !== undefined) {
-        props.setBodies((prev: BodyType[]) => [...prev, newBody as BodyType]);
+        props.setBodies((prev: BodyType[]) => [
+          ...prev,
+          bodyToSend as BodyType,
+        ]);
         handleCloseDialog();
+      } else {
+        setOpenSnackbar(true);
       }
     } else {
-      setErrorMessage(validateErrors.join(" "));
       setOpenSnackbar(true);
     }
   };
@@ -91,9 +105,9 @@ export default function AddBodyDialog(props: IAddBodyDialog) {
         <DialogContent>
           {!isLoading ? (
             <BodyDialogContent
-              body={newBody}
-              setBody={setNewBody}
-              isNameDisabled={false}
+              body={bodyForm}
+              setBody={setBodyForm}
+              setIsValidBodyForm={setIsValidBodyForm}
             />
           ) : (
             <></>
@@ -111,7 +125,7 @@ export default function AddBodyDialog(props: IAddBodyDialog) {
       <SnackbarAlert
         openSnackbarAlert={openSnackbar}
         setOpenSnackbarAlert={setOpenSnackbar}
-        message={errorMessage}
+        message={"Could not send a request"}
       />
     </React.Fragment>
   );

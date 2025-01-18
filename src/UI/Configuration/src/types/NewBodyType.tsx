@@ -1,5 +1,4 @@
-type BodyType = {
-  id: number;
+type NewBodyType = {
   name: string;
   mass: number;
   radius: number;

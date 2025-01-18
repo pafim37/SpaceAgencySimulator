@@ -1,8 +1,7 @@
 ﻿namespace Sas.Body.Service.DataTransferObject
 {
-    public class BodyDto
+    public class NewBodyDto
     {
-        public int? Id { get; set; }
         public string? Name { get; set; }
         public double? Mass { get; set; }
         public double? Radius { get; set; }

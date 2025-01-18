@@ -54,11 +54,12 @@ const TopPanelButtons = (props: ITopPanelButtons) => {
   };
 
   const sendRequest = async () => {
-    const result: string[] = await createBodyDefaultsRequest(namesToCreate);
+    const result: BodyType[] = await createBodyDefaultsRequest(namesToCreate);
     if (result !== undefined) {
       setNamesToCreate((prev: string[]) =>
-        prev.filter((name) => !result.some((r) => r === name))
+        prev.filter((name) => !result.some((r) => r.name === name))
       );
+      props.setBodies((prev) => [...prev, ...result]);
     }
   };
 

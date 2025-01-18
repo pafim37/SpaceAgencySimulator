@@ -146,7 +146,8 @@ namespace Sas.Body.Service.Controllers
             IEnumerable<BodyEntity> bodies = CreateBodyEntitiesFromNames(bodynames);
             await bodyRepository.CreateRangeBodyAsync(bodies.ToList(), cancellationTokenSource.Token).ConfigureAwait(false);
             await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
-            return Created("/", bodies);
+            IEnumerable<BodyDto> bodiesDto = mapper.Map<IEnumerable<BodyDto>>(bodies);
+            return Created("/", bodiesDto);
         }
 
         private static IEnumerable<BodyEntity> CreateBodyEntitiesFromNames(List<string> names)

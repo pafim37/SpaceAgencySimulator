@@ -11,7 +11,7 @@ export const useCreateBodyDefaultsRequest = () => {
     return await axiosBody
       .post("/defaults", names)
       .then((response) => {
-        const data: string[] = response.data.map((b: BodyType) => b.name);
+        const data: BodyType[] = response.data;
         showSnackbar(
           `The ${names.map((name) => name)} was created successfully`,
           "success"

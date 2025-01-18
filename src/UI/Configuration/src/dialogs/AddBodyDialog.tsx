@@ -8,7 +8,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import BodyDialogContent from "./BodyDialogContent";
-import { useCreateBodyRequest } from "../axiosBase/axiosBody";
+import { useCreateBodyRequest } from "../axiosBase/useCreateBodyRequest";
 import SnackbarAlert from "../alerts/SnackbarAlert";
 
 interface IBodyDialog {

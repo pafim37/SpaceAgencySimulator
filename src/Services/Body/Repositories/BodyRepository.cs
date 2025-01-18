@@ -4,11 +4,10 @@ using Sas.Body.Service.Contexts;
 using Sas.Body.Service.DataTransferObject;
 using Sas.Body.Service.Exceptions;
 using Sas.Body.Service.Models.Entities;
-using Sas.Body.Service.Notifications;
 
 namespace Sas.Body.Service.Repositories
 {
-    public class BodyRepository(BodyContext context, NotificationClient notificationService, IMapper mapper) : IBodyRepository
+    public class BodyRepository(BodyContext context, IMapper mapper) : IBodyRepository
     {
         public async Task<BodyEntity> CreateBodyAsync(BodyEntity bodyEntity, CancellationToken cancellationToken)
         {
@@ -18,7 +17,7 @@ namespace Sas.Body.Service.Repositories
                 throw new BodyAlreadyExistsException($"Body with name {bodyEntity.Name} already exists");
             }
             await context.AddAsync(bodyEntity, cancellationToken).ConfigureAwait(false);
-            await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return bodyEntity;
         }
 
@@ -34,7 +33,7 @@ namespace Sas.Body.Service.Repositories
             bodyEntity.Velocity = mapper.Map<VectorEntity>(dataToUpdate.Velocity) ?? bodyEntity.Velocity;
             bodyEntity.Radius = dataToUpdate.Radius ?? bodyEntity.Radius;
             context.Update(bodyEntity);
-            await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return bodyEntity;
         }
 
@@ -44,7 +43,7 @@ namespace Sas.Body.Service.Repositories
             if (body != null)
             {
                 context.Bodies.Remove(body);
-                await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 return body;
             }
             else
@@ -86,22 +85,16 @@ namespace Sas.Body.Service.Repositories
             {
                 bodyToUpdate.Enabled = newState;
                 context.Update(bodyToUpdate);
-                await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 return bodyToUpdate;
             }
         }
-        
+
         public async Task<List<BodyEntity>> CreateRangeBodyAsync(List<BodyEntity> bodyEntities, CancellationToken cancellationToken)
         {
             await context.AddRangeAsync(bodyEntities, cancellationToken).ConfigureAwait(false);
-            await SaveDatabaseAndSendNotification(cancellationToken).ConfigureAwait(false);
-            return bodyEntities;
-        }
-
-        public async Task SaveDatabaseAndSendNotification(CancellationToken cancellationToken)
-        {
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            await notificationService.SendBodyDatabaseChangedNotification(cancellationToken);
+            return bodyEntities;
         }
 
         public async Task<BodyEntity?> GetBodyById(int id, CancellationToken cancellationToken)

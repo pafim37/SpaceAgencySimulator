@@ -49,11 +49,18 @@ namespace Sas.Body.Service.Notifications
             }
         }
 
-        public async Task SendBodyDatabaseChangedNotification(CancellationToken cancellationToken)
+        public async Task SendBodyDatabaseChangedNotification(string? senderId, CancellationToken cancellationToken)
         {
             if (connection.State == HubConnectionState.Connected)
             {
-                await connection.InvokeAsync("SendBodyDatabaseChangedNotification", cancellationToken);
+                if (senderId is null)
+                {
+                    await connection.InvokeAsync("SendBodyDatabaseChangedNotificationToAll", cancellationToken);
+                }
+                else 
+                {
+                    await connection.InvokeAsync("SendBodyDatabaseChangedNotificationExcept", senderId, cancellationToken);
+                }
             }
         }
 

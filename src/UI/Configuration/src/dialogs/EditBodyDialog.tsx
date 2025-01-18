@@ -9,7 +9,7 @@ import { Typography } from "@mui/material";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import BodyDialogContent from "./BodyDialogContent";
-import { useUpdateBodyRequest } from "../axiosBase/axiosBody";
+import { useUpdateBodyRequest } from "../axiosBase/useUpdateBodyRequest";
 import SnackbarAlert from "../alerts/SnackbarAlert";
 
 interface IBodyDialog {

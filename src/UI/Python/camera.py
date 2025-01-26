@@ -11,6 +11,7 @@ class Camera:
         self.camera.rotation_speed = CAMERA_ROTATION_SPEED
         self.pivot = None
         self.compass = Compass()
+        self.state = 1
 
 
     def inject_bodies(self, bodies):
@@ -47,6 +48,19 @@ class Camera:
         if urs.held_keys['space']:
             self.camera.position = CAMERA_INITIAL_POSITION
             self.camera.rotation = CAMERA_INITIAL_ROTATION
+        if urs.held_keys['l']:
+            if self.state == 0:
+                self.camera.position = (0, -200, 0)
+                self.camera.rotation = (-90, 0, 0)
+            elif self.state == 1:
+                self.camera.position = (0, 0, -200)
+                self.camera.rotation = (0, 0, 0)
+            elif self.state == 2:
+                self.camera.position = (-200, 0, 0)
+                self.camera.rotation = (0, 0, 0)
+            self.state += 1
+            if self.state > 1:
+                self.state = 0
         if urs.held_keys['1']:
             self.__set_pivot()
         if urs.held_keys['-']:
@@ -64,6 +78,7 @@ class Camera:
         # print(urs.camera.position)
         if old_camera_position != urs.camera.position or old_camera_rotation != urs.camera.rotation:
             self.compass.update(urs.camera)
+            print(urs.camera.position)
     
     def __set_pivot(self):
         my_entity = self.bodies[1] # TODO: remove hardcoded

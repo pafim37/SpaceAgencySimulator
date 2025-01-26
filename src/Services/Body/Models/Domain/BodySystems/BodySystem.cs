@@ -1,17 +1,18 @@
-﻿using Sas.Body.Service.Models.Domain.BodyExtensions;
+﻿using Sas.Body.Service.Extensions.BodyExtensions;
+using Sas.Body.Service.Models.Domain.Bodies;
 using Sas.Body.Service.Models.Domain.Orbits;
-using Sas.Body.Service.Models.Domain.Orbits.Helpers;
+using Sas.Body.Service.Models.Domain.Orbits.OrbitInfos;
 using Sas.Body.Service.Models.Domain.Orbits.Points;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Body.Service.Models.Domain
+namespace Sas.Body.Service.Models.Domain.BodySystems
 {
     public class BodySystem
     {
         #region fields
         private readonly List<BodyDomain> bodies;
-        private readonly List<Orbit> orbits;
+        private readonly List<PositionedOrbit> orbits;
         private readonly double g; // gravitational constant
         private const string BarycentrumName = "Barycentrum";
         private BodyDomain? barycenter;
@@ -36,7 +37,7 @@ namespace Sas.Body.Service.Models.Domain
         /// <summary>
         /// Gets list of orbits in current body system.
         /// </summary>
-        public List<Orbit> Orbits => orbits;
+        public List<PositionedOrbit> Orbits => orbits;
         #endregion
 
         #region constructors
@@ -114,7 +115,7 @@ namespace Sas.Body.Service.Models.Domain
                 if (body.ParentName is null) continue;
                 BodyDomain? other = bodies.FirstOrDefault(b => b.Name == body.ParentName);
                 if (other is null) continue;
-                Orbit? orbit = CalculateOrbitFactory.Calculate(body, other, g);
+                PositionedOrbit orbit = OrbitFactory.GetOrbit(body, other, g);
                 if (orbit == null) continue;
                 orbits.Add(orbit);
             }
@@ -132,9 +133,12 @@ namespace Sas.Body.Service.Models.Domain
                     body.Position -= barycenter.Position;
                     body.Velocity -= barycenter.Velocity;
                 }
-                foreach (Orbit orbit in orbits)
+                foreach (PositionedOrbit orbit in orbits)
                 {
-                    orbit.Center -= barycenter.Position;
+                    if (orbit.Center != null)
+                    {
+                        orbit.Center -= barycenter.Position;
+                    }
                 }
                 barycenter.Position = Vector.Zero;
                 barycenter.Velocity = Vector.Zero;
@@ -144,7 +148,7 @@ namespace Sas.Body.Service.Models.Domain
 
         public void CalculateOrbitPoints()
         {
-            foreach (var orbit in orbits)
+            foreach (var orbit in orbits.Where(o => o.OrbitDescription is not null))
             {
                 orbit.Points = GetOrbitPointsFactory.GetPoints(orbit);
             }

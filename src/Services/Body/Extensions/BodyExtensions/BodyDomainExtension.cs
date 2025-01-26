@@ -1,6 +1,7 @@
-﻿using Sas.Mathematica.Service.Vectors;
+﻿using Sas.Body.Service.Models.Domain.Bodies;
+using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Body.Service.Models.Domain.BodyExtensions
+namespace Sas.Body.Service.Extensions.BodyExtensions
 {
     public static class BodyDomainExtension
     {

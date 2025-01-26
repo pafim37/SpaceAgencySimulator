@@ -60,6 +60,18 @@ namespace Sas.Mathematica.Service
         public double ThAsDeg { get => ConvertAngle.RadToDeg(_th); }
 
         /// <summary>
+        /// Gets vector which points to the point
+        /// </summary>
+        /// <returns></returns>
+        public Vector GetVector() => new Vector(_x, _y, _z);
+
+        /// <summary>
+        /// Gets normalized vector which points to the point
+        /// </summary>
+        /// <returns></returns>
+        public Vector GetNormalizedVector() => GetVector().Normalize();
+
+        /// <summary>
         /// Creates the reference system for the point with given origin 
         /// </summary>
         /// <param name="origin"></param>

@@ -60,8 +60,6 @@
         /// Vector Z = <0, 0, 1>
         /// </summary>
         public static Vector Oz => new(0, 0, 1);
-        
-
         #endregion
 
         #region Properties
@@ -129,7 +127,7 @@
                 if (i >= 0 && i < _elements.Length) return _elements[i];
                 else throw new IndexOutOfRangeException();
             }
-            set 
+            set
             {
                 if (i >= 0 && i < _elements.Length) _elements[i] = value;
                 else throw new IndexOutOfRangeException();
@@ -243,14 +241,34 @@
         }
 
         /// <summary>
+        /// Overload minus operation for vector
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static Vector operator -(Vector v)
+        {
+            return -1 * v;
+        }
+
+        public static bool operator ==(Vector v1, Vector v2)
+        {
+            return v1.Equals(v2);
+        }
+
+        public static bool operator !=(Vector v1, Vector v2)
+        {
+            return !v1.Equals(v2);
+        }
+        #endregion
+
+        #region Static
+        /// <summary>
         /// Cross product of two vectors
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
         /// <returns></returns>
-        #endregion
 
-        #region Static
         public static Vector CrossProduct(Vector v1, Vector v2) => new(v1.Y * v2.Z - v1.Z * v2.Y, v1.Z * v2.X - v1.X * v2.Z, v1.X * v2.Y - v1.Y * v2.X);
         #endregion
 
@@ -268,7 +286,7 @@
         /// <summary>
         /// Normalize the vector. Has no effect if vector is currently normalized
         /// </summary>
-        public void Normalize()
+        public Vector Normalize()
         {
             if (!_isNormalize)
             {
@@ -276,6 +294,7 @@
                 _magnitude = CalculateMagnitude();
                 _isNormalize = true;
             }
+            return this;
         }
 
         /// <summary>
@@ -302,7 +321,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(X,Y,Z);
+            return HashCode.Combine(X, Y, Z, Magnitude, Length);
         }
 
         public override bool Equals(object? obj)
@@ -316,7 +335,7 @@
         }
         #endregion
 
-        #region Privates
+        #region Private methods
         private double CalculateMagnitude()
         {
             return Math.Sqrt(_elements.Sum(element => element * element));

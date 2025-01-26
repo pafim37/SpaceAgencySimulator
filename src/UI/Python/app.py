@@ -11,10 +11,11 @@ class App:
         self._init_ursina()
         self._init_notification()
         self._init_fields()
-
+        
     def _init_ursina(self):
         self.app = urs.Ursina()
         self.camera = Camera(urs.camera)
+        self._create_world_axis()
         urs.Sky(texture=urs.load_texture("images/stars.jpg"))
 
     def _init_notification(self):
@@ -56,11 +57,11 @@ class App:
                 entity = SphereEntity(body)
             self.bodies.append(entity)
         for orbit in orbits:
-            if orbit.orbitType == 0:
-                vertices = [urs.Vec3(point.x, point.y, point.z) for point in orbit.points]
-                mesh = urs.Mesh(vertices=vertices, mode='line', thickness=1)
-                entity = urs.Entity(model=mesh, name=orbit.name, color=urs.color.blue)
-                self.orbits.append(entity)
+            print(orbit)
+            vertices = [urs.Vec3(point.x, point.y, point.z) for point in orbit.points]
+            mesh = urs.Mesh(vertices=vertices, mode='line', thickness=1)
+            entity = urs.Entity(model=mesh, name=orbit.orbitDescription.name, color=urs.color.blue)
+            self.orbits.append(entity)
 
     def _clean_body_system(self):
         for body in self.bodies:
@@ -69,3 +70,8 @@ class App:
         for orbit in self.orbits:
             urs.destroy(orbit)
         self.orbits = []
+
+    def _create_world_axis(self):
+        urs.Entity(model="cube", scale=(1000,0.2,0.2), position=(0,0,0), color=urs.color.blue)
+        urs.Entity(model="cube", scale=(1000,0.2,0.2), position=(0,0,0), rotation=(0, 0, -90), color=urs.color.green)
+        urs.Entity(model="cube", scale=(1000,0.2,0.2), position=(0,0,0), rotation=(0, -90, 0), color=urs.color.red)

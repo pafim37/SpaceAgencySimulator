@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
-using Sas.Body.Service.Models.Domain;
+using Sas.Body.Service.Models.Domain.Bodies;
+using Sas.Body.Service.Models.Domain.BodySystems;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Test

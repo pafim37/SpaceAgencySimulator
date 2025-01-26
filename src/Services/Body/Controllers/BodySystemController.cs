@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Sas.Body.Service.Models.Domain;
+using Sas.Body.Service.Models.Domain.BodySystems;
 using Sas.Body.Service.Models.Queries;
 
 namespace Sas.Body.Service.Controllers

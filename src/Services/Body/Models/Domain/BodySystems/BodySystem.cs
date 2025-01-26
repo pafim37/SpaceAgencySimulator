@@ -115,7 +115,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                 if (body.ParentName is null) continue;
                 BodyDomain? other = bodies.FirstOrDefault(b => b.Name == body.ParentName);
                 if (other is null) continue;
-                PositionedOrbit? orbit = OrbitFactory.GetOrbit(body, other, g);
+                PositionedOrbit orbit = OrbitFactory.GetOrbit(body, other, g);
                 if (orbit == null) continue;
                 orbits.Add(orbit);
             }

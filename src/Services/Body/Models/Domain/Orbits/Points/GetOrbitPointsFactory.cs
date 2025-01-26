@@ -14,7 +14,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Points
             }
             else if (orbit.OrbitType == OrbitType.Hyperbolic)
             {
-                return GetHyperbolicOrbitPoints.GetPoints(orbit.SemiMajorAxis!.Value, orbit.SemiMinorAxis!.Value, positionedOrbit.Center!, orbit.RotationAngle);
+                return GetHyperbolicOrbitPoints.GetPoints(positionedOrbit);
             }
             else
             {

@@ -13,7 +13,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
     {
         private const double TwoBodyProblemMassRatioLimit = 0.03;
 
-        public static PositionedOrbit? Calculate(BodyDomain body, BodyDomain other, double G)
+        public static PositionedOrbit Calculate(BodyDomain body, BodyDomain other, double G)
         {
             if (body.Mass / other.Mass > TwoBodyProblemMassRatioLimit)
             {
@@ -40,32 +40,38 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
             return positionedOrbit;
         }
 
-        private static Vector? GetCenter(BodyDomain other, OrbitDescription orbitDescription, PositionedOrbit positionedOrbit)
+        private static Vector GetCenter(BodyDomain other, OrbitDescription orbitDescription, PositionedOrbit positionedOrbit)
         {
-            if (orbitDescription.OrbitType == OrbitType.Elliptic)
+            switch (orbitDescription.OrbitType)
             {
-                double ae = orbitDescription.Eccentricity * orbitDescription.SemiMajorAxis!.Value;
-                ReferenceSystem rs = new(other.Position, orbitDescription.EccentricityVector.Normalize());
-                return -ae * rs.GetNormalizedVector();
-            }
-            else if (orbitDescription.OrbitType == OrbitType.Hyperbolic)
-            {
-                double rotationAngle = orbitDescription.RotationAngle;
-                double cx = -orbitDescription.SemiMajorAxis!.Value * orbitDescription.Eccentricity * Math.Cos(rotationAngle);
-                double cy = -orbitDescription.SemiMajorAxis!.Value * orbitDescription.Eccentricity * Math.Sin(rotationAngle);
-                return new Vector(cx, cy, 0);
-            }
-            else if (orbitDescription.OrbitType == OrbitType.Circular)
-            {
-                return new Vector(other.Position.X, other.Position.Y, 0);
-            }
-            else if (orbitDescription.OrbitType == OrbitType.Parabolic)
-            {
-                return new Vector(other.Position.Y, other.Position.X, 0);
-            }
-            else
-            {
-                return null;
+                case OrbitType.Elliptic:
+                    {
+                        if (orbitDescription.SemiMajorAxis == null)
+                        {
+                            throw new InvalidOperationException("SemiMajorAxis cannot be null.");
+                        }
+                        double ae = orbitDescription.Eccentricity * orbitDescription.SemiMajorAxis.Value;
+                        ReferenceSystem rs = new(other.Position, orbitDescription.EccentricityVector.Normalize());
+                        return -ae * rs.GetNormalizedVector();
+                    }
+
+                case OrbitType.Hyperbolic:
+                    {
+                        if (orbitDescription.SemiMajorAxis == null)
+                        {
+                            throw new InvalidOperationException("SemiMajorAxis cannot be null.");
+                        }
+                        double ae = orbitDescription.Eccentricity * orbitDescription.SemiMajorAxis.Value;
+                        ReferenceSystem rs = new(other.Position, orbitDescription.EccentricityVector.Normalize());
+                        return -ae * rs.GetNormalizedVector();
+                    }
+
+                case OrbitType.Circular:
+                    return new Vector(other.Position.X, other.Position.Y, 0);
+                case OrbitType.Parabolic:
+                    return new Vector(other.Position.Y, other.Position.X, 0);
+                default:
+                    throw new UnknownOrbitTypeException("Unknown orbit type while determine a center of the orbit.");
             }
         }
     }

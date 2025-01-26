@@ -5,7 +5,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
 {
     public static class OrbitFactory
     {
-        public static PositionedOrbit? GetOrbit(BodyDomain body, BodyDomain other, double G)
+        public static PositionedOrbit GetOrbit(BodyDomain body, BodyDomain other, double G)
         {
             try
             {
@@ -15,7 +15,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
             {
                 // TODO: create another orbit
                 // TOD0:log it
-                return null;
+                throw;
             }
         }
 

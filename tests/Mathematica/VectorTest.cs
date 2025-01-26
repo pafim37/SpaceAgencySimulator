@@ -77,6 +77,28 @@ namespace Sas.Mathematica.Tests
             vector.Z.Should().Be(1);
         }
 
+        [Fact]
+        public void VectorWithMinusReturnsNegativeVector()
+        {
+            Vector vector = -Vector.Ones;
+            vector.X.Should().Be(-1);
+            vector.Y.Should().Be(-1);
+            vector.Z.Should().Be(-1);
+        }
+
+        [Fact]
+        public void VectorWithMinusDoesNotChangeVectorValues()
+        {
+            Vector vector = Vector.Ones;
+            Vector negativeVector = -vector;
+            vector.X.Should().Be(1);
+            vector.Y.Should().Be(1);
+            vector.Z.Should().Be(1);
+            negativeVector.X.Should().Be(-1);
+            negativeVector.Y.Should().Be(-1);
+            negativeVector.Z.Should().Be(-1);
+        }
+
         [Theory]
         [InlineData(new double[] { 2 }, 2)]
         [InlineData(new double[] { 3, 4 }, 5)]

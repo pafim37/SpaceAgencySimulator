@@ -268,7 +268,7 @@
         /// <summary>
         /// Normalize the vector. Has no effect if vector is currently normalized
         /// </summary>
-        public void Normalize()
+        public Vector Normalize()
         {
             if (!_isNormalize)
             {
@@ -276,6 +276,7 @@
                 _magnitude = CalculateMagnitude();
                 _isNormalize = true;
             }
+            return this;
         }
 
         /// <summary>

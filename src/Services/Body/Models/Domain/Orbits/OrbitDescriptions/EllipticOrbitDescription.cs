@@ -1,11 +1,11 @@
 ﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Body.Service.Models.Domain.Orbits
+namespace Sas.Body.Service.Models.Domain.Orbits.OrbitInfos
 {
-    public class EllipticOrbit : Orbit
+    public class EllipticOrbitDescription : OrbitDescription
     {
-        public EllipticOrbit(Vector position, Vector velocity, double u) :
+        public EllipticOrbitDescription(Vector position, Vector velocity, double u) :
             base(position, velocity, u)
         {
             _type = OrbitType.Elliptic;

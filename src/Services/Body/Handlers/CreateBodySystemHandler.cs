@@ -1,5 +1,6 @@
 ﻿using MediatR;
-using Sas.Body.Service.Models.Domain;
+using Sas.Body.Service.Models.Domain.Bodies;
+using Sas.Body.Service.Models.Domain.BodySystems;
 using Sas.Body.Service.Models.Entities;
 using Sas.Body.Service.Models.Queries;
 using Sas.Body.Service.Repositories;

@@ -1,36 +1,35 @@
 ﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Body.Service.Models.Domain.Orbits
+namespace Sas.Body.Service.Models.Domain.Orbits.OrbitInfos
 {
-    public class ParabolicOrbit : Orbit
+    public class CircularOrbitDescription : OrbitDescription
     {
-        public ParabolicOrbit(Vector position, Vector velocity, double u) :
+        public CircularOrbitDescription(Vector position, Vector velocity, double u) :
             base(position, velocity, u)
         {
-            _type = OrbitType.Parabolic;
+            _type = OrbitType.Circular;
         }
 
         protected override double GetMeanAnomaly(double e, double ae)
         {
-            return e * Math.Sinh(ae) - ae;
+            return ae - e * Math.Sin(ae);
         }
 
         protected override double GetEccentricAnomaly(double e, double phi)
         {
-            double tanGudermannianAngle = (Math.Pow(e, 2) - 1) * Math.Sin(phi) / (1 + e * Math.Cos(phi));
-            double gudermannianAngle = Math.Atan(tanGudermannianAngle);
-            return Math.Log(Math.Tan(gudermannianAngle / 2 + Math.PI / 4));
+            double cosAE = (e + Math.Cos(phi)) / (1 + e * Math.Cos(phi));
+            return Math.Acos(cosAE);
         }
 
         protected override double? GetRadius()
         {
-            return null;
+            return _radius;
         }
 
         protected override double? GetPeriod()
         {
-            return null;
+            return _period;
         }
 
         protected override double? GetSemiMajorAxis()

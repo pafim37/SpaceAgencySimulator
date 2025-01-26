@@ -3,9 +3,9 @@ using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Body.Service.Models.Domain.Orbits
+namespace Sas.Body.Service.Models.Domain.Orbits.OrbitInfos
 {
-    public abstract class Orbit
+    public abstract class OrbitDescription
     {
         #region fields
         protected OrbitType _type; // orbit type
@@ -23,7 +23,9 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         protected double _period;  // period
         protected double _radius;  // radius
         protected double _rMin;    // r - minimum
-        protected double _rotation;// orbit rotation
+        protected double _rotation;// orbit rotation in XY plane (along OZ)
+        protected double _theta;   // orbit rotation in XZ plane (along OY)
+        protected Vector _eVector; // eccentricity Vector
         #endregion
 
         #region properties
@@ -35,7 +37,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         /// <summary>
         /// Name of the body on the current orbit
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Semi major axis
@@ -46,11 +48,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         /// Semi minor axis
         /// </summary>
         public double? SemiMinorAxis => GetSemiMinorAxis();
-
-        /// <summary>
-        /// Center of the orbit
-        /// </summary>
-        public Vector Center { get; set; }
 
         /// <summary>
         /// Semi latus rectum
@@ -88,6 +85,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         public double EccentricAnomaly => _ae;
 
         /// <summary>
+        /// Vector of eccentric Anomaly
+        /// </summary>
+        public Vector EccentricityVector => _eVector; 
+
+        /// <summary>
         /// Mean anomaly
         /// </summary>
         public double MeanAnomaly => _m;
@@ -114,9 +116,13 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         public double RotationAngle => _rotation;
 
         /// <summary>
-        /// Returns points of the orbit in the space.
+        /// The angle by which the orbit is rotated.
         /// </summary>
-        public List<Point>? Points { get; set; }
+        public double Theata => _theta;
+
+        /// <summary>
+        /// The angle by which the orbit is rotated.
+        /// </summary>
         #endregion
 
         #region constructors
@@ -126,7 +132,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         /// <param name="position"></param>
         /// <param name="velocity"></param>
         /// <param name="u">Standard gravitational parameter: G(m1+m2)</param>
-        public Orbit(Vector position, Vector velocity, double u)
+        public OrbitDescription(Vector position, Vector velocity, double u)
         {
             _u = u;
             AssignFileds(position, velocity);
@@ -179,6 +185,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
             double i = GetInclination(hVector, h);
             _a = a;
             _b = b;
+            _eVector = eVector;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
             _i = i;
             _omega = GetAscendingNode(nVector, n);
@@ -190,13 +197,21 @@ namespace Sas.Body.Service.Models.Domain.Orbits
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
             _rMin = rMin;
+            _theta = FindOrbitAbove(eVector);
             _rotation = FindRotationAngle(position, phi, i);
+        }
+
+        private static double FindOrbitAbove(Vector eVector)
+        {
+            return Math.PI / 2 - Math.Acos(eVector.Z / eVector.Magnitude);
         }
 
         private static double FindRotationAngle(Vector position, double phi, double i)
         {
             ReferenceSystem rs = new(position);
-            return double.IsNaN(i) ? rs.Phi : Math.Cos(i) * phi - rs.Phi;
+            double angle = double.IsNaN(i) ? rs.Phi : -Math.Cos(i) * phi + rs.Phi;
+            return angle > 0 ? angle - (int)(angle / 2 / Math.PI) * 2 * Math.PI :
+                2 * Math.PI + (angle - (int)(angle / 2 / Math.PI) * 2 * Math.PI);
         }
 
         private static double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)

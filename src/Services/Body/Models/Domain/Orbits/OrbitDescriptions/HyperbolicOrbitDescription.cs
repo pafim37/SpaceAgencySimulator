@@ -1,11 +1,11 @@
 ﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Body.Service.Models.Domain.Orbits
+namespace Sas.Body.Service.Models.Domain.Orbits.OrbitInfos
 {
-    public class HyperbolicOrbit : Orbit
+    public class HyperbolicOrbitDescription : OrbitDescription
     {
-        public HyperbolicOrbit(Vector position, Vector velocity, double u) :
+        public HyperbolicOrbitDescription(Vector position, Vector velocity, double u) :
             base(position, velocity, u)
         {
             _type = OrbitType.Hyperbolic;
@@ -40,8 +40,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
 
         protected override double? GetSemiMinorAxis()
         {
-            double? a = GetSemiMajorAxis();
-            return a * Math.Sqrt(_e * _e - 1);
+            return _a * Math.Sqrt(_e * _e - 1);
         }
     }
 }

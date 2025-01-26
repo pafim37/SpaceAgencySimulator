@@ -1,5 +1,5 @@
-﻿using Sas.Body.Service.Models.Domain;
-using Sas.Body.Service.Models.Domain.BodyExtensions;
+﻿using Sas.Body.Service.Extensions.BodyExtensions;
+using Sas.Body.Service.Models.Domain.Bodies;
 using Sas.Mathematica.Service.Vectors;
 using Xunit;
 

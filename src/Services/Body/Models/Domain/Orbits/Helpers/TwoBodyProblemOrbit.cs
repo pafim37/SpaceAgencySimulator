@@ -1,8 +1,10 @@
 ﻿using Sas.Body.Service.Exceptions;
-using Sas.Body.Service.Models.Domain.BodyExtensions;
-using Sas.Body.Service.Models.Domain.Orbits.Points;
+using Sas.Body.Service.Extensions.BodyExtensions;
+using Sas.Body.Service.Models.Domain.Bodies;
+using Sas.Body.Service.Models.Domain.Orbits.OrbitInfos;
 using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Domain.Exceptions;
+using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
@@ -11,7 +13,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
     {
         private const double TwoBodyProblemMassRatioLimit = 0.03;
 
-        public static Orbit? Calculate(BodyDomain body, BodyDomain other, double G)
+        public static PositionedOrbit? Calculate(BodyDomain body, BodyDomain other, double G)
         {
             if (body.Mass / other.Mass > TwoBodyProblemMassRatioLimit)
             {
@@ -21,35 +23,50 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
             Vector position = body.GetPositionRelatedTo(other);
             Vector velocity = body.GetVelocityRelatedTo(other);
             double u = G * (body.Mass + other.Mass);
-            Orbit orbit;
+
+            OrbitDescription orbitDescription;
             try
             {
-                orbit = OrbitFactory.CalculateOrbit(position, velocity, u);
+                orbitDescription = OrbitInfoDescription.CalculateOrbit(position, velocity, u);
             }
             catch (UnknownOrbitTypeException)
             {
                 throw;
             }
-            orbit.Name = body.Name;
-            if (orbit.OrbitType == OrbitType.Elliptic)
+
+            PositionedOrbit positionedOrbit = new() { OrbitDescription = orbitDescription };
+            orbitDescription.Name = body.Name;
+            positionedOrbit.Center = GetCenter(other, orbitDescription, positionedOrbit);
+            return positionedOrbit;
+        }
+
+        private static Vector? GetCenter(BodyDomain other, OrbitDescription orbitDescription, PositionedOrbit positionedOrbit)
+        {
+            if (orbitDescription.OrbitType == OrbitType.Elliptic)
             {
-                double rotationAngle = orbit.RotationAngle;
-                orbit.Center = new Vector(other.Position.X - Math.Cos(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis!.Value, Math.Sin(rotationAngle) * orbit.Eccentricity * orbit.SemiMajorAxis.Value + other.Position.Y, 0);
+                double ae = orbitDescription.Eccentricity * orbitDescription.SemiMajorAxis!.Value;
+                ReferenceSystem rs = new(other.Position, orbitDescription.EccentricityVector.Normalize());
+                return -ae * rs.GetNormalizedVector();
             }
-            else if (orbit.OrbitType == OrbitType.Hyperbolic)
+            else if (orbitDescription.OrbitType == OrbitType.Hyperbolic)
             {
-                double rotationAngle = -orbit.RotationAngle;
-                orbit.Center = new Vector(orbit.MinDistance - orbit.SemiMajorAxis!.Value + Math.Cos(rotationAngle) * other.Position.X, orbit.MinDistance - orbit.SemiMajorAxis.Value + other.Position.Y, 0);
+                double rotationAngle = orbitDescription.RotationAngle;
+                double cx = -orbitDescription.SemiMajorAxis!.Value * orbitDescription.Eccentricity * Math.Cos(rotationAngle);
+                double cy = -orbitDescription.SemiMajorAxis!.Value * orbitDescription.Eccentricity * Math.Sin(rotationAngle);
+                return new Vector(cx, cy, 0);
             }
-            else if (orbit.OrbitType == OrbitType.Circular)
+            else if (orbitDescription.OrbitType == OrbitType.Circular)
             {
-                orbit.Center = new Vector(other.Position.X, other.Position.Y, 0);
+                return new Vector(other.Position.X, other.Position.Y, 0);
             }
-            else if (orbit.OrbitType == OrbitType.Parabolic)
+            else if (orbitDescription.OrbitType == OrbitType.Parabolic)
             {
-                orbit.Center = new Vector(other.Position.Y, other.Position.X, 0);
+                return new Vector(other.Position.Y, other.Position.X, 0);
             }
-            return orbit;
+            else
+            {
+                return null;
+            }
         }
     }
 }

@@ -1,20 +1,37 @@
-﻿using Sas.Mathematica.Service;
+﻿using Sas.Body.Service.Extensions.PointExtensions;
+using Sas.Mathematica.Service;
+using Sas.Mathematica.Service.Rotation;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.Orbits.Points
 {
     public class GetEllipticOrbitPoints
     {
-        public static List<Point> GetPoints(double semiMajorAxis, double semiMinorAxis, Vector center, double rotation = 0, int segments = 360)
+        public static List<Point> GetPoints(PositionedOrbit orbit, int segments = 360)
         {
+            double a = orbit.OrbitDescription!.SemiMajorAxis!.Value;
+            double b = orbit.OrbitDescription!.SemiMinorAxis!.Value;
+            double fi = orbit.OrbitDescription.RotationAngle;
+            double inc = orbit.OrbitDescription.Inclination;
+            double sr = orbit.OrbitDescription.Theata;
+            Vector center = orbit.Center!;
+            Vector eVector = orbit.OrbitDescription.EccentricityVector;
+
             List<Point> points = [];
             for (int i = 0; i <= segments; i++)
             {
                 double t = 2 * Constants.PI * i / segments;
-                double x = semiMajorAxis * Math.Cos(t) * Math.Cos(rotation) - semiMinorAxis * Math.Sin(t) * Math.Sin(rotation) + center.X;
-                double y = semiMajorAxis * Math.Cos(t) * Math.Sin(rotation) + semiMinorAxis * Math.Sin(t) * Math.Cos(rotation) + center.Y;
-                double z = center.Z;
-                points.Add(new Point { X = x, Y = y, Z = z });
+
+                // base points
+                double xBase = a * Math.Cos(t);
+                double yBase = b * Math.Sin(t);
+                double zBase = 0;
+                Vector vectorToRotate = new(xBase, yBase, zBase);
+                Vector rotVect = Rotation.Rotate(vectorToRotate, Vector.Oz, fi);
+                Vector resVec = Rotation.Rotate(rotVect, Vector.Oy, sr);
+                Vector incVec = Rotation.Rotate(resVec, eVector, inc);
+                Vector finVec = -1 * incVec + center;
+                points.Add(finVec.AsPoint());
             }
             return points;
         }

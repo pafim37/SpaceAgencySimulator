@@ -4,7 +4,7 @@ using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.Orbits
 {
-    public class PositionedOrbit : IPositionedOrbit
+    public interface IPositionedOrbit
     {
         public IOrbitDescription? OrbitDescription { get; set; }
         public List<Point>? Points { get; set; }

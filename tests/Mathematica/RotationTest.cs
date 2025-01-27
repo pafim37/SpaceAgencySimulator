@@ -70,12 +70,12 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(45),
-                new Vector([Math.Sqrt(2) / 2, 0, Math.Sqrt(2) / 2]),
+                new Vector([Math.Sqrt(2) / 2, 0, -Math.Sqrt(2) / 2]),
             };
             yield return new object[]
             {
                 ConvertAngle.DegToRad(90),
-                1 * Vector.Oz,
+                -Vector.Oz,
             };
             yield return new object[]
             {
@@ -85,7 +85,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(270),
-                -Vector.Oz,
+                Vector.Oz,
             };
             yield return new object[]
             {

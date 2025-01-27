@@ -3,9 +3,9 @@ using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Body.Service.Models.Domain.Orbits.OrbitInfos
+namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
 {
-    public abstract class OrbitDescription
+    public abstract class OrbitDescription : IOrbitDescription
     {
         #region fields
         protected OrbitType _type; // orbit type
@@ -87,7 +87,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitInfos
         /// <summary>
         /// Vector of eccentric Anomaly
         /// </summary>
-        public Vector EccentricityVector => _eVector; 
+        public Vector EccentricityVector => _eVector;
 
         /// <summary>
         /// Mean anomaly
@@ -197,13 +197,14 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitInfos
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
             _rMin = rMin;
-            _theta = FindOrbitAbove(eVector);
+            _theta = FindThetaAngle(eVector);
             _rotation = FindRotationAngle(position, phi, i);
         }
 
-        private static double FindOrbitAbove(Vector eVector)
+        private static double FindThetaAngle(Vector eVector)
         {
-            return Math.PI / 2 - Math.Acos(eVector.Z / eVector.Magnitude);
+            Vector thetaVector = new Vector(eVector.X, eVector.Y); // theta is angle rotation along y axis
+            return Math.Asin(eVector.Z / thetaVector.Magnitude);
         }
 
         private static double FindRotationAngle(Vector position, double phi, double i)

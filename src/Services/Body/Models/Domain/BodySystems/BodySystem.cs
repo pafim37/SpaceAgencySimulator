@@ -1,7 +1,6 @@
 ﻿using Sas.Body.Service.Extensions.BodyExtensions;
 using Sas.Body.Service.Models.Domain.Bodies;
 using Sas.Body.Service.Models.Domain.Orbits;
-using Sas.Body.Service.Models.Domain.Orbits.OrbitInfos;
 using Sas.Body.Service.Models.Domain.Orbits.Points;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
@@ -75,7 +74,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         public void FullUpdate()
         {
             UpdateBodySystem();
-            CalibrateBarycenterToZero();
+            //CalibrateBarycenterToZero();
             CalculateOrbitPoints();
         }
 
@@ -115,9 +114,15 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                 if (body.ParentName is null) continue;
                 BodyDomain? other = bodies.FirstOrDefault(b => b.Name == body.ParentName);
                 if (other is null) continue;
-                PositionedOrbit orbit = OrbitFactory.GetOrbit(body, other, g);
-                if (orbit == null) continue;
-                orbits.Add(orbit);
+                try
+                {
+                    PositionedOrbit orbit = OrbitFactory.GetOrbit(body, other, g);
+                    orbits.Add(orbit);
+                }
+                catch
+                {
+
+                }
             }
         }
 

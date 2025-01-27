@@ -284,15 +284,13 @@
 
 
         /// <summary>
-        /// Normalize the vector. Has no effect if vector is currently normalized
+        /// Gets the normalize vector
         /// </summary>
-        public Vector Normalize()
+        public Vector GetNormalize()
         {
             if (!_isNormalize)
             {
-                _elements = _elements.Select(element => element / _magnitude).ToArray();
-                _magnitude = CalculateMagnitude();
-                _isNormalize = true;
+                return new Vector(_elements.Select(element => element / _magnitude).ToArray());
             }
             return this;
         }

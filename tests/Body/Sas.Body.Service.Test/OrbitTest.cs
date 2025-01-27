@@ -1,4 +1,4 @@
-﻿using Sas.Body.Service.Models.Domain.Orbits.OrbitInfos;
+﻿using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 

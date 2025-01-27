@@ -1,13 +1,13 @@
-﻿using Sas.Body.Service.Models.Domain.Orbits.OrbitInfos;
+﻿using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
 using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 
 namespace Sas.Body.Service.Models.Domain.Orbits.Points
 {
     public static class GetOrbitPointsFactory
     {
-        public static List<Point> GetPoints(PositionedOrbit positionedOrbit)
+        public static List<Point> GetPoints(IPositionedOrbit positionedOrbit)
         {
-            OrbitDescription? orbit = positionedOrbit.OrbitDescription;
+            IOrbitDescription? orbit = positionedOrbit.OrbitDescription;
             if (orbit.OrbitType == OrbitType.Elliptic)
             {
                 return GetEllipticOrbitPoints.GetPoints(positionedOrbit);

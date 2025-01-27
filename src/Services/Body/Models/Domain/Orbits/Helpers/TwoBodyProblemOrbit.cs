@@ -1,7 +1,7 @@
 ﻿using Sas.Body.Service.Exceptions;
 using Sas.Body.Service.Extensions.BodyExtensions;
 using Sas.Body.Service.Models.Domain.Bodies;
-using Sas.Body.Service.Models.Domain.Orbits.OrbitInfos;
+using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
 using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Domain.Exceptions;
 using Sas.Mathematica.Service;
@@ -15,9 +15,10 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
 
         public static PositionedOrbit Calculate(BodyDomain body, BodyDomain other, double G)
         {
-            if (body.Mass / other.Mass > TwoBodyProblemMassRatioLimit)
+            double massRatio = body.Mass / other.Mass;
+            if (massRatio > TwoBodyProblemMassRatioLimit)
             {
-                throw new TwoBodyProblemAssumptionNotSatisfiedException();
+                throw new TwoBodyProblemAssumptionNotSatisfiedException($"Masses of the bodies do not satisy the two body assumption. Mass ratio is {massRatio}, while should be not greater than {TwoBodyProblemMassRatioLimit}");
             }
 
             Vector position = body.GetPositionRelatedTo(other);
@@ -36,11 +37,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
 
             PositionedOrbit positionedOrbit = new() { OrbitDescription = orbitDescription };
             orbitDescription.Name = body.Name;
-            positionedOrbit.Center = GetCenter(other, orbitDescription, positionedOrbit);
+            positionedOrbit.Center = GetCenter(other, orbitDescription);
             return positionedOrbit;
         }
 
-        private static Vector GetCenter(BodyDomain other, OrbitDescription orbitDescription, PositionedOrbit positionedOrbit)
+        private static Vector GetCenter(BodyDomain other, OrbitDescription orbitDescription)
         {
             switch (orbitDescription.OrbitType)
             {
@@ -51,8 +52,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
                             throw new InvalidOperationException("SemiMajorAxis cannot be null.");
                         }
                         double ae = orbitDescription.Eccentricity * orbitDescription.SemiMajorAxis.Value;
-                        ReferenceSystem rs = new(other.Position, orbitDescription.EccentricityVector.Normalize());
-                        return -ae * rs.GetNormalizedVector();
+                        return -ae * orbitDescription.EccentricityVector.GetNormalize() + other.Position;
                     }
 
                 case OrbitType.Hyperbolic:
@@ -62,8 +62,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
                             throw new InvalidOperationException("SemiMajorAxis cannot be null.");
                         }
                         double ae = orbitDescription.Eccentricity * orbitDescription.SemiMajorAxis.Value;
-                        ReferenceSystem rs = new(other.Position, orbitDescription.EccentricityVector.Normalize());
-                        return -ae * rs.GetNormalizedVector();
+                        return -ae * orbitDescription.EccentricityVector.GetNormalize() + other.Position;
                     }
 
                 case OrbitType.Circular:

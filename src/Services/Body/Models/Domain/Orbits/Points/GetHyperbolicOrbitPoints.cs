@@ -2,13 +2,12 @@
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Rotation;
 using Sas.Mathematica.Service.Vectors;
-using System.Drawing;
 
 namespace Sas.Body.Service.Models.Domain.Orbits.Points
 {
     public static class GetHyperbolicOrbitPoints
     {
-        public static List<Point> GetPoints(PositionedOrbit orbit, int segments = 180)
+        public static List<Point> GetPoints(IPositionedOrbit orbit, int segments = 180)
         {
             double a = orbit.OrbitDescription!.SemiMajorAxis!.Value;
             double b = orbit.OrbitDescription!.SemiMinorAxis!.Value;

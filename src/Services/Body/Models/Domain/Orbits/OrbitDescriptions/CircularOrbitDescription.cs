@@ -1,7 +1,7 @@
 ﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Body.Service.Models.Domain.Orbits.OrbitInfos
+namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
 {
     public class CircularOrbitDescription : OrbitDescription
     {

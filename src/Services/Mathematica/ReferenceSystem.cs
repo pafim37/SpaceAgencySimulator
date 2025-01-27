@@ -69,7 +69,7 @@ namespace Sas.Mathematica.Service
         /// Gets normalized vector which points to the point
         /// </summary>
         /// <returns></returns>
-        public Vector GetNormalizedVector() => GetVector().Normalize();
+        public Vector GetNormalizedVector() => GetVector().GetNormalize();
 
         /// <summary>
         /// Creates the reference system for the point with given origin 

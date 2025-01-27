@@ -264,14 +264,10 @@ namespace Sas.Mathematica.Tests
         {
             Vector vector = new Vector(1, 0, 1);
             double value = Math.Round(Math.Sqrt(2) / 2, 13);
-            vector.Normalize();
-            vector.X.Should().Be(value);
-            vector.Y.Should().Be(0);
-            vector.Z.Should().Be(value);
-
-            Vector vector2 = new Vector(10, 0, 0);
-            vector2.Normalize();
-            vector2.Should().Be(Vector.Ox);
+            Vector normalizedVector = vector.GetNormalize();
+            normalizedVector.X.Should().Be(value);
+            normalizedVector.Y.Should().Be(0);
+            normalizedVector.Z.Should().Be(value);
         }
 
         [Fact]

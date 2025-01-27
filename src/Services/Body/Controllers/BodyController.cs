@@ -14,7 +14,7 @@ namespace Sas.Body.Service.Controllers
     {
         private const string SignalRClientIdHeaderName = "X-SAS-SignalRClientId";
         private readonly CancellationTokenSource cancellationTokenSource = new();
-        private readonly List<string> supportedBodyNames = new List<string>() { "Sun", "Earth", "Mars", "Moon", "Player" };
+        private readonly List<string> supportedBodyNames = new List<string>() { "Sun", "Mercury", "Wenus", "Earth", "Mars", "Moon", "Player" };
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -143,73 +143,112 @@ namespace Sas.Body.Service.Controllers
             {
                 return StatusCode(409, new { message = "The request does not contain any supported body name or supported body already exists" });
             }
-            IEnumerable<BodyEntity> bodies = CreateBodyEntitiesFromNames(bodynames);
-            await bodyRepository.CreateRangeBodyAsync(bodies.ToList(), cancellationTokenSource.Token).ConfigureAwait(false);
+            IEnumerable<NewBodyDto> newBodies = CreateBodyEntitiesFromNames(bodynames);
+            List<BodyEntity> bodiesDto = mapper.Map<List<BodyEntity>>(newBodies);
+            await bodyRepository.CreateRangeBodyAsync(bodiesDto, cancellationTokenSource.Token).ConfigureAwait(false);
             await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
-            IEnumerable<BodyDto> bodiesDto = mapper.Map<IEnumerable<BodyDto>>(bodies);
             return Created("/", bodiesDto);
         }
 
-        private static IEnumerable<BodyEntity> CreateBodyEntitiesFromNames(List<string> names)
+        private static IEnumerable<NewBodyDto> CreateBodyEntitiesFromNames(List<string> names)
         {
+            float sunMass = 332950;
             if (names.Contains("Sun"))
             {
-                yield return new BodyEntity()
+                yield return new NewBodyDto()
                 {
                     Name = "Sun",
                     Enabled = true,
-                    Mass = 100,
+                    Mass = sunMass,
                     Radius = 5,
-                    Position = new VectorEntity { X = 0, Y = 0, Z = 0 },
-                    Velocity = new VectorEntity { X = 0, Y = 0, Z = 0 },
+                    Position = new VectorDto { X = 0, Y = 0, Z = 0 },
+                    Velocity = new VectorDto { X = 0, Y = 0, Z = 0 },
+                };
+            }
+            if (names.Contains("Mercury"))
+            {
+                double distance = 38;
+                double velocity = Math.Round(Math.Sqrt(sunMass / distance), 2);
+                yield return new NewBodyDto()
+                {
+                    Name = "Mercury",
+                    Enabled = true,
+                    Mass = 0.0552,
+                    Radius = 1,
+                    Position = new VectorDto { X = distance, Y = 0, Z = 0 },
+                    Velocity = new VectorDto { X = 0, Y = velocity, Z = 0 },
+                };
+            }
+            if (names.Contains("Wenus"))
+            {
+                double distance = 72;
+                double velocity = Math.Round(Math.Sqrt(sunMass / distance), 2);
+                yield return new NewBodyDto()
+                {
+                    Name = "Wenus",
+                    Enabled = true,
+                    Mass = 0.8149,
+                    Radius = 1,
+                    Position = new VectorDto { X = distance, Y = 0, Z = 0 },
+                    Velocity = new VectorDto { X = 0, Y = velocity, Z = 0 },
                 };
             }
             if (names.Contains("Earth"))
             {
-                yield return new BodyEntity()
+                double distance = 100;
+                double velocity = Math.Round(Math.Sqrt(sunMass / distance), 2);
+                yield return new NewBodyDto()
                 {
                     Name = "Earth",
                     Enabled = true,
                     Mass = 1,
                     Radius = 1,
-                    Position = new VectorEntity { X = 50, Y = 0, Z = 0 },
-                    Velocity = new VectorEntity { X = 0, Y = 1, Z = 0 },
+                    Position = new VectorDto { X = distance, Y = 0, Z = 0 },
+                    Velocity = new VectorDto { X = 0, Y = velocity, Z = 0 },
                 };
             }
             if (names.Contains("Moon"))
             {
-                yield return new BodyEntity()
+                double diff = 8;
+                double distance = diff;
+                double velocity = Math.Round(Math.Sqrt(1 / distance), 2); // relative to Earth
+                yield return new NewBodyDto()
                 {
                     Name = "Moon",
                     Enabled = true,
                     Mass = 0.01,
                     Radius = 0.5,
-                    Position = new VectorEntity { X = 60, Y = 0, Z = 0 },
-                    Velocity = new VectorEntity { X = 0, Y = 1.3, Z = 0 },
+                    Position = new VectorDto { X = 100, Y = diff, Z = 0 }, // relative to Earth
+                    Velocity = new VectorDto { X = -velocity, Y = -Math.Round(Math.Sqrt(sunMass / 100), 2), Z = 0 },
                 };
             }
             if (names.Contains("Mars"))
             {
-                yield return new BodyEntity()
+                double distance = 152;
+                double velocity = Math.Round(Math.Sqrt(sunMass / distance), 2);
+                yield return new NewBodyDto()
                 {
                     Name = "Mars",
                     Enabled = true,
                     Mass = 1,
                     Radius = 1,
-                    Position = new VectorEntity { X = 0, Y = 50, Z = 0 },
-                    Velocity = new VectorEntity { X = -1.4, Y = 0, Z = 0 },
+                    Position = new VectorDto { X = distance, Y = 0, Z = 0 },
+                    Velocity = new VectorDto { X = 0, Y = velocity, Z = 0 },
                 };
             }
             if (names.Contains("Player"))
             {
-                yield return new BodyEntity()
+                double diff = 4;
+                double distance = 100 + diff;
+                double velocity = Math.Round(Math.Sqrt(sunMass / distance), 2);
+                yield return new NewBodyDto()
                 {
                     Name = "Player",
                     Enabled = true,
                     Mass = 0.01,
                     Radius = 0.001,
-                    Position = new VectorEntity { X = 40, Y = 0, Z = 0 },
-                    Velocity = new VectorEntity { X = 0, Y = 1.3, Z = 0 },
+                    Position = new VectorDto { X = distance - diff, Y = diff, Z = 0 },
+                    Velocity = new VectorDto { X = 0, Y = velocity, Z = 0 },
                 };
             }
         }

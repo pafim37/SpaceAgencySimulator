@@ -5,7 +5,7 @@ namespace Sas.Mathematica.Service.Rotation
 {
     public class Rotation
     {
-        public static Vector Rotate(Vector vectorToRotate, Vector axis, double angle)
+        public static Vector Rotate(Vector vectorToRotate, Vector axis, double angle, bool inverseRotation = false)
         {
             int vectorDim = 3;
             if (vectorToRotate.Length != vectorDim)
@@ -16,15 +16,16 @@ namespace Sas.Mathematica.Service.Rotation
             {
                 throw new ArgumentException($"Axis vector has incorrect length. Expected (3), Actual {vectorToRotate.Length}");
             }
-            double[] rotationMatrixElement = CalculateElementsOfRotationMatix(axis, angle);
+            double[] rotationMatrixElement = CalculateElementsOfRotationMatix(axis, angle, inverseRotation);
             Matrix rotationMatrix = new(rotationMatrixElement, vectorDim, vectorDim);
             Matrix vectorToRotateAsMatrix = new(vectorToRotate.GetElements(), 3, 1);
             return (rotationMatrix * vectorToRotateAsMatrix).ToVector();
         }
 
-        private static double[] CalculateElementsOfRotationMatix(Vector axis, double angle)
+        private static double[] CalculateElementsOfRotationMatix(Vector rotationAxis, double angle, bool inverseRotation)
         {
-            axis.Normalize();
+            angle = inverseRotation ? -angle : angle;
+            Vector axis = rotationAxis.GetNormalize();
             double ux = axis[0];
             double ux2 = axis[0] * axis[0];
             double uy = axis[1];
@@ -42,7 +43,7 @@ namespace Sas.Mathematica.Service.Rotation
                 uy * ux * cos1 + uz * sin,
                 cos + uy2 * cos1,
                 uy * uz * cos1 - ux * sin,
-                uz * ux * cos1 + uy * sin,
+                uz * ux * cos1 - uy * sin,
                 uz * uy * cos1 + ux * sin,
                 cos + uz2 * cos1
             ];

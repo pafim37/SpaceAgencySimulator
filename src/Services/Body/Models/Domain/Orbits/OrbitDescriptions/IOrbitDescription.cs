@@ -23,6 +23,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         public double MinDistance { get; }
         public double RotationAngle { get; }
         public double Theata { get; }
+        public double Eta { get; }
     }
 }
 

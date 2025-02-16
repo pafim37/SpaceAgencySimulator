@@ -17,14 +17,15 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         protected double _w;       // argument of periapsis
         protected double _i;       // inclination
         protected double _omega;   // ascending node
-        protected double _phi;     // true anomaly
+        protected double _trueAnomaly;     // true anomaly
         protected double _ae;      // eccentric anomaly
         protected double _m;       // mass 
         protected double _period;  // period
         protected double _radius;  // radius
         protected double _rMin;    // r - minimum
-        protected double _rotation;// orbit rotation in XY plane (along OZ)
+        protected double _phi;     // orbit rotation in XY plane (along OZ)
         protected double _theta;   // orbit rotation in XZ plane (along OY)
+        protected double _eta;     // orbit rotation along eccentricity vector
         protected Vector _eVector; // eccentricity Vector
         #endregion
 
@@ -77,7 +78,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// <summary>
         /// True anomaly
         /// </summary>
-        public double TrueAnomaly => _phi;
+        public double TrueAnomaly => _trueAnomaly;
 
         /// <summary>
         /// Eccentric Anomaly - angle that define position of the body at auxiliary circle 
@@ -113,7 +114,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// <summary>
         /// The angle by which the orbit is rotated.
         /// </summary>
-        public double RotationAngle => _rotation;
+        public double RotationAngle => _phi;
 
         /// <summary>
         /// The angle by which the orbit is rotated.
@@ -123,6 +124,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// <summary>
         /// The angle by which the orbit is rotated.
         /// </summary>
+        public double Eta => _eta;
         #endregion
 
         #region constructors
@@ -177,20 +179,19 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             Vector eVector = 1 / u * Vector.CrossProduct(velocity, hVector) - 1 / r * position;
             double e = eVector.Magnitude;
             double b = a * Math.Sqrt(1 - e * e);
-            double phi = GetTrueAnomaly(position, velocity, eVector, e);
-            double ae = GetEccentricAnomaly(e, phi);
+            double trueAnomaly = GetTrueAnomaly(position, velocity, eVector, e);
+            double ae = GetEccentricAnomaly(e, trueAnomaly);
             double m = GetMeanAnomaly(e, ae);
             double p = h * h / u;
             double rMin = p / (1 + e);
-            double i = GetInclination(hVector, h);
             _a = a;
             _b = b;
             _eVector = eVector;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
-            _i = i;
+            _i = GetInclination(hVector, h);
             _omega = GetAscendingNode(nVector, n);
             _w = GetArgumentOfPeriapsis(eVector, e, nVector, n);
-            _phi = phi;
+            _trueAnomaly = trueAnomaly;
             _ae = ae;
             _m = m;
             _p = p;
@@ -198,12 +199,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             _radius = r;
             _rMin = rMin;
             ReferenceSystem rs = new(eVector);
-            _rotation = rs.Phi;
-            _i = rs.Th;
-
+            _phi = rs.Phi;
+            _theta = rs.Th;
             Vector v1 = Rotation.Rotate(Vector.Oy, Vector.Oz, rs.Phi, true);
             Vector v2 = Rotation.Rotate(v1, Vector.Oy, rs.Th);
-            _theta = Math.Atan2(Vector.DotProduct(velocity.CrossProduct(v2), eVector), Vector.DotProduct(velocity, v2));
+            _eta = Math.Atan2(Vector.DotProduct(velocity.CrossProduct(v2), eVector), Vector.DotProduct(velocity, v2));
         }
 
 

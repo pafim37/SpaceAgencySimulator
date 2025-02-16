@@ -1,6 +1,6 @@
-﻿using Sas.Body.Service.Models.Domain.Orbits.Points;
-using Sas.Body.Service.Models.Domain.Orbits.Primitives;
+﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service;
+using Sas.Mathematica.Service.Rotation;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
@@ -197,23 +197,16 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
             _rMin = rMin;
-            _theta = FindThetaAngle(eVector);
-            _rotation = FindRotationAngle(position, phi, i);
+            ReferenceSystem rs = new(eVector);
+            _rotation = rs.Phi;
+            _i = rs.Th;
+
+            Vector v1 = Rotation.Rotate(Vector.Oy, Vector.Oz, rs.Phi, true);
+            Vector v2 = Rotation.Rotate(v1, Vector.Oy, rs.Th);
+            _theta = Math.Atan2(Vector.DotProduct(velocity.CrossProduct(v2), eVector), Vector.DotProduct(velocity, v2));
         }
 
-        private static double FindThetaAngle(Vector eVector)
-        {
-            Vector thetaVector = new Vector(eVector.X, eVector.Y); // theta is angle rotation along y axis
-            return Math.Asin(eVector.Z / thetaVector.Magnitude);
-        }
 
-        private static double FindRotationAngle(Vector position, double phi, double i)
-        {
-            ReferenceSystem rs = new(position);
-            double angle = double.IsNaN(i) ? rs.Phi : -Math.Cos(i) * phi + rs.Phi;
-            return angle > 0 ? angle - (int)(angle / 2 / Math.PI) * 2 * Math.PI :
-                2 * Math.PI + (angle - (int)(angle / 2 / Math.PI) * 2 * Math.PI);
-        }
 
         private static double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)
         {

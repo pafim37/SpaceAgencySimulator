@@ -13,7 +13,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Points
             double b = orbit.OrbitDescription!.SemiMinorAxis!.Value;
             double fi = orbit.OrbitDescription.RotationAngle;
             double inc = orbit.OrbitDescription.Inclination;
-            double theta = orbit.OrbitDescription.Theata;
+            double aop = orbit.OrbitDescription.Theata;
             Vector center = orbit.Center!;
             Vector eVector = orbit.OrbitDescription.EccentricityVector;
 
@@ -28,11 +28,19 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Points
                 double zBase = 0;
                 Vector vectorToRotate = new(xBase, yBase, zBase);
                 Vector rotVect = Rotation.Rotate(vectorToRotate, Vector.Oz, fi);
-                Vector resVec = Rotation.Rotate(rotVect, Vector.Oy, theta, true);
-                Vector incVec = Rotation.Rotate(resVec, eVector, inc);
-                Vector finVec = -incVec + center;
-                points.Add(finVec.AsPoint());
+                Vector incVec = Rotation.Rotate(rotVect, Vector.Oy, inc, true);
+                if (double.IsNaN(aop))
+                {
+                    Vector finVec = -incVec + center;
+                    points.Add(finVec.AsPoint());
                 }
+                else
+                {
+                    Vector resVec = Rotation.Rotate(incVec, eVector, aop, true);
+                    Vector finVec = -resVec + center;
+                    points.Add(finVec.AsPoint());
+                }
+            }
             return points;
         }
     }

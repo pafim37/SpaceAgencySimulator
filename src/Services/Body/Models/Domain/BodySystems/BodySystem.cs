@@ -74,8 +74,8 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         public void FullUpdate()
         {
             UpdateBodySystem();
-            //CalibrateBarycenterToZero();
-            CalculateOrbitPoints();
+            CalibrateBarycenterToZero();
+            AssignOrbitPoints();
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                 }
                 foreach (PositionedOrbit orbit in orbits)
                 {
-                    if (orbit.Center != null)
+                    if (orbit.Center is not null)
                     {
                         orbit.Center -= barycenter.Position;
                     }
@@ -151,13 +151,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         }
         #endregion
 
-        public void CalculateOrbitPoints()
-        {
-            foreach (PositionedOrbit? orbit in orbits.Where(o => o.OrbitDescription is not null))
-            {
-                orbit.Points = GetOrbitPointsFactory.GetPoints(orbit);
-            }
-        }
+        public void AssignOrbitPoints() => orbits.ForEach(orbit => orbit.Points = GetOrbitPointsFactory.GetPoints(orbit));
 
         #region private methods
         private BodyDomain? FindBarycenter()

@@ -48,9 +48,9 @@ namespace Sas.Body.Service.Controllers
             BodyEntity bodyDb = mapper.Map<BodyEntity>(body);
             try
             {
-                await bodyRepository.CreateBodyAsync(bodyDb, cancellationTokenSource.Token).ConfigureAwait(false);
+                BodyEntity createdBody = await bodyRepository.CreateBodyAsync(bodyDb, cancellationTokenSource.Token).ConfigureAwait(false);
                 await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
-                return Created("/", body);
+                return Created("/", createdBody);
             }
             catch (BodyAlreadyExistsException e)
             {

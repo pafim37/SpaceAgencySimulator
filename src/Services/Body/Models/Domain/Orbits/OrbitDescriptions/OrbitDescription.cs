@@ -104,7 +104,9 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// <param name="position"></param>
         /// <param name="velocity"></param>
         /// <param name="u">Standard gravitational parameter: G(m1+m2)</param>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public OrbitDescription(Vector position, Vector velocity, double u)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
             _u = u;
             AssignFileds(position, velocity);

@@ -71,10 +71,11 @@ export default function BodyDialog(props: IBodyDialog) {
         },
       };
       const createdBody: BodyType = await createBodyRequest(bodyToSend);
+      console.log("====", createdBody);
       if (createdBody !== undefined) {
         props.setBodies((prev: BodyType[]) => [
           ...prev,
-          bodyToSend as BodyType,
+          createdBody as BodyType,
         ]);
         handleCloseDialog();
       } else {

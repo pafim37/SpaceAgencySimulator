@@ -201,7 +201,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             ReferenceSystem rs = new(eVector);
             _phi = rs.Phi;
             _theta = rs.Th;
-            Vector v1 = Rotation.Rotate(Vector.Oy, Vector.Oz, rs.Phi, true);
+            Vector v1 = Rotation.Rotate(Vector.Oy, Vector.Oz, rs.Phi);
             Vector v2 = Rotation.Rotate(v1, Vector.Oy, rs.Th);
             _eta = Math.Atan2(Vector.DotProduct(velocity.CrossProduct(v2), eVector), Vector.DotProduct(velocity, v2));
         }

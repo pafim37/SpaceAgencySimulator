@@ -50,7 +50,7 @@ namespace Sas.Mathematica.Tests
             referenceSystem.Z.Should().Be(1);
             referenceSystem.R.Should().Be(Math.Sqrt(3));
             referenceSystem.Phi.Should().Be(ConvertAngle.DegToRad(45));
-            referenceSystem.Th.Should().Be(ConvertAngle.DegToRad(45));
+            referenceSystem.Theta.Should().Be(ConvertAngle.DegToRad(45));
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace Sas.Mathematica.Tests
             referenceSystem.Z.Should().Be(-1);
             referenceSystem.R.Should().Be(Math.Sqrt(3));
             referenceSystem.Phi.Should().Be(ConvertAngle.DegToRad(225));
-            referenceSystem.Th.Should().Be(ConvertAngle.DegToRad(-45));
+            referenceSystem.Theta.Should().Be(ConvertAngle.DegToRad(-45));
             referenceSystem.PhiAsDeg.Should().Be(225);
             referenceSystem.ThAsDeg.Should().Be(-45);
         }
@@ -100,7 +100,7 @@ namespace Sas.Mathematica.Tests
             ReferenceSystem referenceSystem = new(origin, point);
 
             // Assert
-            referenceSystem.Th.Should().Be(th);
+            referenceSystem.Theta.Should().Be(th);
         }
     }
 }

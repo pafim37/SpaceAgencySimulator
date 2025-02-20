@@ -1,6 +1,5 @@
 ﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service;
-using Sas.Mathematica.Service.Rotation;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
@@ -22,10 +21,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         protected double _m;       // mass 
         protected double _period;  // period
         protected double _radius;  // radius
-        protected double _rMin;    // r - minimum
-        protected double _phi;     // orbit rotation in XY plane (along OZ)
-        protected double _theta;   // orbit rotation in XZ plane (along OY)
-        protected double _eta;     // orbit rotation along eccentricity vector
         protected Vector _eVector; // eccentricity Vector
         #endregion
 
@@ -34,11 +29,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// Type of the orbit
         /// </summary>
         public OrbitType OrbitType => _type;
-
-        /// <summary>
-        /// Name of the body on the current orbit
-        /// </summary>
-        public string? Name { get; set; }
 
         /// <summary>
         /// Semi major axis
@@ -105,26 +95,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// Radius of the circular orbit 
         /// </summary>
         public double? Radius => GetRadius();
-
-        /// <summary>
-        /// Minimal distance between focus and point on orbit
-        /// </summary>
-        public double MinDistance => _rMin;
-
-        /// <summary>
-        /// The angle by which the orbit is rotated.
-        /// </summary>
-        public double RotationAngle => _phi;
-
-        /// <summary>
-        /// The angle by which the orbit is rotated.
-        /// </summary>
-        public double Theata => _theta;
-
-        /// <summary>
-        /// The angle by which the orbit is rotated.
-        /// </summary>
-        public double Eta => _eta;
         #endregion
 
         #region constructors
@@ -183,7 +153,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             double ae = GetEccentricAnomaly(e, trueAnomaly);
             double m = GetMeanAnomaly(e, ae);
             double p = h * h / u;
-            double rMin = p / (1 + e);
             _a = a;
             _b = b;
             _eVector = eVector;
@@ -197,16 +166,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             _p = p;
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
-            _rMin = rMin;
-            ReferenceSystem rs = new(eVector);
-            _phi = rs.Phi;
-            _theta = rs.Th;
-            Vector v1 = Rotation.Rotate(Vector.Oy, Vector.Oz, rs.Phi);
-            Vector v2 = Rotation.Rotate(v1, Vector.Oy, rs.Th);
-            _eta = Math.Atan2(Vector.DotProduct(velocity.CrossProduct(v2), eVector), Vector.DotProduct(velocity, v2));
         }
-
-
 
         private static double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)
         {

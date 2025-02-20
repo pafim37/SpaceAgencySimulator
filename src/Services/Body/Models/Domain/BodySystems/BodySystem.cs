@@ -153,7 +153,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
 
         public void CalculateOrbitPoints()
         {
-            foreach (var orbit in orbits.Where(o => o.OrbitDescription is not null))
+            foreach (PositionedOrbit? orbit in orbits.Where(o => o.OrbitDescription is not null))
             {
                 orbit.Points = GetOrbitPointsFactory.GetPoints(orbit);
             }
@@ -168,7 +168,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                 IEnumerable<BodyDomain> mostMassiveBodies = bodies.Where(b => b.Mass == maxMass);
                 Vector position = Vector.Zero;
                 Vector velocity = Vector.Zero;
-                foreach (var body in mostMassiveBodies)
+                foreach (BodyDomain body in mostMassiveBodies)
                 {
                     velocity += body.Velocity;
                 }

@@ -39,11 +39,11 @@ namespace Sas.Mathematica.Service.Rotation
             [
                 cos + ux2 * cos1,
                 ux * uy * cos1 - uz * sin,
-                ux * uz * cos1 + uy * sin,
+                ux * uz * cos1 - uy * sin,
                 uy * ux * cos1 + uz * sin,
                 cos + uy2 * cos1,
                 uy * uz * cos1 - ux * sin,
-                uz * ux * cos1 - uy * sin,
+                uz * ux * cos1 + uy * sin,
                 uz * uy * cos1 + ux * sin,
                 cos + uz2 * cos1
             ];

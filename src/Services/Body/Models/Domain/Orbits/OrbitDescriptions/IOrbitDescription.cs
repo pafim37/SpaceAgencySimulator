@@ -6,7 +6,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
     public interface IOrbitDescription
     {
         public OrbitType OrbitType { get; }
-        public string? Name { get; }
         public double? SemiMajorAxis { get; }
         public double? SemiMinorAxis { get; }
         public double SemiLatusRectum { get; }
@@ -20,10 +19,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         public double MeanAnomaly { get; }
         public double? Period { get; }
         public double? Radius { get; }
-        public double MinDistance { get; }
-        public double RotationAngle { get; }
-        public double Theata { get; }
-        public double Eta { get; }
     }
 }
 

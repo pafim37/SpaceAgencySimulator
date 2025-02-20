@@ -45,7 +45,7 @@ namespace Sas.Mathematica.Service
         /// Polar angle (spherical coordinate system) of point relative to the origin.
         /// The angle is expressed in radians
         /// </summary>
-        public double Th { get => _th; private set => _th = value; }
+        public double Theta { get => _th; private set => _th = value; }
 
         /// <summary>
         /// Azimuthal angle Phi (spherical coordinate system) of point relative to the origin.

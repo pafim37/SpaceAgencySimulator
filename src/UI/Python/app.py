@@ -60,7 +60,7 @@ class App:
             print(orbit)
             vertices = [urs.Vec3(point.x, point.y, point.z) for point in orbit.points]
             mesh = urs.Mesh(vertices=vertices, mode='line', thickness=1)
-            entity = urs.Entity(model=mesh, name=orbit.orbitDescription.name, color=urs.color.blue)
+            entity = urs.Entity(model=mesh, name=orbit.name, color=urs.color.blue)
             self.orbits.append(entity)
 
     def _clean_body_system(self):

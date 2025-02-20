@@ -15,7 +15,7 @@ namespace Sas.Body.Service.Test
             double u = Constants.G * (Constants.SolarMass + Constants.EarthMass);
 
             // Act
-            OrbitDescription orbit = OrbitInfoDescription.CalculateOrbit(position, velocity, u);
+            OrbitDescription orbit = OrbitDescriptionFactory.GetOrbitDescription(position, velocity, u);
 
             // Assert
             Assert.Equal(149588585873.2210, orbit.SemiMajorAxis!.Value, 4);
@@ -36,7 +36,7 @@ namespace Sas.Body.Service.Test
             Vector velocity = new Vector(-5.922, 1.926, 3.246);
             double u = 398600;
 
-            OrbitDescription orbit = OrbitInfoDescription.CalculateOrbit(position, velocity, u);
+            OrbitDescription orbit = OrbitDescriptionFactory.GetOrbitDescription(position, velocity, u);
 
             Assert.Equal(19198.3565, orbit.SemiMajorAxis!.Value, 4);
             Assert.Equal(0.4095, orbit.Eccentricity, 4);

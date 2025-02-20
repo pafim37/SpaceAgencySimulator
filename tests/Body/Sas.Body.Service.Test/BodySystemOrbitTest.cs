@@ -28,5 +28,48 @@ namespace Sas.Body.Service.Test
             // Assert
             Assert.Equal(OrbitType.Circular, bodySystem.Orbits.First()!.OrbitDescription.OrbitType);
         }
+
+        public static IEnumerable<object[]> OrbitData()
+        {
+            // Basic plane XY
+            yield return new object[] { new Vector(10, 0, 0), new Vector(0, 4, 0), 0, 0, 0 };        // Horizontal - counter clockwise
+            yield return new object[] { new Vector(10, 0, 0), new Vector(0, -4, 0), 0, 0, Math.PI }; // Horizontal - clockwise
+            yield return new object[] { new Vector(7.07, 7.07, 0), new Vector(-2.82843, 2.82843, 0), Math.PI / 4, 0, 0 }; // H - V - CCW
+            yield return new object[] { new Vector(0, 10, 0), new Vector(-4, 0, 0), Math.PI / 2, 0, 0 };      // Vertical - counter clockwise
+            yield return new object[] { new Vector(0, 10, 0), new Vector(4, 0, 0), Math.PI / 2, 0, Math.PI }; // Vertical - clockwise
+            yield return new object[] { new Vector(0, 0, 10), new Vector(4, 0, 0), 0, Math.PI / 2, Math.PI / 2 }; // V
+
+            // Plane XZ
+            yield return new object[] { new Vector(0, 0, 10), new Vector(4, 0, 0), 0, Math.PI / 2, Math.PI / 2 }; // V
+            yield return new object[] { new Vector(0, 0, 10), new Vector(-4, 0, 0), 0, Math.PI / 2, -Math.PI / 2 }; // V
+
+            // Plane YZ
+            yield return new object[] { new Vector(0, 0, 10), new Vector(0, 4, 0), 0, Math.PI / 2, 0 }; // V
+            yield return new object[] { new Vector(0, 0, 10), new Vector(0, -4, 0), 0, Math.PI / 2, Math.PI }; // V
+
+            // Plane YZ
+            yield return new object[] { new Vector(35.35534, 0, 35.35534), new Vector(0, 1, 0), Math.PI, -Math.PI / 4, Math.PI };
+        }
+
+        [Theory]
+        [MemberData(nameof(OrbitData))]
+        public void BodySystemCalculateAnglesOfTheOrbitsCorrectly(Vector position, Vector velocity, double rotation, double theta, double eta)
+        {
+            // Arange
+            BodyDomain sun = new("Sun", 100, Vector.Zero, Vector.Zero);
+            BodyDomain testBody = new("test", 1, position, velocity);
+            List<BodyDomain> bodies = [sun, testBody];
+
+            // Act
+            BodySystem bodySystem = new(bodies, 1);
+            bodySystem.FullUpdate();
+
+            // Assert
+            List<Models.Domain.Orbits.PositionedOrbit> orbits = bodySystem.Orbits;
+            orbits.Should().HaveCount(1);
+            orbits.First().Phi.Should().BeApproximately(rotation, 0.0001);
+            orbits.First().Theta.Should().BeApproximately(theta, 0.0001);
+            orbits.First().Eta.Should().BeApproximately(eta, 0.0001);
+        }
     }
 }

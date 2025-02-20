@@ -6,8 +6,12 @@ namespace Sas.Body.Service.Models.Domain.Orbits
 {
     public interface IPositionedOrbit
     {
-        public IOrbitDescription? OrbitDescription { get; set; }
-        public List<Point>? Points { get; set; }
+        public IOrbitDescription OrbitDescription { get; init; }
+        public string Name { get; init; }
+        public double Phi { get; init; }
+        public double Theta { get; init; }
+        public double Eta { get; init; }
         public Vector? Center { get; set; }
+        public List<Point>? Points { get; set; }
     }
 }

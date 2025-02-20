@@ -3,9 +3,9 @@ using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
 {
-    public static class OrbitInfoDescription
+    public static class OrbitDescriptionFactory
     {
-        public static OrbitDescription CalculateOrbit(Vector position, Vector velocity, double u)
+        public static OrbitDescription GetOrbitDescription(Vector position, Vector velocity, double u)
         {
             double e = GetEccentricity(position, velocity, u);
             if (e > 0 && e < 1) return new EllipticOrbitDescription(position, velocity, u);

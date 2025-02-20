@@ -70,12 +70,12 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(45),
-                new Vector([Math.Sqrt(2) / 2, 0, -Math.Sqrt(2) / 2]),
+                new Vector([Math.Sqrt(2) / 2, 0, Math.Sqrt(2) / 2]),
             };
             yield return new object[]
             {
                 ConvertAngle.DegToRad(90),
-                -Vector.Oz,
+                Vector.Oz,
             };
             yield return new object[]
             {
@@ -85,7 +85,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(270),
-                Vector.Oz,
+                -Vector.Oz,
             };
             yield return new object[]
             {
@@ -99,12 +99,12 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(45),
-                new Vector([Math.Sqrt(2) / 2, 0, Math.Sqrt(2) / 2]),
+                new Vector([-Math.Sqrt(2) / 2, 0, Math.Sqrt(2) / 2]),
             };
             yield return new object[]
             {
                 ConvertAngle.DegToRad(90),
-                Vector.Ox,
+                -Vector.Ox,
             };
             yield return new object[]
             {
@@ -114,7 +114,7 @@ namespace Sas.Mathematica.Tests
             yield return new object[]
             {
                 ConvertAngle.DegToRad(270),
-                -Vector.Ox,
+                Vector.Ox,
             };
             yield return new object[]
             {
@@ -245,7 +245,7 @@ namespace Sas.Mathematica.Tests
         [Fact]
         public void RotationRotateVectorThrowsExceptionWhenInvalidVectorToRotate()
         {
-            Vector invalidVectorToRotate = new([1,1,1,1]);
+            Vector invalidVectorToRotate = new([1, 1, 1, 1]);
             Action comparison = () => Rotation.Rotate(invalidVectorToRotate, Vector.Ox, 1);
             comparison.Should().Throw<ArgumentException>();
         }

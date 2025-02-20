@@ -1,5 +1,4 @@
-﻿using Sas.Body.Service.Models.Domain.Orbits.Points;
-using Sas.Body.Service.Models.Domain.Orbits.Primitives;
+﻿using Sas.Body.Service.Models.Domain.Orbits.Primitives;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
@@ -17,14 +16,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         protected double _w;       // argument of periapsis
         protected double _i;       // inclination
         protected double _omega;   // ascending node
-        protected double _phi;     // true anomaly
+        protected double _trueAnomaly;     // true anomaly
         protected double _ae;      // eccentric anomaly
         protected double _m;       // mass 
         protected double _period;  // period
         protected double _radius;  // radius
-        protected double _rMin;    // r - minimum
-        protected double _rotation;// orbit rotation in XY plane (along OZ)
-        protected double _theta;   // orbit rotation in XZ plane (along OY)
         protected Vector _eVector; // eccentricity Vector
         #endregion
 
@@ -33,11 +29,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// Type of the orbit
         /// </summary>
         public OrbitType OrbitType => _type;
-
-        /// <summary>
-        /// Name of the body on the current orbit
-        /// </summary>
-        public string? Name { get; set; }
 
         /// <summary>
         /// Semi major axis
@@ -77,7 +68,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// <summary>
         /// True anomaly
         /// </summary>
-        public double TrueAnomaly => _phi;
+        public double TrueAnomaly => _trueAnomaly;
 
         /// <summary>
         /// Eccentric Anomaly - angle that define position of the body at auxiliary circle 
@@ -104,25 +95,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// Radius of the circular orbit 
         /// </summary>
         public double? Radius => GetRadius();
-
-        /// <summary>
-        /// Minimal distance between focus and point on orbit
-        /// </summary>
-        public double MinDistance => _rMin;
-
-        /// <summary>
-        /// The angle by which the orbit is rotated.
-        /// </summary>
-        public double RotationAngle => _rotation;
-
-        /// <summary>
-        /// The angle by which the orbit is rotated.
-        /// </summary>
-        public double Theata => _theta;
-
-        /// <summary>
-        /// The angle by which the orbit is rotated.
-        /// </summary>
         #endregion
 
         #region constructors
@@ -132,7 +104,9 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// <param name="position"></param>
         /// <param name="velocity"></param>
         /// <param name="u">Standard gravitational parameter: G(m1+m2)</param>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public OrbitDescription(Vector position, Vector velocity, double u)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
             _u = u;
             AssignFileds(position, velocity);
@@ -177,42 +151,23 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             Vector eVector = 1 / u * Vector.CrossProduct(velocity, hVector) - 1 / r * position;
             double e = eVector.Magnitude;
             double b = a * Math.Sqrt(1 - e * e);
-            double phi = GetTrueAnomaly(position, velocity, eVector, e);
-            double ae = GetEccentricAnomaly(e, phi);
+            double trueAnomaly = GetTrueAnomaly(position, velocity, eVector, e);
+            double ae = GetEccentricAnomaly(e, trueAnomaly);
             double m = GetMeanAnomaly(e, ae);
             double p = h * h / u;
-            double rMin = p / (1 + e);
-            double i = GetInclination(hVector, h);
             _a = a;
             _b = b;
             _eVector = eVector;
             _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
-            _i = i;
+            _i = GetInclination(hVector, h);
             _omega = GetAscendingNode(nVector, n);
             _w = GetArgumentOfPeriapsis(eVector, e, nVector, n);
-            _phi = phi;
+            _trueAnomaly = trueAnomaly;
             _ae = ae;
             _m = m;
             _p = p;
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
-            _rMin = rMin;
-            _theta = FindThetaAngle(eVector);
-            _rotation = FindRotationAngle(position, phi, i);
-        }
-
-        private static double FindThetaAngle(Vector eVector)
-        {
-            Vector thetaVector = new Vector(eVector.X, eVector.Y); // theta is angle rotation along y axis
-            return Math.Asin(eVector.Z / thetaVector.Magnitude);
-        }
-
-        private static double FindRotationAngle(Vector position, double phi, double i)
-        {
-            ReferenceSystem rs = new(position);
-            double angle = double.IsNaN(i) ? rs.Phi : -Math.Cos(i) * phi + rs.Phi;
-            return angle > 0 ? angle - (int)(angle / 2 / Math.PI) * 2 * Math.PI :
-                2 * Math.PI + (angle - (int)(angle / 2 / Math.PI) * 2 * Math.PI);
         }
 
         private static double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)

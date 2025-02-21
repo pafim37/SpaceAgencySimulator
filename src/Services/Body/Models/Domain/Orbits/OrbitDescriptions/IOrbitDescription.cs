@@ -8,7 +8,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         public OrbitType OrbitType { get; }
         public double? SemiMajorAxis { get; }
         public double? SemiMinorAxis { get; }
-        public double SemiLatusRectum { get; }
         public double Eccentricity { get; }
         public double ArgumentOfPeriapsis { get; }
         public double Inclination { get; }

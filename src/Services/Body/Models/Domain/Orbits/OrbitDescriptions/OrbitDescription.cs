@@ -11,7 +11,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         protected double _u;       // G(m1+m2)
         protected double _a;       // semi-major axis
         protected double _b;       // semi-minor axis
-        protected double _p;       // semi-latus rectum
         protected double _e;       // eccentricity
         protected double _w;       // argument of periapsis
         protected double _i;       // inclination
@@ -39,11 +38,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// Semi minor axis
         /// </summary>
         public double? SemiMinorAxis => GetSemiMinorAxis();
-
-        /// <summary>
-        /// Semi latus rectum
-        /// </summary>
-        public double SemiLatusRectum => _p;
 
         /// <summary>
         /// Eccentricity
@@ -154,7 +148,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             double trueAnomaly = GetTrueAnomaly(position, velocity, eVector, e);
             double ae = GetEccentricAnomaly(e, trueAnomaly);
             double m = GetMeanAnomaly(e, ae);
-            double p = h * h / u;
             _a = a;
             _b = b;
             _eVector = eVector;
@@ -165,7 +158,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             _trueAnomaly = trueAnomaly;
             _ae = ae;
             _m = m;
-            _p = p;
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
         }

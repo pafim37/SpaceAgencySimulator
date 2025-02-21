@@ -34,6 +34,12 @@ namespace Sas.Body.Service.Models.Domain.Bodies
         /// Name of the revolving body
         /// </summary>
         public string? ParentName { get; set; }
+
+        /// <summary>
+        /// Radius of the sphere of influence
+        /// </summary>
+        public double? SphereOfInfluenceRadius { get; set; }
+
         #endregion
 
         #region constructors

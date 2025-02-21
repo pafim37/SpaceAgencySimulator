@@ -69,10 +69,16 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         }
 
         /// <summary>
+        /// It scale the body system size (orbits are preserved) 
+        /// </summary>
+        public void ScaleBodySystem() => bodies.ForEach(body => ScaleBody.Scale(body));
+
+        /// <summary>
         /// It updates body system, calibrates barycenter to zero and caluculates orbits points
         /// </summary>
         public void FullUpdate()
         {
+            ScaleBodySystem();
             UpdateBodySystem();
             CalibrateBarycenterToZero();
             AssignOrbitPoints();
@@ -83,24 +89,37 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         /// </summary>
         public void EstablishHierarchy()
         {
-            List<BodyDomain> sortBodies = [.. bodies.OrderBy(x => x.Mass)];
-            for (int i = 0; i < sortBodies.Count - 1; i++)
+            List<BodyDomain> sortBodies = [.. bodies.OrderByDescending(x => x.Mass)]; // Sun, Earth, Moon, Satellite...
+            if (sortBodies.Count == 0)
+            {
+                return;
+            }
+            BodyDomain mostMassiveBody = sortBodies[0];
+            if (sortBodies.Count > 1)
+            {
+                BodyDomain planet = sortBodies[1];
+                planet.ParentName = mostMassiveBody.Name;
+                planet.SphereOfInfluenceRadius = planet.GetSphereOfInfluenceRelatedTo(mostMassiveBody);
+            }
+            for (int i = 2; i < sortBodies.Count; i++)
             {
                 BodyDomain body = sortBodies[i];
-                string? parent = null;
-                double distance = double.MaxValue;
-                for (int j = i + 1; j < sortBodies.Count; j++)
+                BodyDomain parentBody = mostMassiveBody;
+                double tmpDistance = double.MaxValue;
+                for (int j = 1; j < i; j++)
                 {
                     BodyDomain other = sortBodies[j];
                     double relativeDistance = body.GetPositionRelatedTo(other).Magnitude;
-                    double influenceRadius = other.GetSphereOfInfluenceRelatedTo(body);
-                    if (relativeDistance < distance && influenceRadius >= relativeDistance)
+                    BodyDomain parentOtherBody = sortBodies.Find(b => b.Name == other.ParentName) ?? sortBodies.First();
+                    double sphereOfInfluenceOfParentOtherBodyRadius = other.GetSphereOfInfluenceRelatedTo(parentOtherBody);
+                    if (relativeDistance < tmpDistance && sphereOfInfluenceOfParentOtherBodyRadius >= relativeDistance)
                     {
-                        distance = relativeDistance;
-                        parent = other.Name;
+                        tmpDistance = relativeDistance;
+                        parentBody = other;
                     }
                 }
-                body.ParentName = parent;
+                body.ParentName = parentBody.Name;
+                body.SphereOfInfluenceRadius = body.GetSphereOfInfluenceRelatedTo(parentBody);
             }
         }
 
@@ -116,7 +135,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                 if (other is null) continue;
                 try
                 {
-                    PositionedOrbit orbit = OrbitFactory.GetOrbit(body, other, g);
+                    PositionedOrbit orbit = OrbitFactory.GetOrbit(body, other, G);
                     orbits.Add(orbit);
                 }
                 catch

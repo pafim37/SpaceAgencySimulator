@@ -9,10 +9,10 @@ namespace Sas.Body.Service.Controllers
     [Route("body-system")]
     public class BodySystemController(IMediator mediator) : Controller
     {
-        [HttpGet("{G}")]
-        public async Task<IActionResult> Get(double G)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-            BodySystem bodySystem = await mediator.Send(new CreateBodySystem(G)).ConfigureAwait(false);
+            BodySystem bodySystem = await mediator.Send(new CreateBodySystem()).ConfigureAwait(false);
             return Ok(bodySystem);
         }
     }

@@ -48,7 +48,7 @@ namespace Sas.Body.Service.Test
             yield return new object[] { new Vector(0, 0, 10), new Vector(0, -4, 0), 0, Math.PI / 2, Math.PI }; // V
 
             // Plane YZ
-            yield return new object[] { new Vector(35.35534, 0, 35.35534), new Vector(0, 1, 0), Math.PI, -Math.PI / 4, Math.PI };
+            yield return new object[] { new Vector(35.35534, 0, 35.35534), new Vector(0, 1, 0), 0, Math.PI / 4, 0 };
         }
 
         [Theory]

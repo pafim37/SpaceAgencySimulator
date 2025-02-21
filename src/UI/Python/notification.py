@@ -5,7 +5,6 @@ class Notification:
         hub_url = "http://localhost:6443/notification"
         self.hub_connection = HubConnectionBuilder()\
             .with_url(hub_url)\
-            .configure_logging(logging_level="DEBUG")\
             .build()
         
     def register_listener(self, event, function): 

@@ -28,7 +28,7 @@ namespace Sas.Body.Service.Handlers
                     )
                 );
             }
-            BodySystem bodySystem = new(bodyDomains, request.G);
+            BodySystem bodySystem = new(bodyDomains);
             bodySystem.FullUpdate();
             return bodySystem;
         }

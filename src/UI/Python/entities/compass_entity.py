@@ -2,11 +2,12 @@ import math
 import numpy as np
 from ursina import *
 from entities.arrow_entity import ArrowEntity
-class Compass():
-    def __init__(self):
-        self.arrow_x = ArrowEntity(scale=(0.4,0.3,0.3), position=(3,1.5,0), color=color.blue).e
-        self.arrow_y = ArrowEntity(scale=(0.4,0.3,0.3), position=(3,1.5,0), rotation=(0, 0, -90), color=color.green).e
-        self.arrow_z = ArrowEntity(scale=(0.4,0.3,0.3), position=(3,1.5,0), rotation=(0, -90, 0), color=color.red).e
+class CompassEntity(Entity):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.arrow_x = ArrowEntity(parent=self, scale=(0.4,0.3,0.3), position=(3,1.5,0), color_head=color.blue, color_shaft=color.blue)
+        self.arrow_y = ArrowEntity(parent=self, scale=(0.4,0.3,0.3), position=(3,1.5,0), rotation=(0, 0, -90), color_head=color.green, color_shaft=color.green)
+        self.arrow_z = ArrowEntity(parent=self, scale=(0.4,0.3,0.3), position=(3,1.5,0), rotation=(0, -90, 0), color_head=color.red, color_shaft=color.red)
 
     def turn_off(self):
         self.arrow_x.enabled = False
@@ -18,7 +19,7 @@ class Compass():
         self.arrow_y.enabled = True
         self.arrow_z.enabled = True
 
-    def update(self, camera, pivot):
+    def update_directions(self, pivot):
         x = math.radians(pivot.rotation[0])
         y = math.radians(pivot.rotation[1])
         z = math.radians(pivot.rotation[2])

@@ -6,6 +6,7 @@ class BodyEntity(Entity):
             model='sphere',
             name=body.name,
             position=(body.position.x, body.position.y, body.position.z),
+            rotation=(-90, 0, 0),
             scale=body.radius,
             **kwargs
         )

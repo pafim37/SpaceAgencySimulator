@@ -24,6 +24,7 @@ export default function ConfirmationDialog(props: IConfirmationDialog) {
 
   const handleSubmit = () => {
     props.call();
+    handleCloseDialog();
   };
 
   return (

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import Button from "@mui/material/Button";
+import {Button, IconButton} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import EditIcon from "@mui/icons-material/Edit";
-import { Typography } from "@mui/material";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import BodyDialogContent from "./BodyDialogContent";
@@ -89,15 +88,12 @@ export default function BodyDialog(props: IBodyDialog) {
 
   return (
     <React.Fragment>
-      <Button
-        startIcon={<EditIcon />}
-        variant="contained"
-        m={3}
-        style={{ backgroundColor: "#1fb89f", color: "black" }}
+      <IconButton
         onClick={handleOpenDialog}
+        style={{ color: "#1fb89f" }}
       >
-        <Typography>Edit body</Typography>
-      </Button>
+        <EditIcon />
+      </IconButton>
 
       <Dialog
         open={openDialog}

@@ -7,7 +7,7 @@ import {
   Collapse,
   Typography,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import AddBodyDialog from "./../dialogs/AddBodyDialog";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useCreateBodyDefaultsRequest } from "./../axiosBase/useCreateBodyDefaultsRequest";

@@ -12,7 +12,14 @@ namespace Sas.Body.Service.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            BodySystem bodySystem = await mediator.Send(new CreateBodySystem()).ConfigureAwait(false);
+            BodySystem bodySystem = await mediator.Send(new CreateBodySystem(Scaled: false)).ConfigureAwait(false);
+            return Ok(bodySystem);
+        }
+
+        [HttpGet("scaled")]
+        public async Task<IActionResult> GetScaled()
+        {
+            BodySystem bodySystem = await mediator.Send(new CreateBodySystem(Scaled: true)).ConfigureAwait(false);
             return Ok(bodySystem);
         }
     }

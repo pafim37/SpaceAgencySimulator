@@ -1,18 +1,31 @@
-﻿using Sas.Mathematica.Service;
+﻿using Sas.Body.Service.Models.Domain.Orbits;
+using Sas.Mathematica.Service;
 
 namespace Sas.Body.Service.Models.Domain.Bodies
 {
-    public static class ScaleBody
+    public static class Scale
     {
         private const double ScaleFactor = 100;
-        public static BodyDomain Scale(BodyDomain body)
+        public static BodyDomain ScaleBody(BodyDomain body)
         {
             double scale = ScaleFactor / Constants.EarthPeriapsis;
-            body.Radius = 1 + Math.Log10(body.Mass);
-            body.Position *= Constants.EarthPeriapsis * scale;
-            body.Velocity *= Constants.EarthMaxVelocity * scale;
-            body.Mass *= Constants.EarthMass * Math.Pow(scale, 3);
+            body.Position *= scale;
+            body.SphereOfInfluenceRadius *= scale;
             return body;
+        }
+
+        public static PositionedOrbit ScaleOrbit(PositionedOrbit orbit)
+        {
+            double scale = ScaleFactor / Constants.EarthPeriapsis;
+
+            for (int i = 0; i < orbit.Points.Count; i++)
+            {
+                orbit.Points[i].X *= scale;
+                orbit.Points[i].Y *= scale;
+                orbit.Points[i].Z *= scale;
+            }
+
+            return orbit;
         }
     }
 }

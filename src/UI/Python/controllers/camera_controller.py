@@ -17,6 +17,9 @@ class CameraController:
         camera.position = CAMERA_INITIAL_POSITION
         camera.parent = self.pivot
 
+    def update_entities(entity_bodies):
+        self.set_camera(entity_bodies)
+
     def change_body_view(self):
         self.body_index += 1
         if self.body_index > len(self.entity_bodies) - 1:

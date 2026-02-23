@@ -62,6 +62,35 @@ namespace Sas.Body.Service.Controllers
             }
         }
 
+        [HttpPost("clone/{bodyName}")]
+        public async Task<IActionResult> Clone(string bodyName, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(bodyName);
+            BodyEntity? body = await bodyRepository.GetBodyByNameAsNoTrackingAsync(bodyName, cancellationTokenSource.Token).ConfigureAwait(false);
+            if (body == null)
+            {
+                return NotFound();
+            }
+            body.Id = 0;
+            body.Name = bodyName + "Copy";
+            body.Position.Id = 0;
+            body.Velocity.Id = 0;
+            try
+            {
+                BodyEntity createdBody = await bodyRepository.CreateBodyAsync(body, cancellationTokenSource.Token).ConfigureAwait(false);
+                await notificationService.SendBodyDatabaseChangedNotification(signalRConnectionId, cancellationTokenSource.Token);
+                return Created("/", createdBody);
+            }
+            catch (BodyAlreadyExistsException e)
+            {
+                return StatusCode(409, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpPatch]
         public async Task<IActionResult> Patch([FromBody] BodyDto body, [FromHeader(Name = SignalRClientIdHeaderName)] string? signalRConnectionId)
         {

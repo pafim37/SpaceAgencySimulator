@@ -1,5 +1,4 @@
-﻿using Sas.Body.Service.Extensions.PointExtensions;
-using Sas.Mathematica.Service;
+﻿using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
 using Sas.Mathematica.Service.Rotation;
 using Sas.Mathematica.Service.Vectors;
 
@@ -9,31 +8,27 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Points
     {
         public static List<Point> GetPoints(IPositionedOrbit orbit, int segments = 180)
         {
-            double a = orbit.OrbitDescription!.SemiMajorAxis!.Value;
-            double b = orbit.OrbitDescription!.SemiMinorAxis!.Value;
-            double fi = orbit.Phi;
-            double th = orbit.Theta;
-            double eta = orbit.Eta;
-            Vector center = orbit.Center!;
-            Vector eVector = orbit.OrbitDescription.EccentricityVector;
-
             List<Point> points = [];
+            IOrbitDescription desc = orbit.OrbitDescription;
+
+            double a = desc.SemiMajorAxis ?? 0;
+            double b = desc.SemiMinorAxis ?? 0;
+
+            double w = double.IsNaN(desc.ArgumentOfPeriapsis) ? 0.0 : desc.ArgumentOfPeriapsis;
+            double i = double.IsNaN(desc.Inclination) ? 0.0 : desc.Inclination;
+            double om = double.IsNaN(desc.AscendingNode) ? 0.0 : desc.AscendingNode;
             int halfSegments = segments / 2;
-            for (int i = -halfSegments; i <= halfSegments; i++)
+            for (int k = -halfSegments; k <= halfSegments; k++)
             {
-                double t = 2 * Constants.PI * i / segments;
+                double t = 2 * Math.PI * k / segments;
+                Vector p = new(a * Math.Cosh(t), b * Math.Sinh(t), 0);
 
-                // base points
-                double xBase = -a * Math.Cosh(t);
-                double yBase = b * Math.Sinh(t);
-                double zBase = 0;
+                p = Rotation.Rotate(p, Vector.Oz, w);
+                p = Rotation.Rotate(p, Vector.Ox, i);
+                p = Rotation.Rotate(p, Vector.Oz, om);
 
-                Vector vectorToRotate = new(xBase, yBase, zBase);
-                Vector fiVec = Rotation.Rotate(vectorToRotate, Vector.Oz, fi);
-                Vector thVec = Rotation.Rotate(fiVec, Vector.Oy, th);
-                Vector etaVec = Rotation.Rotate(thVec, eVector, eta, true);
-                Vector resultVec = -etaVec + center;
-                points.Add(resultVec.AsPoint());
+                p += orbit.Center ?? Vector.Zero;
+                points.Add(new Point(p[0], p[1], p[2]));
             }
             return points;
         }

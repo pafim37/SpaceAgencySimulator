@@ -62,6 +62,11 @@ namespace Sas.Body.Service.Repositories
             return await context.Bodies.FirstOrDefaultAsync(b => b.Name == name, cancellationToken).ConfigureAwait(false);
         }
 
+        public async Task<BodyEntity?> GetBodyByNameAsNoTrackingAsync(string name, CancellationToken cancellationToken)
+        {
+            return await context.Bodies.AsNoTracking().FirstOrDefaultAsync(b => b.Name == name, cancellationToken).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<string>> GetAllBodiesNamesAsync(CancellationToken cancellationToken)
         {
             IEnumerable<BodyEntity> bodies = await GetAllBodiesAsync(cancellationToken).ConfigureAwait(false);

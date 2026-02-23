@@ -22,7 +22,7 @@ class BodySystemController:
                 destroy(e)
     
     def fetch_body_system_data(self):
-        return HttpClient.get_body_system() # bodies, orbits
+        return HttpClient.get_scaled_body_system() # bodies, orbits
 
     def transform_bodies_to_entities(self, bodies, transformSOI = False):
         entity_bodies = []

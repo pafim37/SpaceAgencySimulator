@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import {Button, IconButton} from "@mui/material";
+import {Button, IconButton, Checkbox, FormControlLabel} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -24,32 +24,63 @@ export default function BodyDialog(props: IBodyDialog) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [autoUpdate, setAutoUpdate] = useState<boolean>(false);
   const updateBodyRequest = useUpdateBodyRequest();
 
   useEffect(() => {
-    setBodyForm({
-      name: props.body.name,
-      mass: props.body.mass.toString(),
-      radius: props.body.radius.toString(),
-      position: {
-        x: props.body.position.x.toString(),
-        y: props.body.position.y.toString(),
-        z: props.body.position.z.toString(),
-      },
-      velocity: {
-        x: props.body.velocity.x.toString(),
-        y: props.body.velocity.y.toString(),
-        z: props.body.velocity.z.toString(),
-      },
-    });
-    setIsLoading(false);
-  }, [props]);
+    if (openDialog) {
+      setBodyForm({
+        name: props.body.name,
+        mass: props.body.mass.toString(),
+        radius: props.body.radius.toString(),
+        position: {
+          x: props.body.position.x.toString(),
+          y: props.body.position.y.toString(),
+          z: props.body.position.z.toString(),
+        },
+        velocity: {
+          x: props.body.velocity.x.toString(),
+          y: props.body.velocity.y.toString(),
+          z: props.body.velocity.z.toString(),
+        },
+      });
+      setIsLoading(false);
+    }
+  }, [openDialog, props.body.id]);
+
+  useEffect(() => {
+    if (!bodyForm || !isValidBodyForm || !autoUpdate) return;
+
+    const timer = setTimeout(async () => {
+      const bodyToSend: BodyType = {
+        id: props.body.id,
+        enabled: true,
+        name: bodyForm.name,
+        mass: parseFloat(bodyForm.mass),
+        radius: parseFloat(bodyForm.radius),
+        position: {
+          x: parseFloat(bodyForm.position.x),
+          y: parseFloat(bodyForm.position.y),
+          z: parseFloat(bodyForm.position.z),
+        },
+        velocity: {
+          x: parseFloat(bodyForm.velocity.x),
+          y: parseFloat(bodyForm.velocity.y),
+          z: parseFloat(bodyForm.velocity.z),
+        },
+      };
+      await updateBodyRequest(bodyToSend);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [bodyForm, isValidBodyForm, autoUpdate]);
 
   const handleOpenDialog = async () => {
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
+    setAutoUpdate(false);
     setOpenDialog(false);
   };
 
@@ -113,13 +144,27 @@ export default function BodyDialog(props: IBodyDialog) {
             <></>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleCloseDialog}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleSubmit}>
-            Update
-          </Button>
+        <DialogActions >
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={autoUpdate}
+                onChange={(e) => setAutoUpdate(e.target.checked)}
+              />
+            }
+            label="Auto-update"
+          />
+            <Button variant="outlined" onClick={handleCloseDialog}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              disabled={autoUpdate}
+              style={{ marginLeft: "8px" }}
+            >
+              Update
+            </Button>
         </DialogActions>
       </Dialog>
       <SnackbarAlert

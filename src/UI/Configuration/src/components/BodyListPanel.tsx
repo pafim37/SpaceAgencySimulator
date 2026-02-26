@@ -7,6 +7,8 @@ import EditBodyDialog from "../dialogs/EditBodyDialog";
 import { useDeleteBodyRequest } from "../axiosBase/useDeleteBodyRequest";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationDialog from "../dialogs/ConfirmationDialog";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useCloneBodyRequest } from "../axiosBase/useCloneBodyRequest";
 
 interface IMainPanel {
   bodies: BodyType[];
@@ -44,6 +46,17 @@ const RemoveCell = ({ bodyName, onRemoveClick }: RemoveCellProps): ReactNode => 
   </IconButton>
 );
 
+interface CloneCellProps {
+  bodyName: string;
+  onCloneClick: (name: string) => void;
+}
+
+const CloneCell = ({ bodyName, onCloneClick }: CloneCellProps): ReactNode => (
+  <IconButton onClick={() => onCloneClick(bodyName)} color="primary">
+    <ContentCopyIcon />
+  </IconButton>
+);
+
 interface EditCellProps {
   body: BodyType | undefined;
   setBodies: Dispatch<SetStateAction<BodyType[]>>;
@@ -57,6 +70,7 @@ const BodyListPanel = (props: IMainPanel) => {
   const [isOpenConfirmationDialog, setIsOpenConfirmationDialog] = useState<boolean>(false);
   const changeStateBodyRequest = useChangeStateBodyRequest();
   const deleteBodyRequest = useDeleteBodyRequest();
+  const cloneBodyRequest = useCloneBodyRequest();
 
   const openConfirmationDialog = (name: string): void => {
     setBodyNameToRemove(name);
@@ -115,14 +129,14 @@ const BodyListPanel = (props: IMainPanel) => {
       ),
     },
     { field: 'name', headerName: 'Name', width: COLUMN_WIDTHS.NAME },
-    { field: 'mass', headerName: 'Mass', width: COLUMN_WIDTHS.NUMBER },
-    { field: 'radius', headerName: 'Radius', width: COLUMN_WIDTHS.NUMBER },
-    { field: 'posX', headerName: 'Pos X', width: COLUMN_WIDTHS.NUMBER },
-    { field: 'posY', headerName: 'Pos Y', width: COLUMN_WIDTHS.NUMBER },
-    { field: 'posZ', headerName: 'Pos Z', width: COLUMN_WIDTHS.NUMBER },
-    { field: 'velX', headerName: 'Vel X', width: COLUMN_WIDTHS.NUMBER },
-    { field: 'velY', headerName: 'Vel Y', width: COLUMN_WIDTHS.NUMBER },
-    { field: 'velZ', headerName: 'Vel Z', width: COLUMN_WIDTHS.NUMBER },
+    { field: 'mass', headerName: 'Mass [kg]', width: COLUMN_WIDTHS.NUMBER },
+    { field: 'radius', headerName: 'Radius [m]', width: COLUMN_WIDTHS.NUMBER },
+    { field: 'posX', headerName: 'Pos X [m]', width: COLUMN_WIDTHS.NUMBER },
+    { field: 'posY', headerName: 'Pos Y [m]', width: COLUMN_WIDTHS.NUMBER },
+    { field: 'posZ', headerName: 'Pos Z [m]', width: COLUMN_WIDTHS.NUMBER },
+    { field: 'velX', headerName: 'Vel X [km/s]', width: COLUMN_WIDTHS.NUMBER },
+    { field: 'velY', headerName: 'Vel Y [km/s]', width: COLUMN_WIDTHS.NUMBER },
+    { field: 'velZ', headerName: 'Vel Z [km/s]', width: COLUMN_WIDTHS.NUMBER },
     {
       field: 'edit',
       headerName: 'Edit',
@@ -142,6 +156,14 @@ const BodyListPanel = (props: IMainPanel) => {
         <RemoveCell bodyName={params.row.name} onRemoveClick={openConfirmationDialog} />
       ),
     },
+    {
+      field: 'clone',
+      headerName: 'Clone',
+      width: COLUMN_WIDTHS.ACTION,
+      renderCell: (params: GridRenderCellParams) => (
+        <CloneCell bodyName={params.row.name} onCloneClick={cloneBodyRequest} />
+      ),
+    }
   ];
 
   return (

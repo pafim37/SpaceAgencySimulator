@@ -71,14 +71,14 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         /// <summary>
         /// It scale the body system size (orbits are preserved) 
         /// </summary>
-        public void ScaleBodySystem() => bodies.ForEach(body => ScaleBody.Scale(body));
+        public void ScaleBodies() => bodies.ForEach(body => Scale.ScaleBody(body));
+        public void ScaleOribts() => orbits.ForEach(orbit => Scale.ScaleOrbit(orbit));
 
         /// <summary>
         /// It updates body system, calibrates barycenter to zero and caluculates orbits points
         /// </summary>
         public void FullUpdate()
         {
-            ScaleBodySystem();
             UpdateBodySystem();
             CalibrateBarycenterToZero();
             AssignOrbitPoints();
@@ -130,12 +130,15 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         {
             foreach (BodyDomain body in bodies)
             {
-                if (body.ParentName is null) continue;
-                BodyDomain? other = bodies.FirstOrDefault(b => b.Name == body.ParentName);
-                if (other is null) continue;
+                if (body.ParentName is null)
+                {
+                    continue;
+                }
+                BodyDomain? centerBody = bodies.FirstOrDefault(b => b.Name == body.ParentName);
+                if (centerBody is null) continue;
                 try
                 {
-                    PositionedOrbit orbit = OrbitFactory.GetOrbit(body, other, G);
+                    PositionedOrbit orbit = OrbitFactory.GetOrbit(body, centerBody, G);
                     orbits.Add(orbit);
                 }
                 catch

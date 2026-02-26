@@ -27,11 +27,13 @@ namespace Sas.Mathematica.Service.Rotation
             angle = inverseRotation ? -angle : angle;
             Vector axis = rotationAxis.GetNormalize();
             double ux = axis[0];
-            double ux2 = axis[0] * axis[0];
             double uy = axis[1];
-            double uy2 = axis[1] * axis[1];
             double uz = axis[2];
+
+            double ux2 = axis[0] * axis[0];
+            double uy2 = axis[1] * axis[1];
             double uz2 = axis[2] * axis[2];
+
             double cos = Math.Cos(angle);
             double sin = Math.Sin(angle);
             double cos1 = 1 - cos;
@@ -39,11 +41,11 @@ namespace Sas.Mathematica.Service.Rotation
             [
                 cos + ux2 * cos1,
                 ux * uy * cos1 - uz * sin,
-                ux * uz * cos1 - uy * sin,
+                ux * uz * cos1 + uy * sin,
                 uy * ux * cos1 + uz * sin,
                 cos + uy2 * cos1,
                 uy * uz * cos1 - ux * sin,
-                uz * ux * cos1 + uy * sin,
+                uz * ux * cos1 - uy * sin,
                 uz * uy * cos1 + ux * sin,
                 cos + uz2 * cos1
             ];

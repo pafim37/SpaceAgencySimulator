@@ -71,7 +71,7 @@ export default function BodyDialogContent(props: IBodyDialogContent) {
     if (parseFloat(normalizedValue) === 0) return "Value cannot be zero";
     if (value.includes("e")) {
       if (value.includes(".")) {
-        const regex = /^(-)?(\d+)[.](\d+)[e](\d+)$/;
+        const regex = /^(-)?(\d+)[.](\d+)[e](-)?(\d+)$/;
         return regex.test(normalizedValue)
           ? ""
           : "Value must be a valid number";
@@ -95,12 +95,12 @@ export default function BodyDialogContent(props: IBodyDialogContent) {
     if (!normalizedValue.trim()) return "Value cannot be empty";
     if (value.includes("e")) {
       if (value.includes(".")) {
-        const regex = /^(-)?(\d+)[.](\d+)[e](\d+)$/;
+        const regex = /^(-)?(\d+)[.](\d+)[e](-)?(\d+)$/;
         return regex.test(normalizedValue)
           ? ""
           : "Value must be a valid number";
       } else {
-        const regex = /^(-)?(\d+)[e](\d+)$/;
+        const regex = /^(-)?(\d+)[e](-)?(\d+)$/;
         return regex.test(normalizedValue)
           ? ""
           : "Value must be a valid number";
@@ -146,7 +146,7 @@ export default function BodyDialogContent(props: IBodyDialogContent) {
 
   const handlePositiveNumber = (event) => {
     const { name, value } = event.target;
-    const regex = /^(-)?(\d*)?[.,]?(\d*)[e]?(\d*)$/;
+      const regex = /^(-)?(\d*)?[.,]?(\d*)[e]?(-)?(\d*)$/;
     if (regex.test(value)) {
       const message = isValidPositiveNumberString(value);
       setBodyOrError(message === "", name, value, message);
@@ -155,7 +155,7 @@ export default function BodyDialogContent(props: IBodyDialogContent) {
 
   const handleNegativeNumber = (event) => {
     const { name, value } = event.target;
-    const regex = /^(-)?(\d*)?[.,]?(\d*)[e]?(\d*)$/;
+    const regex = /^(-)?(\d*)?[.,]?(\d*)[e]?(-)?(\d*)$/;
     if (regex.test(value)) {
       const message = isValidNegativeNumberString(value);
       setBodyOrError(message === "", name, value, message);

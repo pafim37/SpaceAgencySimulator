@@ -1,4 +1,5 @@
 from ursina import *
+from tkinter import messagebox 
 from notification import Notification
 import queue
 from controllers.body_system_controller import BodySystemController
@@ -10,7 +11,11 @@ add_get_body_system_function_to_task_queue runs on Thread-1 (SignalR thread) whi
 It causes break get_body_system function so that function should be processes on MainThread
 """
 def add_get_body_system_function_to_task_queue():
-    task_queue.put(lambda: body_system_controller.create_body_system_entities(transformSOI = True))
+    def update_body_system():
+        global entity_bodies
+        entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
+        camera_controller.entity_bodies = entity_bodies
+    task_queue.put(update_body_system)
 
 def run_tasks_from_queue():
     while not task_queue.empty():
@@ -33,12 +38,16 @@ def input(key):
         camera_controller.zoom(True)
     if key == "scroll up":
         camera_controller.zoom(False)
+    if key == "m":
+        if wc.is_world_axis_on:
+            wc.turn_off_world_axis()
+        else:
+            wc.turn_on_world_axis()
     if key == 'r':
         entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
         camera_controller = CameraController(entity_bodies)
 
 if __name__ == '__main__':
-
     app = Ursina()
     Sky(texture=load_texture("images/stars.jpg"))
     
@@ -52,8 +61,12 @@ if __name__ == '__main__':
     # body sytem
     body_system_controller = BodySystemController()
     entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
+    if len(entity_bodies) == 0:
+        messagebox.showerror("Error", "There are no bodies in the body system. Please add or enable bodies in the body system to visualize them.")
+
 
     # camera
+
     camera_controller = CameraController(entity_bodies)
 
     # world

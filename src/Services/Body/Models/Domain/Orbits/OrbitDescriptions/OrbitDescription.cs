@@ -173,9 +173,17 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
 
         private static double GetArgumentOfPeriapsis(Vector eVector, double e, Vector nVector, double n)
         {
-            return eVector.Z >= 0 ?
-                Math.Acos(Vector.DotProduct(nVector, eVector) / (n * e)) :
-                2 * Math.PI - Math.Acos(Vector.DotProduct(nVector, eVector) / (n * e));
+            if (n == 0)
+            {
+                return Math.Atan2(eVector.Y, eVector.X);
+            }
+            double cosw = Vector.DotProduct(nVector, eVector) / (n * e);
+            cosw = Math.Clamp(cosw, -1.0, 1.0);
+
+            return eVector.Z >= 0
+                ? Math.Acos(cosw)
+                : 2 * Math.PI - Math.Acos(cosw);
+
         }
 
         private static double GetInclination(Vector hVector, double h)

@@ -29,11 +29,16 @@ def update():
     run_tasks_from_queue()
     camera_controller.handle_input()
     compass.update_directions(camera_controller.pivot)
+    if not isMovementPaused:
+        body_system_controller.update_body_positions(entity_bodies)
 
 def input(key):
     global camera_controller
     if key == "v":
         camera_controller.change_body_view()
+    if key == "n":
+        global isMovementPaused
+        isMovementPaused = not isMovementPaused
     if key == "scroll down":
         camera_controller.zoom(True)
     if key == "scroll up":
@@ -48,6 +53,7 @@ def input(key):
         camera_controller = CameraController(entity_bodies)
 
 if __name__ == '__main__':
+    isMovementPaused = True
     app = Ursina()
     Sky(texture=load_texture("images/stars.jpg"))
     

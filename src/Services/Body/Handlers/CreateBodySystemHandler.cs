@@ -30,11 +30,6 @@ namespace Sas.Body.Service.Handlers
             }
             BodySystem bodySystem = new(bodyDomains);
             bodySystem.FullUpdate();
-            if (request.Scaled)
-            {
-                bodySystem.ScaleBodies();
-                bodySystem.ScaleOribts();
-            }
             return bodySystem;
         }
     }

@@ -69,12 +69,6 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         }
 
         /// <summary>
-        /// It scale the body system size (orbits are preserved) 
-        /// </summary>
-        public void ScaleBodies() => bodies.ForEach(body => Scale.ScaleBody(body));
-        public void ScaleOribts() => orbits.ForEach(orbit => Scale.ScaleOrbit(orbit));
-
-        /// <summary>
         /// It updates body system, calibrates barycenter to zero and caluculates orbits points
         /// </summary>
         public void FullUpdate()

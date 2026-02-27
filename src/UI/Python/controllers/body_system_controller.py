@@ -35,7 +35,7 @@ class BodySystemController:
     
     
     def fetch_body_system_data(self):
-        return HttpClient.get_scaled_body_system() # bodies, orbits
+        return HttpClient.get_body_system() # bodies, orbits
 
     def transform_bodies_to_entities(self, bodies, transformSOI = False):
         entity_bodies = []
@@ -56,8 +56,8 @@ class BodySystemController:
         for orbit in self.orbits:
             body = next(b for b in entity_bodies if b.name == orbit.name)
             dr = MovementSimulator(orbit.orbitDescription)
-            body.position = dr.state_vector(self.dt) * math.pow(6.7981755138134135,-10) / 7
-        self.dt += math.pow(10,13) / 7
+            body.position = dr.state_vector(self.dt) * 100 / 147098291000
+        self.dt += math.pow(10,18)
 
     def __clear_body_system(self):
         for e in scene.entities[:]:

@@ -49,6 +49,7 @@ def input(key):
         else:
             wc.turn_on_world_axis()
     if key == 'r':
+        isMovementPaused = False
         entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
         camera_controller = CameraController(entity_bodies)
 

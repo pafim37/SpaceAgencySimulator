@@ -30,42 +30,31 @@ def solve_kepler(M, e):
 
 
 def eccentric_to_true_anomaly(E, e):
-    """
-    Konwersja anomalii mimośrodowej E do anomalii prawdziwej ν.
-    """
-    cos_E = np.cos(E)
-    sin_E = np.sin(E)
-
     factor = np.sqrt((1 + e) / (1 - e))
     tan_v_over_2 = factor * np.tan(E / 2.0)
     v = 2.0 * np.arctan(tan_v_over_2)
 
-    # Normalizacja do [0, 2π)
-    v = np.mod(v, 2.0 * np.pi)
+    
+    v = np.mod(v, 2.0 * np.pi) # normalize to [0, 2π)
     return v
 
 
 def orbital_radius(a, e, E):
-    """
-    Promień orbity:
-        r = a (1 - e cos E)
-    """
     return a * (1.0 - e * np.cos(E))
 
-
-def rotation_matrix_3d(omega, inc, Omega):
+def rotation_matrix_3d(argument_of_periapsis, inc, ascending_node):
     """
     Macierz rotacji z płaszczyzny orbity do układu inercjalnego.
-    Kolejność: Rz(Omega) * Rx(inc) * Rz(omega)
+    Kolejność: Rz(ascending_node) * Rx(inc) * Rz(argument_of_periapsis)
     """
-    cO = np.cos(Omega)
-    sO = np.sin(Omega)
+    cO = np.cos(ascending_node)
+    sO = np.sin(ascending_node)
     ci = np.cos(inc)
     si = np.sin(inc)
-    co = np.cos(omega)
-    so = np.sin(omega)
+    co = np.cos(argument_of_periapsis)
+    so = np.sin(argument_of_periapsis)
 
-    # Rz(Omega)
+    # Rz(ascending_node)
     Rz_O = np.array([
         [cO, -sO, 0.0],
         [sO,  cO, 0.0],
@@ -79,7 +68,7 @@ def rotation_matrix_3d(omega, inc, Omega):
         [0.0,  si,  ci]
     ])
 
-    # Rz(omega)
+    # Rz(argument_of_periapsis)
     Rz_o = np.array([
         [co, -so, 0.0],
         [so,  co, 0.0],
@@ -105,17 +94,19 @@ class MovementSimulator:
         self.a = orbit.semiMajorAxis
         self.e = orbit.eccentricity
         self.i = orbit.inclination
-        self.Omega = orbit.ascendingNode
-        self.omega = orbit.argumentOfPeriapsis
-        self.M0 = 0.0
-        self.mu = 100
+        self.ascending_node = orbit.ascendingNode
+        self.argument_of_periapsis = orbit.argumentOfPeriapsis
+        self.M0 = orbit.meanAnomaly
+        self.mu = orbit.gravitationalParameter
         self.epoch = 0.0
 
         # Średni ruch
         self.n = np.sqrt(self.mu / self.a**3)
 
         # Macierz rotacji z płaszczyzny orbity do inercjalnego
-        self.R = rotation_matrix_3d(self.omega, self.i, self.Omega)
+        self.R = rotation_matrix_3d(self.argument_of_periapsis, self.i, self.ascending_node)
+
+    
 
     def mean_anomaly(self, t):
         """
@@ -153,12 +144,12 @@ if __name__ == "__main__":
     a = 7000e3          # 7000 km
     e = 0.01
     i = np.deg2rad(45)  # 45°
-    Omega = np.deg2rad(30)
-    omega = np.deg2rad(40)
+    ascending_node = np.deg2rad(30)
+    argument_of_periapsis = np.deg2rad(40)
     M0 = np.deg2rad(0)  # w peryapsie
     epoch = 0.0
 
-    orbit = KeplerOrbit(a, e, i, Omega, omega, M0, mu_earth, epoch)
+    orbit = MovementSimulator(a, e, i, ascending_node, argument_of_periapsis, M0, mu_earth, epoch)
 
     # Pozycja po 10 minutach
     t = 600.0

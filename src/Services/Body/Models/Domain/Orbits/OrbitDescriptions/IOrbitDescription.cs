@@ -18,6 +18,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         public double MeanAnomaly { get; }
         public double? Period { get; }
         public double? Radius { get; }
+        public double GravitationalParameter { get; }
     }
 }
 

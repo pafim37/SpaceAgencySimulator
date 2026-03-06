@@ -15,5 +15,13 @@ namespace Sas.Body.Service.Controllers
             BodySystem bodySystem = await mediator.Send(new CreateBodySystem()).ConfigureAwait(false);
             return Ok(bodySystem);
         }
+
+        [HttpGet("{atTime}")]
+        public async Task<IActionResult> GetAtTime(double atTime)
+        {
+            BodySystem bodySystem = await mediator.Send(new CreateBodySystem()).ConfigureAwait(false);
+            bodySystem.Move(atTime);
+            return Ok(bodySystem);
+        }
     }
 }

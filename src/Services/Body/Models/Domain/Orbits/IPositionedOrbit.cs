@@ -1,6 +1,6 @@
-﻿using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
+﻿using Sas.Body.Service.Models.Domain.Bodies;
+using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
 using Sas.Body.Service.Models.Domain.Orbits.Points;
-using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.Orbits
 {
@@ -8,7 +8,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
     {
         public IOrbitDescription OrbitDescription { get; init; }
         public string Name { get; init; }
-        public Vector? Center { get; set; }
-        public List<Point>? Points { get; set; }
+        public List<Point> Points { get; }
+        public List<Point> UpdateCenterOfPoints(BodyDomain other);
     }
 }

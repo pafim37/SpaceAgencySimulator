@@ -20,6 +20,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         protected double _m;       // mass 
         protected double _period;  // period
         protected double _radius;  // radius
+        protected double _n;       // fist node
         protected Vector _eVector; // eccentricity Vector
         #endregion
 
@@ -94,6 +95,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// Standard gravitational parameter G(m1+m2)
         /// </summary>
         public double GravitationalParameter => _u;
+
+        /// <summary>
+        /// Gets the value of the first node.
+        /// </summary>
+        public double FirstNode => _n;
         #endregion
 
         #region constructors
@@ -131,6 +137,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
             _radius = r;
             _u = u;
+            _n = n;
         }
         #endregion
 

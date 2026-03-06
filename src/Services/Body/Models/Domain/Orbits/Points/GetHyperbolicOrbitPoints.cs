@@ -27,7 +27,6 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Points
                 p = Rotation.Rotate(p, Vector.Ox, i);
                 p = Rotation.Rotate(p, Vector.Oz, om);
 
-                p += orbit.Center ?? Vector.Zero;
                 points.Add(new Point(p[0], p[1], p[2]));
             }
             return points;

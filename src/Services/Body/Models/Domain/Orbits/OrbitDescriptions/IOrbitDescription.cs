@@ -19,6 +19,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         public double? Period { get; }
         public double? Radius { get; }
         public double GravitationalParameter { get; }
+        public double FirstNode { get; }
     }
 }
 

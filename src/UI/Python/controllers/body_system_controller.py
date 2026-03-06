@@ -26,17 +26,13 @@ class BodySystemController:
 
     def create_body_system_entities(self, transformSOI = False):
         self.__clear_body_system()
-        bodies, orbits = self.fetch_body_system_data()
+        bodies, orbits = self.__fetch_body_system_data()
         self.scale(bodies, orbits)
         self.orbits = orbits
         entity_bodies = self.transform_bodies_to_entities(bodies, transformSOI)
         self.transform_orbits_to_entities(orbits)
         return entity_bodies
     
-    
-    def fetch_body_system_data(self):
-        return HttpClient.get_body_system() # bodies, orbits
-
     def transform_bodies_to_entities(self, bodies, transformSOI = False):
         entity_bodies = []
         for body in bodies:
@@ -52,14 +48,23 @@ class BodySystemController:
         for orbit in orbits:
             OrbitEntity(orbit)
 
-    def update_body_positions(self, entity_bodies):
-        for orbit in self.orbits:
-            body = next(b for b in entity_bodies if b.name == orbit.name)
-            dr = MovementSimulator(orbit.orbitDescription)
-            body.position = dr.state_vector(self.dt) * 100 / 147098291000
-        self.dt += math.pow(10,18)
+    def update_body_positions(self):
+        self.__clear_body_system()
+        bodies, orbits = self.__fetch_body_system_data_at_time(self.dt)
+        self.scale(bodies, orbits)
+        self.orbits = orbits
+        entity_bodies = self.transform_bodies_to_entities(bodies, True)
+        self.transform_orbits_to_entities(orbits)
+        self.dt += 0.001
+        return entity_bodies
 
     def __clear_body_system(self):
         for e in scene.entities[:]:
             if hasattr(e, 'tag') and e.tag == "bodysystemelement":
                 destroy(e)
+
+    def __fetch_body_system_data(self):
+        return HttpClient.get_body_system() # bodies, orbits
+    
+    def __fetch_body_system_data_at_time(self, time):
+        return HttpClient.get_body_system_at_time(time) # bodies, orbits

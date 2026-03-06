@@ -15,22 +15,8 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Helpers
             double u = G * (body.Mass + other.Mass);
 
             OrbitDescription orbitDescription = OrbitDescriptionFactory.GetOrbitDescription(position, velocity, u);
-            PositionedOrbit positionedOrbit = new(body.Name, orbitDescription)
-            {
-                Center = GetCenter(other, orbitDescription)
-            };
+            PositionedOrbit positionedOrbit = new(body.Name, other, orbitDescription);
             return positionedOrbit;
-        }
-
-        private static Vector GetCenter(BodyDomain other, OrbitDescription orbitDescription)
-        {
-            if (orbitDescription.SemiMajorAxis == null)
-                throw new InvalidOperationException("SemiMajorAxis cannot be null.");
-
-            double a = orbitDescription.SemiMajorAxis.Value;
-            Vector eVec = orbitDescription.EccentricityVector;
-
-            return other.Position - a * eVec;
         }
     }
 }

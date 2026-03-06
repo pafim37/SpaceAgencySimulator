@@ -1,7 +1,7 @@
 ﻿using Sas.Body.Service.Extensions.BodyExtensions;
 using Sas.Body.Service.Models.Domain.Bodies;
 using Sas.Body.Service.Models.Domain.Orbits;
-using Sas.Body.Service.Models.Domain.Orbits.Points;
+using Sas.Body.Service.Movements;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
@@ -65,7 +65,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         {
             barycenter = FindBarycenter();
             EstablishHierarchy();
-            FindOrbits();
+
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         {
             UpdateBodySystem();
             CalibrateBarycenterToZero();
-            AssignOrbitPoints();
+            FindOrbits();
         }
 
         /// <summary>
@@ -133,6 +133,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                 try
                 {
                     PositionedOrbit orbit = OrbitFactory.GetOrbit(body, centerBody, G);
+                    orbit.UpdateCenterOfPoints(centerBody);
                     orbits.Add(orbit);
                 }
                 catch
@@ -154,20 +155,16 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                     body.Position -= barycenter.Position;
                     body.Velocity -= barycenter.Velocity;
                 }
-                foreach (PositionedOrbit orbit in orbits)
-                {
-                    if (orbit.Center is not null)
-                    {
-                        orbit.Center -= barycenter.Position;
-                    }
-                }
                 barycenter.Position = Vector.Zero;
                 barycenter.Velocity = Vector.Zero;
             }
         }
         #endregion
 
-        public void AssignOrbitPoints() => orbits.ForEach(orbit => orbit.Points = GetOrbitPointsFactory.GetPoints(orbit));
+        public void Move(double t)
+        {
+            Movement.Move(orbits, bodies, t);
+        }
 
         #region private methods
         private BodyDomain? FindBarycenter()

@@ -12,14 +12,16 @@ namespace Sas.Body.Service.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            BodySystem bodySystem = await mediator.Send(new CreateBodySystem()).ConfigureAwait(false);
+            CreateBodySystem request = new(SkipStaticPoints: false);
+            BodySystem bodySystem = await mediator.Send(request).ConfigureAwait(false);
             return Ok(bodySystem);
         }
 
         [HttpGet("{atTime}")]
         public async Task<IActionResult> GetAtTime(double atTime)
         {
-            BodySystem bodySystem = await mediator.Send(new CreateBodySystem()).ConfigureAwait(false);
+            CreateBodySystem request = new(SkipStaticPoints: true);
+            BodySystem bodySystem = await mediator.Send(request).ConfigureAwait(false);
             bodySystem.Move(atTime);
             return Ok(bodySystem);
         }

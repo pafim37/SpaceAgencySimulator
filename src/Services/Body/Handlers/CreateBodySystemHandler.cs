@@ -29,7 +29,8 @@ namespace Sas.Body.Service.Handlers
                 );
             }
             BodySystem bodySystem = new(bodyDomains);
-            bodySystem.FullUpdate();
+            bodySystem.UpdateBodySystem();
+            bodySystem.FindOrbits(request.SkipStaticPoints);
             return bodySystem;
         }
     }

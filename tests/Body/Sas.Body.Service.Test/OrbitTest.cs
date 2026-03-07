@@ -21,7 +21,7 @@ namespace Sas.Body.Service.Test
             Assert.Equal(149588585873.2210, orbit.SemiMajorAxis!.Value, 4);
             Assert.Equal(0.01677, orbit.Eccentricity, 4);
             Assert.Equal(3.1416, orbit.MeanAnomaly, 4);
-            Assert.Equal(double.NaN, orbit.ArgumentOfPeriapsis, 4);
+            Assert.Equal(3.141592, orbit.ArgumentOfPeriapsis, 4);
             Assert.Equal(0, orbit.Inclination, 4);
             Assert.Equal(double.NaN, orbit.AscendingNode, 4);
             Assert.Equal(3.1416, orbit.TrueAnomaly, 4);

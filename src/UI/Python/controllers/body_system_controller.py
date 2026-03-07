@@ -48,14 +48,18 @@ class BodySystemController:
             OrbitEntity(orbit)
 
     def update_body_positions(self):
-        self.__clear_body_system()
         bodies, orbits = self.__fetch_body_system_data_at_time(self.dt)
         self.scale(bodies, orbits)
-        self.orbits = orbits
-        entity_bodies = self.transform_bodies_to_entities(bodies, True)
-        self.transform_orbits_to_entities(orbits)
+        
+        # Update existing body entities
+        for body, entity in zip(bodies, [e for e in scene.entities if isinstance(e, BodyEntity)]):
+            entity.update_position(body.position)
+
+        # Update existing orbit entities
+        for orbit, entity in zip(orbits, [e for e in scene.entities if isinstance(e, OrbitEntity)]):
+            entity.update_points(orbit.points)
+
         self.dt += math.pow(10, 18) # increase time by 1 million seconds (about 11.57 days) each update, to speed up the visualization of the system's evolution over time
-        return entity_bodies
 
     def __clear_body_system(self):
         for e in scene.entities[:]:

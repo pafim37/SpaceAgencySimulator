@@ -30,8 +30,7 @@ def update():
     camera_controller.handle_input()
     compass.update_directions(camera_controller.pivot)
     if not isMovementPaused:
-        global entity_bodies
-        entity_bodies = body_system_controller.update_body_positions()
+        body_system_controller.update_body_positions()
 
 def input(key):
     global camera_controller

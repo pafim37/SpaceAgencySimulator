@@ -1,4 +1,5 @@
 from ursina import *
+from scaler import Scaler
 from http_client import HttpClient
 from entities.player_entity import PlayerEntity
 from entities.body_entity import BodyEntity
@@ -8,25 +9,11 @@ from entities.orbit_entity import OrbitEntity
 class BodySystemController:
     def __init__(self):
         self.dt = 0.0
-        return
-    
-    def scale(self, bodies, orbits):
-        # TODO: move out this method to a separate utility class, and find a better way to scale the system to fit the scene
-        scale = 100 / 147098291000
-        for body in bodies:
-            body.position.x *= scale
-            body.position.y *= scale
-            body.position.z *= scale
-        for orbit in orbits:
-            for point in orbit.points:
-                point.x *= scale
-                point.y *= scale
-                point.z *= scale
 
     def create_body_system_entities(self, transformSOI = False):
         self.__clear_body_system()
         bodies, orbits = self.__fetch_body_system_data()
-        self.scale(bodies, orbits)
+        Scaler.scale(bodies, orbits)
         self.orbits = orbits
         entity_bodies = self.transform_bodies_to_entities(bodies, transformSOI)
         self.transform_orbits_to_entities(orbits)
@@ -49,7 +36,7 @@ class BodySystemController:
 
     def update_body_positions(self):
         bodies, orbits = self.__fetch_body_system_data_at_time(self.dt)
-        self.scale(bodies, orbits)
+        Scaler.scale(bodies, orbits)
         
         # Update existing body entities
         for body, entity in zip(bodies, [e for e in scene.entities if isinstance(e, BodyEntity)]):
@@ -59,7 +46,7 @@ class BodySystemController:
         for orbit, entity in zip(orbits, [e for e in scene.entities if isinstance(e, OrbitEntity)]):
             entity.update_points(orbit.points)
 
-        self.dt += math.pow(10, 18) # increase time by 1 million seconds (about 11.57 days) each update, to speed up the visualization of the system's evolution over time
+        self.dt += Scaler.dt 
 
     def __clear_body_system(self):
         for e in scene.entities[:]:

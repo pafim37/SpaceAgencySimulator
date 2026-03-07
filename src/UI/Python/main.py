@@ -29,11 +29,16 @@ def update():
     run_tasks_from_queue()
     camera_controller.handle_input()
     compass.update_directions(camera_controller.pivot)
+    if not isMovementPaused:
+        body_system_controller.update_body_positions()
 
 def input(key):
     global camera_controller
     if key == "v":
         camera_controller.change_body_view()
+    if key == "n":
+        global isMovementPaused
+        isMovementPaused = not isMovementPaused
     if key == "scroll down":
         camera_controller.zoom(True)
     if key == "scroll up":
@@ -44,10 +49,12 @@ def input(key):
         else:
             wc.turn_on_world_axis()
     if key == 'r':
+        isMovementPaused = True
         entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
         camera_controller = CameraController(entity_bodies)
 
 if __name__ == '__main__':
+    isMovementPaused = True
     app = Ursina()
     Sky(texture=load_texture("images/stars.jpg"))
     
@@ -56,7 +63,6 @@ if __name__ == '__main__':
     notification.start()
     task_queue = queue.Queue()
     notification.register_listener("BodyDatabaseChanged", lambda *args: add_get_body_system_function_to_task_queue())
-
     
     # body sytem
     body_system_controller = BodySystemController()
@@ -64,9 +70,7 @@ if __name__ == '__main__':
     if len(entity_bodies) == 0:
         messagebox.showerror("Error", "There are no bodies in the body system. Please add or enable bodies in the body system to visualize them.")
 
-
     # camera
-
     camera_controller = CameraController(entity_bodies)
 
     # world

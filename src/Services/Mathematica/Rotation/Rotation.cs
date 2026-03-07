@@ -22,6 +22,29 @@ namespace Sas.Mathematica.Service.Rotation
             return (rotationMatrix * vectorToRotateAsMatrix).ToVector();
         }
 
+        public static Matrix RotationMatrix3D(double argumentOfPeriapsis,
+                                         double inclination,
+                                         double ascendingNode)
+        {
+            double cO = Math.Cos(ascendingNode);
+            double sO = Math.Sin(ascendingNode);
+            double ci = Math.Cos(inclination);
+            double si = Math.Sin(inclination);
+            double co = Math.Cos(argumentOfPeriapsis);
+            double so = Math.Sin(argumentOfPeriapsis);
+
+            // Rz(Ω)
+            Matrix RzO = new([cO, -sO, 0, sO, cO, 0, 0, 0, 1], 3, 3);
+
+            // Rx(i)
+            Matrix Rxi = new([1, 0, 0, 0, ci, -si, 0, si, ci], 3, 3);
+
+            // Rz(ω)
+            Matrix Rzo = new([co, -so, 0, so, co, 0, 0, 0, 1], 3, 3);
+
+            return RzO * Rxi * Rzo;
+        }
+
         private static double[] CalculateElementsOfRotationMatix(Vector rotationAxis, double angle, bool inverseRotation)
         {
             angle = inverseRotation ? -angle : angle;

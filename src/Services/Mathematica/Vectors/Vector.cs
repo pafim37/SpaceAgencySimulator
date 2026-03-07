@@ -1,4 +1,6 @@
-﻿namespace Sas.Mathematica.Service.Vectors
+﻿using Sas.Mathematica.Service.Matrices;
+
+namespace Sas.Mathematica.Service.Vectors
 {
     /// <summary>
     /// Class <c>Vector</c> models a vector in a three-dimensional space
@@ -309,6 +311,11 @@
         /// <param name="v2"></param>
         /// <returns>Dot Product</returns>
         public static double DotProduct(Vector v1, Vector v2) => v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+
+        public Matrix AsMatrix()
+        {
+            return new Matrix([X, Y, Z], 3, 1);
+        }
         #endregion
 
         #region Overrides
@@ -342,7 +349,7 @@
         private bool CheckIfNormalize()
         {
             bool isNormalize = true;
-            foreach (var element in _elements)
+            foreach (double element in _elements)
             {
                 isNormalize &= element == element / _magnitude;
             }

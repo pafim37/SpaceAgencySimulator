@@ -10,7 +10,7 @@ namespace Sas.Body.Service.Extensions.PointExtensions
             return new Vector(point.X, point.Y, point.Z);
         }  
 
-        public static Point AsPoint (this Vector vector)
+        public static Point AsPoint(this Vector vector)
         {
             return new Point(vector.X, vector.Y, vector.Z);
         }

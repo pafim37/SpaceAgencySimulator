@@ -1,18 +1,17 @@
 ﻿using Sas.Body.Service.Extensions.BodyExtensions;
 using Sas.Body.Service.Models.Domain.Bodies;
 using Sas.Body.Service.Models.Domain.Orbits;
-using Sas.Body.Service.Models.Domain.Orbits.Points;
+using Sas.Body.Service.Movements;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Body.Service.Models.Domain.BodySystems
 {
-    public class BodySystem
+    public class BodySystem(IEnumerable<BodyDomain> bodies, double gravitationalConst = Constants.G)
     {
         #region fields
-        private readonly List<BodyDomain> bodies;
-        private readonly List<PositionedOrbit> orbits;
-        private readonly double g; // gravitational constant
+        private readonly List<BodyDomain> bodies = bodies.ToList();
+        private readonly List<PositionedOrbit> orbits = [];
         private const string BarycentrumName = "Barycentrum";
         private BodyDomain? barycenter;
         #endregion
@@ -21,7 +20,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         /// <summary>
         /// Gets gravitational constant.
         /// </summary>
-        public double G => g;
+        public double G => gravitationalConst;
 
         /// <summary>
         /// Gets center of mass of the system (Barycentrum).
@@ -37,26 +36,10 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         /// Gets list of orbits in current body system.
         /// </summary>
         public List<PositionedOrbit> Orbits => orbits;
-        #endregion
 
-        #region constructors
-        public BodySystem(IEnumerable<BodyDomain> bodies, double gravitationalConst = Constants.G)
-        {
-            this.bodies = bodies.ToList();
-            orbits = [];
-            g = gravitationalConst;
-        }
         #endregion
 
         #region public methods
-        /// <summary>
-        /// Adds a new body to the system.
-        /// </summary>
-        /// <param name="body"></param>
-        public void AddBody(BodyDomain body)
-        {
-            bodies.Add(body);
-        }
 
         /// <summary>
         /// It finds barycenter, establishes hierarchy between bodies and finds orbits. 
@@ -65,23 +48,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         {
             barycenter = FindBarycenter();
             EstablishHierarchy();
-            FindOrbits();
-        }
-
-        /// <summary>
-        /// It scale the body system size (orbits are preserved) 
-        /// </summary>
-        public void ScaleBodies() => bodies.ForEach(body => Scale.ScaleBody(body));
-        public void ScaleOribts() => orbits.ForEach(orbit => Scale.ScaleOrbit(orbit));
-
-        /// <summary>
-        /// It updates body system, calibrates barycenter to zero and caluculates orbits points
-        /// </summary>
-        public void FullUpdate()
-        {
-            UpdateBodySystem();
             CalibrateBarycenterToZero();
-            AssignOrbitPoints();
         }
 
         /// <summary>
@@ -126,7 +93,7 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
         /// <summary>
         /// Finds orbits of the bodies.
         /// </summary>
-        public void FindOrbits()
+        public void FindOrbits(bool skipGetPoints = false)
         {
             foreach (BodyDomain body in bodies)
             {
@@ -139,6 +106,10 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                 try
                 {
                     PositionedOrbit orbit = OrbitFactory.GetOrbit(body, centerBody, G);
+                    if (!skipGetPoints)
+                    {
+                        orbit.UpdateCenterOfPoints(centerBody);
+                    }
                     orbits.Add(orbit);
                 }
                 catch
@@ -160,20 +131,20 @@ namespace Sas.Body.Service.Models.Domain.BodySystems
                     body.Position -= barycenter.Position;
                     body.Velocity -= barycenter.Velocity;
                 }
-                foreach (PositionedOrbit orbit in orbits)
-                {
-                    if (orbit.Center is not null)
-                    {
-                        orbit.Center -= barycenter.Position;
-                    }
-                }
                 barycenter.Position = Vector.Zero;
                 barycenter.Velocity = Vector.Zero;
             }
         }
-        #endregion
 
-        public void AssignOrbitPoints() => orbits.ForEach(orbit => orbit.Points = GetOrbitPointsFactory.GetPoints(orbit));
+        /// <summary>
+        /// Advances the simulation by moving all bodies along their orbits for the specified time interval.
+        /// </summary>
+        /// <param name="t">The time interval, in seconds, by which to advance the simulation. Must be a non-negative value.</param>
+        public void Move(double t)
+        {
+            Movement.Move(orbits, bodies, t);
+        }
+        #endregion
 
         #region private methods
         private BodyDomain? FindBarycenter()

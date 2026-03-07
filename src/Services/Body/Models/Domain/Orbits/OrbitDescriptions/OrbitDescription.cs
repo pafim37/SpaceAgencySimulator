@@ -20,7 +20,9 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         protected double _m;       // mass 
         protected double _period;  // period
         protected double _radius;  // radius
+        protected double _n;       // fist node
         protected Vector _eVector; // eccentricity Vector
+        protected double _meanMotion;
         #endregion
 
         #region properties
@@ -89,6 +91,21 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// Radius of the circular orbit 
         /// </summary>
         public double? Radius => GetRadius();
+
+        /// <summary>
+        /// Standard gravitational parameter G(m1+m2)
+        /// </summary>
+        public double GravitationalParameter => _u;
+
+        /// <summary>
+        /// Gets the value of the first node.
+        /// </summary>
+        public double FirstNode => _n;
+
+        /// <summary>
+        /// Mean Motion
+        /// </summary>
+        public double MeanMotion => _meanMotion;
         #endregion
 
         #region constructors
@@ -98,43 +115,8 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// <param name="position"></param>
         /// <param name="velocity"></param>
         /// <param name="u">Standard gravitational parameter: G(m1+m2)</param>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public OrbitDescription(Vector position, Vector velocity, double u)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
-            _u = u;
-            AssignFileds(position, velocity);
-        }
-        #endregion
-
-        #region public method
-        public double GetU() => _u;
-
-        public void UpdateOrbit(Vector position, Vector velocity)
-        {
-            AssignFileds(position, velocity);
-        }
-
-        public void UpdateOrbit(Vector position, Vector velocity, double u)
-        {
-            _u = u;
-            AssignFileds(position, velocity);
-        }
-        #endregion
-
-        #region protected abstracts
-        protected abstract double? GetRadius();
-        protected abstract double? GetPeriod();
-        protected abstract double? GetSemiMajorAxis();
-        protected abstract double? GetSemiMinorAxis();
-        protected abstract double GetMeanAnomaly(double e, double ae);
-        protected abstract double GetEccentricAnomaly(double e, double phi);
-        #endregion
-
-        #region private methods
-        private void AssignFileds(Vector position, Vector velocity)
-        {
-            double u = _u;
             double r = position.Magnitude;
             double v = velocity.Magnitude;
             double a = 1 / (2 / r - v * v / u);
@@ -158,10 +140,24 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             _trueAnomaly = trueAnomaly;
             _ae = ae;
             _m = m;
-            _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
+            _meanMotion = Math.Sqrt(u / Math.Pow(a, 3));
+            _period = 2 * Constants.PI / _meanMotion;
             _radius = r;
+            _u = u;
+            _n = n;
         }
+        #endregion
 
+        #region protected abstracts
+        protected abstract double? GetRadius();
+        protected abstract double? GetPeriod();
+        protected abstract double? GetSemiMajorAxis();
+        protected abstract double? GetSemiMinorAxis();
+        protected abstract double GetMeanAnomaly(double e, double ae);
+        protected abstract double GetEccentricAnomaly(double e, double phi);
+        #endregion
+
+        #region private methods
         private static double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)
         {
             double dotProduct = Vector.DotProduct(eVector, position) / (e * position.Magnitude);

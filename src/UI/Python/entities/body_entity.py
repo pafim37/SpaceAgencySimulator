@@ -19,3 +19,6 @@ class BodyEntity(Entity):
             self.texture = texture
         else:
             self.color = color.red
+
+    def update_position(self, new_position):
+        self.position = (new_position.x, new_position.y, new_position.z)

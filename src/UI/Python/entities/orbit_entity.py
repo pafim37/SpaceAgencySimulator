@@ -10,3 +10,8 @@ class OrbitEntity(Entity):
             **kwargs
         )
         self.tag = "bodysystemelement"
+
+    def update_points(self, new_points):
+        vertices = [Vec3(point.x, point.y, point.z) for point in new_points]
+        self.model.vertices = vertices
+        self.model.generate()

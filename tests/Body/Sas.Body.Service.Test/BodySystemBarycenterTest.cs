@@ -26,7 +26,7 @@ namespace Sas.Body.Service.Test
             barycentrum!.Name.Should().Be("Barycentrum");
             barycentrum.Mass.Should().Be(20);
             barycentrum.Radius.Should().Be(0);
-            barycentrum.Position.X.Should().Be(25);
+            barycentrum.Position.X.Should().Be(0);
             barycentrum.Position.Y.Should().Be(0);
             barycentrum.Position.Z.Should().Be(0);
             barycentrum.Velocity.Should().Be(Vector.Zero);

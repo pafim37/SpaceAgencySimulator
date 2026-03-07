@@ -28,7 +28,7 @@ namespace Sas.Body.Service.Movements
 
         private static Vector Move(IOrbitDescription orbDesc, double t)
         {
-            double meanAnomalyAtTime = orbDesc.MeanAnomaly + orbDesc.FirstNode * t;
+            double meanAnomalyAtTime = orbDesc.MeanAnomaly + orbDesc.MeanMotion * t;
             double E = SolveKeplerEquation(meanAnomalyAtTime, orbDesc.Eccentricity);
             double th = EccentricToTrueAnomaly(E, orbDesc.Eccentricity);
             double r = OrbitalRadius(orbDesc.SemiMajorAxis ?? 0, orbDesc.Eccentricity, th);

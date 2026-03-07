@@ -1,5 +1,4 @@
 from ursina import *
-from movement_simulator import MovementSimulator
 from http_client import HttpClient
 from entities.player_entity import PlayerEntity
 from entities.body_entity import BodyEntity
@@ -55,7 +54,7 @@ class BodySystemController:
         self.orbits = orbits
         entity_bodies = self.transform_bodies_to_entities(bodies, True)
         self.transform_orbits_to_entities(orbits)
-        self.dt += 0.001
+        self.dt += math.pow(10, 18) # increase time by 1 million seconds (about 11.57 days) each update, to speed up the visualization of the system's evolution over time
         return entity_bodies
 
     def __clear_body_system(self):

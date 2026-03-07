@@ -22,6 +22,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         protected double _radius;  // radius
         protected double _n;       // fist node
         protected Vector _eVector; // eccentricity Vector
+        protected double _meanMotion;
         #endregion
 
         #region properties
@@ -100,6 +101,11 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
         /// Gets the value of the first node.
         /// </summary>
         public double FirstNode => _n;
+
+        /// <summary>
+        /// Mean Motion
+        /// </summary>
+        public double MeanMotion => _meanMotion;
         #endregion
 
         #region constructors
@@ -134,7 +140,8 @@ namespace Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions
             _trueAnomaly = trueAnomaly;
             _ae = ae;
             _m = m;
-            _period = 2 * Constants.PI * Math.Sqrt(Math.Pow(a, 3) / u);
+            _meanMotion = Math.Sqrt(u / Math.Pow(a, 3));
+            _period = 2 * Constants.PI / _meanMotion;
             _radius = r;
             _u = u;
             _n = n;

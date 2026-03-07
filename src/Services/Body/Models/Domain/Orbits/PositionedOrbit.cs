@@ -1,4 +1,5 @@
-﻿using Sas.Body.Service.Models.Domain.Bodies;
+﻿using Sas.Body.Service.Extensions.PointExtensions;
+using Sas.Body.Service.Models.Domain.Bodies;
 using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
 using Sas.Body.Service.Models.Domain.Orbits.Points;
 using Sas.Mathematica.Service.Vectors;
@@ -10,6 +11,7 @@ namespace Sas.Body.Service.Models.Domain.Orbits
         public IOrbitDescription OrbitDescription { get; init; }
 
         private List<Point> points;
+        private List<Point> privatePoints;
 
         public string Name { get; init; }
 
@@ -20,13 +22,23 @@ namespace Sas.Body.Service.Models.Domain.Orbits
             Name = name;
             OrbitDescription = orbitDescription;
             points = UpdateCenterOfPoints(other);
+            privatePoints = points;
         }
         public List<Point> UpdateCenterOfPoints(BodyDomain other)
         {
-            List<Point> points = GetOrbitPointsFactory.GetPoints(this);
+            if (privatePoints is null || privatePoints.Count == 0)
+            {
+                privatePoints = GetOrbitPointsFactory.GetPoints(this);
+            }
+
             Vector center = GetCenter(other);
-            this.points = [.. points.Select(p => new Point(center.X + p.X, center.Y + p.Y, center.Z + p.Z))];
-            return points;
+            int count = privatePoints.Count;
+            points = new List<Point>(count);
+            for (int i = 0; i < count; i++)
+            {
+                points.Add(privatePoints[i] + center.AsPoint());
+            }
+            return privatePoints;
         }
         private Vector GetCenter(BodyDomain other)
         {

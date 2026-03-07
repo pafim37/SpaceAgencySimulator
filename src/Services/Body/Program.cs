@@ -10,9 +10,11 @@ namespace Sas.Body.Service
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IBodyRepository, BodyRepository>();
+
+            builder.Services.AddMemoryCache();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -39,11 +41,11 @@ namespace Sas.Body.Service
                 policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
             }));
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
+            using (IServiceScope scope = app.Services.CreateScope())
             {
-                var signalRClient = scope.ServiceProvider.GetRequiredService<NotificationClient>();
+                NotificationClient signalRClient = scope.ServiceProvider.GetRequiredService<NotificationClient>();
                 signalRClient.StartConnection();
             }
 

@@ -15,4 +15,6 @@ class HttpClient:
         url = f"http://localhost:5000/body-system/{time}"
         r = requests.get(url)
         data = json.loads(r.content, object_hook=lambda d: SimpleNamespace(**d))
+        print("Data:", data.bodies)
+
         return data.bodies, data.orbits

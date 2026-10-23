@@ -25,8 +25,74 @@ namespace Sas.Body.Service.Movements
                 List<Point> orbitPoints = orbit.UpdateCenterOfPoints(other);
             }
         }
-
         private static Vector Move(IOrbitDescription orbDesc, double t)
+        {
+            if (orbDesc.OrbitType == Models.Domain.Orbits.Primitives.OrbitType.Elliptic)
+            {
+                return MoveElliptic(orbDesc, t);
+            }
+            else
+            {
+                return MoveHyperbolic(orbDesc, t);
+            }
+        }
+        private static Vector MoveHyperbolic(IOrbitDescription orbDesc, double t)
+        {
+            double M = orbDesc.MeanAnomaly + orbDesc.MeanMotion * t;
+            double e = orbDesc.Eccentricity;
+
+            double H = SolveHyperbolicKepler(M, e);
+            double th = HyperbolicToTrueAnomaly(H, e);
+            double r = HyperbolicRadius(orbDesc.SemiMajorAxis ?? 0, e, th);
+
+            double x = r * Math.Cos(th);
+            double y = r * Math.Sin(th);
+            double z = 0;
+
+            Vector vector = new(x, y, z);
+            Matrix result = Rotation.RotationMatrix3D(
+                orbDesc.ArgumentOfPeriapsis,
+                orbDesc.Inclination,
+                orbDesc.AscendingNode);
+
+            return (result * vector.AsMatrix()).ToVector();
+        }
+
+
+        private static double SolveHyperbolicKepler(double M, double e)
+        {
+            const int MAX_IT = 50;
+            const double TOL = 1e-12;
+
+            double H = Math.Log(2 * Math.Abs(M) / e + 1.8); // dobre przybliżenie startowe
+
+            for (int i = 0; i < MAX_IT; i++)
+            {
+                double f = e * Math.Sinh(H) - H - M;
+                double fPrime = e * Math.Cosh(H) - 1;
+                double dH = -f / fPrime;
+                H += dH;
+
+                if (Math.Abs(dH) < TOL)
+                    break;
+            }
+
+            return H;
+        }
+
+        private static double HyperbolicToTrueAnomaly(double H, double e)
+        {
+            double factor = Math.Sqrt((e + 1) / (e - 1));
+            double tan_th_over_2 = factor * Math.Tanh(H / 2.0);
+            return 2.0 * Math.Atan(tan_th_over_2);
+        }
+
+        private static double HyperbolicRadius(double a, double e, double th)
+        {
+            return a * (e * e - 1) / (1 + e * Math.Cos(th));
+        }
+
+        private static Vector MoveElliptic(IOrbitDescription orbDesc, double t)
         {
             double meanAnomalyAtTime = orbDesc.MeanAnomaly + orbDesc.MeanMotion * t;
             double E = SolveKeplerEquation(meanAnomalyAtTime, orbDesc.Eccentricity);

@@ -13,6 +13,7 @@ class BodySystemController:
     def create_body_system_entities(self, transformSOI = False):
         self.__clear_body_system()
         bodies, orbits = self.__fetch_body_system_data()
+        print(orbits)
         Scaler.scale(bodies, orbits)
         self.orbits = orbits
         entity_bodies = self.transform_bodies_to_entities(bodies, transformSOI)

@@ -11,6 +11,7 @@ class Scaler:
             body.position.y *= scale
             body.position.z *= scale
         for orbit in orbits:
+            print(f"Scaling {orbit} with name {orbit.name}")
             for point in orbit.points:
                 point.x *= scale
                 point.y *= scale

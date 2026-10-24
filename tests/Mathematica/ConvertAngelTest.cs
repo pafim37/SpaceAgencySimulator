@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Sas.Mathematica.Service.Converters;
+using ConvertAngle = Sas.Mathematica.Service.Converters.ConvertAngles;
 
 namespace Sas.Mathematica.Tests
 {

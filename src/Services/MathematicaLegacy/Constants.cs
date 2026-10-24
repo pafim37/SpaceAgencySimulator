@@ -1,5 +1,6 @@
-﻿namespace Sas.Mathematica.Service
+namespace Sas.MathematicaLegacy.Service
 {
+    [Obsolete("Legacy implementation. Use Sas.Mathematica.Service instead.")]
     public class Constants
     {
         public static readonly double SolarMass = 1.9884 * Math.Pow(10, 30); // kg

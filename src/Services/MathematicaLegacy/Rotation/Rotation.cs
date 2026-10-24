@@ -1,10 +1,12 @@
-﻿using Sas.Mathematica.Service.Matrices;
-using Sas.Mathematica.Service.Vectors;
+using Sas.MathematicaLegacy.Service.Matrices;
+using Sas.MathematicaLegacy.Service.Vectors;
 
-namespace Sas.Mathematica.Service.Rotation
+namespace Sas.MathematicaLegacy.Service.Rotation
 {
+    [Obsolete("Legacy implementation. Use Sas.Mathematica.Service instead.")]
     public class Rotation
     {
+        [Obsolete("Legacy implementation. Use Sas.Mathematica.Service instead.")]
         public static Vector Rotate(Vector vectorToRotate, Vector axis, double angle, bool inverseRotation = false)
         {
             int vectorDim = 3;
@@ -22,6 +24,7 @@ namespace Sas.Mathematica.Service.Rotation
             return (rotationMatrix * vectorToRotateAsMatrix).ToVector();
         }
 
+        [Obsolete("Legacy implementation. Use Sas.Mathematica.Service instead.")]
         public static Matrix RotationMatrix3D(double argumentOfPeriapsis,
                                          double inclination,
                                          double ascendingNode)
@@ -45,6 +48,7 @@ namespace Sas.Mathematica.Service.Rotation
             return RzO * Rxi * Rzo;
         }
 
+        [Obsolete("Legacy implementation. Use Sas.Mathematica.Service instead.")]
         private static double[] CalculateElementsOfRotationMatix(Vector rotationAxis, double angle, bool inverseRotation)
         {
             angle = inverseRotation ? -angle : angle;

@@ -1,7 +1,6 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32228.430
+# Visual Studio Version 18
+VisualStudioVersion = 18.9.12105.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{C6B36E63-FFFD-44E7-9B96-8091363DB646}"
 EndProject
@@ -10,8 +9,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Astronomy", "Astronomy", "{3E9FE29F-2A15-4583-853F-4C7E60DCB753}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Body", "Body", "{5A6C825A-9DE4-479C-A142-89C92B35829B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Mathematica.Service", "Services\Mathematica\Sas.Mathematica.Service.csproj", "{AFA4EC9E-6E67-4A63-BED0-0738FE9C9C9E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sas.Astronomy.Service", "Services\Astronomy\Sas.Astronomy.Service.csproj", "{C5E2E3BE-6DB2-43C4-AAC7-A6AA33E189A6}"
 EndProject
@@ -31,16 +28,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notification", "Notificatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Notification.Service", "Services\Notification\Sas.Notification.Service\Sas.Notification.Service.csproj", "{C2DD312C-9A58-4410-887A-B5D79B57AE97}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Mathematica.Service", "Services\Mathematica\Sas.Mathematica.Service.csproj", "{6B56194B-169B-400D-8B99-6330DAA0ED59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.MathematicaLegacy.Service", "Services\MathematicaLegacy\Sas.MathematicaLegacy.Service.csproj", "{F87FD3D9-3062-B82C-FD65-2C2E680B1CC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AFA4EC9E-6E67-4A63-BED0-0738FE9C9C9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFA4EC9E-6E67-4A63-BED0-0738FE9C9C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFA4EC9E-6E67-4A63-BED0-0738FE9C9C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFA4EC9E-6E67-4A63-BED0-0738FE9C9C9E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C5E2E3BE-6DB2-43C4-AAC7-A6AA33E189A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C5E2E3BE-6DB2-43C4-AAC7-A6AA33E189A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5E2E3BE-6DB2-43C4-AAC7-A6AA33E189A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,6 +66,14 @@ Global
 		{C2DD312C-9A58-4410-887A-B5D79B57AE97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2DD312C-9A58-4410-887A-B5D79B57AE97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2DD312C-9A58-4410-887A-B5D79B57AE97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B56194B-169B-400D-8B99-6330DAA0ED59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B56194B-169B-400D-8B99-6330DAA0ED59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B56194B-169B-400D-8B99-6330DAA0ED59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B56194B-169B-400D-8B99-6330DAA0ED59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F87FD3D9-3062-B82C-FD65-2C2E680B1CC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F87FD3D9-3062-B82C-FD65-2C2E680B1CC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F87FD3D9-3062-B82C-FD65-2C2E680B1CC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F87FD3D9-3062-B82C-FD65-2C2E680B1CC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,7 +82,6 @@ Global
 		{D891E995-5FC4-496B-84E0-D6298D02726E} = {C6B36E63-FFFD-44E7-9B96-8091363DB646}
 		{3E9FE29F-2A15-4583-853F-4C7E60DCB753} = {C6B36E63-FFFD-44E7-9B96-8091363DB646}
 		{5A6C825A-9DE4-479C-A142-89C92B35829B} = {C6B36E63-FFFD-44E7-9B96-8091363DB646}
-		{AFA4EC9E-6E67-4A63-BED0-0738FE9C9C9E} = {D891E995-5FC4-496B-84E0-D6298D02726E}
 		{C5E2E3BE-6DB2-43C4-AAC7-A6AA33E189A6} = {3E9FE29F-2A15-4583-853F-4C7E60DCB753}
 		{C079D69D-BC04-4516-9CBE-4517557BE5C3} = {94C89791-6CF4-4EE2-8C75-32A4D6D3FB89}
 		{3310A228-E137-4574-8490-32DB90E48BAC} = {94C89791-6CF4-4EE2-8C75-32A4D6D3FB89}
@@ -85,6 +89,8 @@ Global
 		{8848EBCA-9F1A-452C-A5B2-CCD8652413B6} = {94C89791-6CF4-4EE2-8C75-32A4D6D3FB89}
 		{54CDF753-9F5D-43AB-8EC5-6BA12C7F0FB6} = {C6B36E63-FFFD-44E7-9B96-8091363DB646}
 		{C2DD312C-9A58-4410-887A-B5D79B57AE97} = {54CDF753-9F5D-43AB-8EC5-6BA12C7F0FB6}
+		{6B56194B-169B-400D-8B99-6330DAA0ED59} = {D891E995-5FC4-496B-84E0-D6298D02726E}
+		{F87FD3D9-3062-B82C-FD65-2C2E680B1CC8} = {D891E995-5FC4-496B-84E0-D6298D02726E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {134514F9-9E28-4183-AB9F-4B8B84DAC997}

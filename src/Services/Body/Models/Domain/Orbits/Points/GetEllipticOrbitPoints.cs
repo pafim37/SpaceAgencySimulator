@@ -17,15 +17,14 @@ namespace Sas.Body.Service.Models.Domain.Orbits.Points
             double w = double.IsNaN(desc.ArgumentOfPeriapsis) ? 0.0 : desc.ArgumentOfPeriapsis;
             double i = double.IsNaN(desc.Inclination) ? 0.0 : desc.Inclination;
             double om = double.IsNaN(desc.AscendingNode) ? 0.0 : desc.AscendingNode;
+            var rotation = Rotation.RotationMatrix3D(w, i, om);
 
             for (int k = 0; k <= segments; k++)
             {
                 double t = 2 * Math.PI * k / segments;
                 Vector p = new(a * Math.Cos(t), b * Math.Sin(t), 0);
 
-                p = Rotation.Rotate(p, Vector.Oz, w);
-                p = Rotation.Rotate(p, Vector.Ox, i);
-                p = Rotation.Rotate(p, Vector.Oz, om);
+                p = rotation * p;
 
                 points.Add(new Point(p[0], p[1], p[2]));
             }

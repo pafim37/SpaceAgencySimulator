@@ -1,77 +1,76 @@
-﻿using Sas.Mathematica.Service.Matrices;
+using Sas.Mathematica.Service.Matrices;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.Mathematica.Service.Rotation
 {
-    public class Rotation
+    /// <summary>Active, right-handed rotations of 3D column vectors. All angles are in radians.</summary>
+    public static class Rotation
     {
+        /// <summary>Rotates a vector about a nonzero axis; inputs are not modified.</summary>
+        /// <param name="vectorToRotate">A finite three-dimensional vector.</param>
+        /// <param name="axis">A finite nonzero 3D axis; normalized internally.</param>
+        /// <param name="angle">The finite rotation angle in radians, following the right-hand rule.</param>
+        /// <param name="inverseRotation">If true, negates the angle.</param>
+        /// <exception cref="ArgumentException">A vector is not finite 3D data or the axis is zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The angle is not finite.</exception>
         public static Vector Rotate(Vector vectorToRotate, Vector axis, double angle, bool inverseRotation = false)
         {
-            int vectorDim = 3;
-            if (vectorToRotate.Length != vectorDim)
-            {
-                throw new ArgumentException($"Vector to rotate has incorrect length. Expected (3), Actual {vectorToRotate.Length}");
-            }
-            if (axis.Length != vectorDim)
-            {
-                throw new ArgumentException($"Axis vector has incorrect length. Expected (3), Actual {vectorToRotate.Length}");
-            }
-            double[] rotationMatrixElement = CalculateElementsOfRotationMatix(axis, angle, inverseRotation);
-            Matrix rotationMatrix = new(rotationMatrixElement, vectorDim, vectorDim);
-            Matrix vectorToRotateAsMatrix = new(vectorToRotate.GetElements(), 3, 1);
-            return (rotationMatrix * vectorToRotateAsMatrix).ToVector();
-        }
+            ValidateVector(vectorToRotate, nameof(vectorToRotate));
+            ValidateVector(axis, nameof(axis));
+            ValidateAngle(angle, nameof(angle));
+            if (axis.X == 0 && axis.Y == 0 && axis.Z == 0)
+                throw new ArgumentException("The rotation axis must be nonzero.", nameof(axis));
 
-        public static Matrix RotationMatrix3D(double argumentOfPeriapsis,
-                                         double inclination,
-                                         double ascendingNode)
-        {
-            double cO = Math.Cos(ascendingNode);
-            double sO = Math.Sin(ascendingNode);
-            double ci = Math.Cos(inclination);
-            double si = Math.Sin(inclination);
-            double co = Math.Cos(argumentOfPeriapsis);
-            double so = Math.Sin(argumentOfPeriapsis);
-
-            // Rz(Ω)
-            Matrix RzO = new([cO, -sO, 0, sO, cO, 0, 0, 0, 1], 3, 3);
-
-            // Rx(i)
-            Matrix Rxi = new([1, 0, 0, 0, ci, -si, 0, si, ci], 3, 3);
-
-            // Rz(ω)
-            Matrix Rzo = new([co, -so, 0, so, co, 0, 0, 0, 1], 3, 3);
-
-            return RzO * Rxi * Rzo;
-        }
-
-        private static double[] CalculateElementsOfRotationMatix(Vector rotationAxis, double angle, bool inverseRotation)
-        {
-            angle = inverseRotation ? -angle : angle;
-            Vector axis = rotationAxis.GetNormalize();
-            double ux = axis[0];
-            double uy = axis[1];
-            double uz = axis[2];
-
-            double ux2 = axis[0] * axis[0];
-            double uy2 = axis[1] * axis[1];
-            double uz2 = axis[2] * axis[2];
-
+            Vector unit = axis.GetNormalize();
             double cos = Math.Cos(angle);
-            double sin = Math.Sin(angle);
-            double cos1 = 1 - cos;
-            return
-            [
-                cos + ux2 * cos1,
-                ux * uy * cos1 - uz * sin,
-                ux * uz * cos1 + uy * sin,
-                uy * ux * cos1 + uz * sin,
-                cos + uy2 * cos1,
-                uy * uz * cos1 - ux * sin,
-                uz * ux * cos1 - uy * sin,
-                uz * uy * cos1 + ux * sin,
-                cos + uz2 * cos1
-            ];
+            double sin = Math.Sin(inverseRotation ? -angle : angle);
+            double projection = Vector.DotProduct(unit, vectorToRotate) * (1 - cos);
+            // Rodrigues' formula avoids allocating intermediate matrices.
+            return new Vector(
+                vectorToRotate.X * cos + (unit.Y * vectorToRotate.Z - unit.Z * vectorToRotate.Y) * sin + unit.X * projection,
+                vectorToRotate.Y * cos + (unit.Z * vectorToRotate.X - unit.X * vectorToRotate.Z) * sin + unit.Y * projection,
+                vectorToRotate.Z * cos + (unit.X * vectorToRotate.Y - unit.Y * vectorToRotate.X) * sin + unit.Z * projection);
+        }
+
+        /// <summary>Maps perifocal column vectors into the reference frame using Rz(Ω) * Rx(i) * Rz(ω).</summary>
+        /// <param name="argumentOfPeriapsis">ω in radians.</param>
+        /// <param name="inclination">i in radians.</param>
+        /// <param name="ascendingNode">Ω in radians.</param>
+        /// <exception cref="ArgumentOutOfRangeException">An angle is not finite.</exception>
+        public static Matrix RotationMatrix3D(double argumentOfPeriapsis, double inclination, double ascendingNode)
+        {
+            ValidateAngle(argumentOfPeriapsis, nameof(argumentOfPeriapsis));
+            ValidateAngle(inclination, nameof(inclination));
+            ValidateAngle(ascendingNode, nameof(ascendingNode));
+            double nodeCos = Math.Cos(ascendingNode);
+            double nodeSin = Math.Sin(ascendingNode);
+            double inclinationCos = Math.Cos(inclination);
+            double inclinationSin = Math.Sin(inclination);
+            double periapsisCos = Math.Cos(argumentOfPeriapsis);
+            double periapsisSin = Math.Sin(argumentOfPeriapsis);
+            return new Matrix([
+                nodeCos * periapsisCos - nodeSin * inclinationCos * periapsisSin,
+                -nodeCos * periapsisSin - nodeSin * inclinationCos * periapsisCos,
+                nodeSin * inclinationSin,
+                nodeSin * periapsisCos + nodeCos * inclinationCos * periapsisSin,
+                -nodeSin * periapsisSin + nodeCos * inclinationCos * periapsisCos,
+                -nodeCos * inclinationSin,
+                inclinationSin * periapsisSin,
+                inclinationSin * periapsisCos,
+                inclinationCos
+            ], 3, 3);
+        }
+
+        private static void ValidateVector(Vector vector, string parameterName)
+        {
+            ArgumentNullException.ThrowIfNull(vector, parameterName);
+            if (vector.Length != 3 || !double.IsFinite(vector.X) || !double.IsFinite(vector.Y) || !double.IsFinite(vector.Z))
+                throw new ArgumentException("Expected a three-dimensional vector with finite components.", parameterName);
+        }
+
+        private static void ValidateAngle(double angle, string parameterName)
+        {
+            if (!double.IsFinite(angle)) throw new ArgumentOutOfRangeException(parameterName, "Angles must be finite radians.");
         }
     }
 }

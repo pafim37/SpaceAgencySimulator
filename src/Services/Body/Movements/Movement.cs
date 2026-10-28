@@ -37,7 +37,7 @@ namespace Sas.Body.Service.Movements
             double z = 0;
             Vector vector = new(x, y, z);
             Matrix result = Rotation.RotationMatrix3D(orbDesc.ArgumentOfPeriapsis, orbDesc.Inclination, orbDesc.AscendingNode);
-            return (result * vector.AsMatrix()).ToVector();
+            return result * vector;
         }
         private static double OrbitalRadius(double a, double e, double th)
         {

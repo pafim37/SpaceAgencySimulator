@@ -1,5 +1,4 @@
 ﻿using Sas.Domain.Models.Clocks;
-using Sas.Mathematica.Service.Converters;
 using Xunit;
 
 namespace Sas.Domain.Tests
@@ -22,9 +21,9 @@ namespace Sas.Domain.Tests
                 //},
                 new object[]
                 {
-                    ConvertAngle.DegToRad(20.2167f),
+                    double.DegreesToRadians(20.2167f),
                     new DateTime(2012, 2, 13, 2, 30, 0),
-                    ConvertAngle.DegToRad(200.26241475864445f)
+                    double.DegreesToRadians(200.26241475864445f)
                 }
             };
 

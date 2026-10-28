@@ -1,372 +1,183 @@
-﻿using Sas.Mathematica.Service.Vectors;
+using System.Text;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+using SasVector = Sas.Mathematica.Service.Vectors.Vector;
 
 namespace Sas.Mathematica.Service.Matrices
 {
+    /// <summary>A mutable matrix backed by Math.NET Numerics, exposing row-major arrays.</summary>
+    /// <remarks>Transpose and Invert mutate this instance. Do not mutate a matrix used as a hash key.</remarks>
     public class Matrix
     {
-        #region Privates Fields
-        private double[] _elements;
-        private readonly int _dim;
-        private int _numberOfRows;
-        private int _numberOfColumns;
-        private readonly bool _squareMatrix;
-        #endregion
+        private Matrix<double> _values;
 
-        #region Constructors
-        /// <summary>
-        /// Constructor of the matrix
-        /// </summary>
-        /// <param name="numberOfRows"></param>
-        /// <param name="numberOfColumns"></param>
-        /// <param name="elements"></param>
+        /// <summary>Copies row-major elements into a matrix with positive dimensions.</summary>
+        /// <exception cref="ArgumentNullException">Elements are null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Dimensions or element count are invalid.</exception>
         public Matrix(double[] elements, int numberOfRows, int numberOfColumns)
-        {
-            AreArgumentsValid(elements, numberOfRows, numberOfColumns);
-            _numberOfRows = numberOfRows;
-            _numberOfColumns = numberOfColumns;
-            _elements = elements;
-            if (numberOfRows == _numberOfColumns)
-            {
-                _squareMatrix = true;
-                _dim = numberOfRows;
-            }
-            else
-            {
-                _squareMatrix = false;
-            }
-        }
-        #endregion
-
-        #region Properties
-        /// <summary>
-        /// Gets number of rows
-        /// </summary>
-        /// <returns></returns>
-        public int RowsNumber { get { return _numberOfRows; } }
-
-        /// <summary>
-        /// Gets number of columns
-        /// </summary>
-        /// <returns></returns>
-        public int ColumnsNumber { get { return _numberOfColumns; } }
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Returns all matrix element
-        /// </summary>
-        /// <returns></returns>
-        public double[] GetAllElements() => _elements;
-
-        /// <summary>
-        /// Returns dimension of the matrix if matrix is square
-        /// </summary>
-        /// <returns></returns>
-        public int GetDimension()
-        {
-            return _squareMatrix ? _dim : throw new Exception("Matrix is irregular");
-        }
-
-        /// <summary>
-        /// Returns single (col-th) column 
-        /// </summary>
-        /// <param name="col">number of column</param>
-        /// <returns></returns>
-        /// <exception cref="IndexOutOfRangeException"></exception>
-        public double[] GetColumn(int col)
-        {
-            if (col < 0 || col > _numberOfColumns) throw new IndexOutOfRangeException(nameof(col));
-            double[] column = new double[_numberOfRows];
-            for (int c = 0; c < _numberOfRows; c++)
-            {
-                int index = c * _numberOfRows + col;
-                column[c] = _elements[--index];
-            }
-            return column;
-        }
-
-        /// <summary>
-        /// Gets Determinant of the matrix
-        /// </summary>
-        public double GetDeterminant() => CalculateDeterminant();
-
-        /// <summary>
-        /// Define the indexer to allow use [] notation
-        /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
-        /// <exception cref="IndexOutOfRangeException"></exception>
-        public double this[int row, int col]
-        {
-            get
-            {
-                if (row >= 1 && row <= _numberOfRows && col >= 1 && col <= _numberOfColumns)
-                {
-                    return _elements[--row * _numberOfColumns + --col];
-                }
-                else
-                {
-                    throw new IndexOutOfRangeException();
-                }
-            }
-            set
-            {
-                if (row >= 1 && row <= _numberOfRows && col >= 1 && col <= _numberOfColumns)
-                {
-                    _elements[--row * _numberOfColumns + --col] = value;
-                }
-                else
-                {
-                    throw new IndexOutOfRangeException();
-                }
-            }
-
-        }
-
-        /// <summary>
-        /// Define the indexer to allow use [] notation
-        /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
-        /// <exception cref="IndexOutOfRangeException"></exception>
-        public double this[int i]
-        {
-            get
-            {
-                if (i >= 0 && i < _elements.Length) return _elements[i];
-                else throw new IndexOutOfRangeException();
-            }
-            set
-            {
-                if (i >= 0 && i < _elements.Length) _elements[i] = value;
-                else throw new IndexOutOfRangeException();
-            }
-        }
-
-        /// <summary>
-        /// Transpose of the matrix 
-        /// </summary>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public Matrix Transpose()
-        {
-            double[] transposeElements = new double[_elements.Length];
-            for (int row = 0; row < _numberOfRows; row++)
-            {
-                for (int col = 0; col < _numberOfColumns; col++)
-                {
-                    transposeElements[col * _numberOfRows + row] = _elements[row * _numberOfColumns + col];
-                }
-            }
-
-            for (int i = 0; i < _elements.Length; i++)
-            {
-                _elements[i] = transposeElements[i];
-            }
-
-            (_numberOfRows, _numberOfColumns) = (_numberOfColumns, _numberOfRows);
-            return this;
-        }
-
-        /// <summary>
-        /// Invert matrix
-        /// </summary>
-        public Matrix Invert()
-        {
-            if (!_squareMatrix) throw new InvalidOperationException("Matrix is no square");
-            double det = CalculateDeterminant();
-            if (det == 0)
-            {
-                throw new Exception("Irreversible matrix");
-            }
-
-            int dim = _dim;
-            double[] tmpElements = new double[dim * dim];
-            for (int row = 0; row < dim; row++)
-            {
-                for (int col = 0; col < dim; col++)
-                {
-                    Matrix? minor = CreateMinor(this, row, col);
-                    tmpElements[row * dim + col] = Math.Pow(-1, row + col) * minor.GetDeterminant();
-                }
-            }
-            Matrix cofactor = new(tmpElements, dim, dim);
-            Matrix adjugate = cofactor.Transpose();
-            Matrix invertedMatrix = 1 / det * adjugate;
-            _elements = invertedMatrix.GetAllElements();
-            return this;
-        }
-        public Vector ToVector()
-        {
-            return new Vector(_elements);
-        }
-        #endregion
-
-        #region Privates Methods
-        /// <summary>
-        /// Calculate a determinant of the matrix
-        /// </summary>
-        /// <returns>determinant as a double</returns>
-        private double CalculateDeterminant()
-        {
-            if (!_squareMatrix)
-            {
-                throw new Exception("Matrix is no square");
-            }
-
-            int dim = _dim;
-
-            if (dim == 1) return _elements[0];
-            else if (dim == 2) return _elements[0] * _elements[3] - _elements[1] * _elements[2];
-            else
-            {
-                double det = 0.0;
-                for (int i = 0; i < dim; i++)
-                {
-                    Matrix minor = CreateMinor(this, dim - 1, i);
-                    det += Math.Pow(-1, dim + i + 1) * this[(dim - 1) * dim + i] * minor.GetDeterminant();
-                }
-                return det;
-            }
-        }
-
-        /// <summary>
-        /// Creates a minor of matrix by remove row and column
-        /// </summary>
-        /// <param name="matrix"></param>
-        /// <param name="i">index of row to remove</param>
-        /// <param name="j">index of col to remove</param>
-        /// <returns></returns>
-        private static Matrix CreateMinor(Matrix matrix, int i, int j)
-        {
-            double[] minorelements = CreateMinorElements(matrix, i, j).ToArray();
-            return new Matrix(minorelements, matrix.GetDimension() - 1, matrix.GetDimension() - 1);
-        }
-
-        private static IEnumerable<double> CreateMinorElements(Matrix matrix, int i, int j)
-        {
-            int dim = matrix.GetDimension();
-            for (int row = 0; row < dim; row++)
-            {
-                if (row == i) continue;
-                for (int col = 0; col < dim; col++)
-                {
-                    if (col == j) continue;
-                    yield return matrix[row * dim + col];
-                }
-            }
-        }
-
-        /// <summary>
-        /// Check if arguments are valid
-        /// </summary>
-        /// <returns></returns>
-        private static void AreArgumentsValid(double[] elements, int numberOfRows, int numberOfColumns)
         {
             ArgumentNullException.ThrowIfNull(elements);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfRows);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColumns);
-            if (numberOfRows * numberOfColumns != elements.Length)
+            if ((long)numberOfRows * numberOfColumns != elements.Length)
+                throw new ArgumentOutOfRangeException(nameof(elements), "Element count must equal rows times columns.");
+            _values = DenseMatrix.Create(numberOfRows, numberOfColumns,
+                (row, col) => elements[row * numberOfColumns + col]);
+        }
+
+        // Only newly allocated Math.NET operation results are passed here, so no extra clone is needed.
+        private Matrix(Matrix<double> values) => _values = values;
+
+        /// <summary>The number of rows.</summary>
+        public int RowsNumber => _values.RowCount;
+        /// <summary>The number of columns.</summary>
+        public int ColumnsNumber => _values.ColumnCount;
+        /// <summary>Returns an independent copy of the elements in row-major order.</summary>
+        public double[] GetAllElements() => _values.ToRowMajorArray();
+
+        /// <summary>Returns the size of a square matrix.</summary>
+        /// <exception cref="InvalidOperationException">The matrix is not square.</exception>
+        public int GetDimension()
+        {
+            if (RowsNumber != ColumnsNumber) throw new InvalidOperationException("The matrix must be square.");
+            return RowsNumber;
+        }
+
+        /// <summary>Copies a column selected by a one-based index.</summary>
+        /// <exception cref="IndexOutOfRangeException">The column is outside 1..ColumnsNumber.</exception>
+        public double[] GetColumn(int col)
+        {
+            if (col < 1 || col > ColumnsNumber) throw new IndexOutOfRangeException(nameof(col));
+            return _values.Column(col - 1).ToArray();
+        }
+
+        /// <summary>Gets or sets an element using one-based row and column indices.</summary>
+        /// <exception cref="IndexOutOfRangeException">Either index is outside the matrix.</exception>
+        public double this[int row, int col]
+        {
+            get { ValidateIndices(row, col); return _values[row - 1, col - 1]; }
+            set { ValidateIndices(row, col); _values[row - 1, col - 1] = value; }
+        }
+
+        /// <summary>Gets or sets a row-major element using a zero-based linear index.</summary>
+        /// <exception cref="IndexOutOfRangeException">The index is outside the matrix.</exception>
+        public double this[int i]
+        {
+            get { ValidateLinearIndex(i); return _values[i / ColumnsNumber, i % ColumnsNumber]; }
+            set { ValidateLinearIndex(i); _values[i / ColumnsNumber, i % ColumnsNumber] = value; }
+        }
+
+        /// <summary>Transposes this matrix in place using Math.NET and returns this instance.</summary>
+        public Matrix Transpose()
+        {
+            _values = _values.Transpose();
+            return this;
+        }
+
+        /// <summary>Calculates a square matrix's determinant with Math.NET's pivoted LU decomposition.</summary>
+        /// <remarks>No absolute epsilon is applied. A determinant can underflow or overflow even for an invertible matrix.</remarks>
+        /// <exception cref="InvalidOperationException">The matrix is not square or contains nonfinite elements.</exception>
+        public double GetDeterminant()
+        {
+            ValidateFactorizationInput();
+            return _values.Determinant();
+        }
+
+        /// <summary>Replaces this matrix with its inverse using Math.NET's pivoted LU, returning this instance.</summary>
+        /// <remarks>
+        /// A zero LU pivot is rejected without using a determinant threshold. No condition number is estimated;
+        /// callers handling ill-conditioned systems should verify the residual. Failure leaves this instance unchanged.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">The matrix is nonsquare, singular, or the result is nonfinite.</exception>
+        public Matrix Invert()
+        {
+            ValidateFactorizationInput();
+            var factor = _values.LU();
+            Matrix<double> upper = factor.U;
+            if (upper.Enumerate().Any(value => !double.IsFinite(value)))
+                throw new InvalidOperationException("LU cannot be represented with finite components.");
+            // Testing the determinant would incorrectly reject small invertible matrices when it underflows.
+            for (int i = 0; i < RowsNumber; i++)
+                if (upper[i, i] == 0) throw new InvalidOperationException("The matrix is singular.");
+            Matrix<double> inverse = factor.Inverse();
+            if (inverse.Enumerate().Any(value => !double.IsFinite(value)))
+                throw new InvalidOperationException("The inverse cannot be represented with finite components.");
+            _values = inverse;
+            return this;
+        }
+
+        /// <summary>Copies the row-major elements to an independent vector, preserving their order.</summary>
+        public SasVector ToVector() => new(GetAllElements());
+
+        /// <summary>Multiplies a matrix by an N-dimensional column vector using Math.NET.</summary>
+        /// <exception cref="ArgumentException">The vector length differs from the number of columns.</exception>
+        public static SasVector operator *(Matrix matrix, SasVector vector)
+        {
+            ArgumentNullException.ThrowIfNull(matrix);
+            ArgumentNullException.ThrowIfNull(vector);
+            if (matrix.ColumnsNumber != vector.Length)
+                throw new ArgumentException("Vector length must match the matrix columns.", nameof(vector));
+            Vector<double> input = new DenseVector(vector.GetElements());
+            return new SasVector((matrix._values * input).ToArray());
+        }
+
+        /// <summary>Returns a new matrix with every component multiplied by the scalar.</summary>
+        public static Matrix operator *(double s, Matrix matrix) => new(matrix._values * s);
+        /// <summary>Returns a new matrix with every component multiplied by the scalar.</summary>
+        public static Matrix operator *(Matrix matrix, double s) => s * matrix;
+
+        /// <summary>Returns the Math.NET matrix product without modifying either operand.</summary>
+        /// <exception cref="InvalidOperationException">The inner dimensions differ.</exception>
+        public static Matrix operator *(Matrix left, Matrix right)
+        {
+            if (left.ColumnsNumber != right.RowsNumber)
+                throw new InvalidOperationException("The inner matrix dimensions must match.");
+            return new(left._values * right._values);
+        }
+
+        /// <summary>Formats rows in storage order using the current culture and LF row separators.</summary>
+        public override string ToString()
+        {
+            StringBuilder text = new();
+            for (int row = 0; row < RowsNumber; row++)
             {
-                throw new ArgumentOutOfRangeException(nameof(elements), "Bad number of elements for provided dimensions of matrix");
+                for (int col = 0; col < ColumnsNumber; col++)
+                    text.Append(_values[row, col]).Append(", ");
+                text.Append('\n');
             }
-        }
-        #endregion
-
-        #region Operators
-        /// <summary>
-        /// Overloaded multiplication operator scalar and matrix
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static Matrix operator *(double s, Matrix matrix)
-        {
-            int rows = matrix.RowsNumber;
-            int cols = matrix.ColumnsNumber;
-            double[] tmpMatrixElements = new double[rows * cols];
-            for (int i = 0; i < rows * cols; i++)
-            {
-                tmpMatrixElements[i] = s * matrix[i];
-            }
-
-            return new Matrix(tmpMatrixElements, rows, cols);
+            return text.ToString();
         }
 
-        /// <summary>
-        /// Overloaded multiplication operator matrix and scalar
-        /// </summary>
-        /// <param name="matrix"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        public static Matrix operator *(Matrix matrix, double s)
-        {
-            return s * matrix;
-        }
+        /// <summary>Compares dimensions and all components exactly.</summary>
+        public override bool Equals(object? obj) => obj is Matrix matrix
+            && RowsNumber == matrix.RowsNumber && ColumnsNumber == matrix.ColumnsNumber
+            && _values.Enumerate().SequenceEqual(matrix._values.Enumerate());
 
-        /// <summary>
-        /// Overloaded multiplication of matrix and matrix 
-        /// </summary>
-        /// <param name="A"></param>
-        /// <param name="B"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static Matrix operator *(Matrix A, Matrix B)
-        {
-            int rowsA = A.RowsNumber;
-            int colsA = A.ColumnsNumber;
-            int rowsB = B.RowsNumber;
-            int colsB = B.ColumnsNumber;
-
-            if (colsA != rowsB)
-                throw new InvalidOperationException("Number of columns of the first matrix is not equal to the numbers of the rows of the secound matrix");
-
-            Matrix result = new(new double[rowsA * colsB], rowsA, colsB);
-
-            for (int i = 1; i <= rowsA; i++)
-            {
-                for (int j = 1; j <= colsB; j++)
-                {
-                    for (int k = 1; k <= colsA; k++)
-                    {
-                        result[i, j] += A[i, k] * B[k, j];
-                    }
-                }
-            }
-
-            return result;
-        }
-        #endregion
-
-        #region Overrides
-        public override string? ToString()
-        {
-            string result = string.Empty;
-            for (int row = 0; row < _numberOfRows; row++)
-            {
-                for (int col = 0; col < _numberOfColumns; col++)
-                {
-                    result += _elements[row * (_numberOfRows - 1) + col] + ", ";
-                }
-                result += "\n";
-            }
-            return result;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is Matrix matrix
-                && _elements.SequenceEqual(matrix.GetAllElements())
-                && _numberOfRows == matrix.RowsNumber
-                && _numberOfColumns == matrix.ColumnsNumber;
-        }
-
+        /// <summary>Hashes dimensions and all components; do not mutate a matrix used as a hash key.</summary>
         public override int GetHashCode()
         {
-            return HashCode.Combine(_elements, _numberOfRows, _numberOfColumns);
+            HashCode hash = new();
+            hash.Add(RowsNumber);
+            hash.Add(ColumnsNumber);
+            foreach (double value in _values.Enumerate()) hash.Add(value);
+            return hash.ToHashCode();
         }
 
-        #endregion
+        private void ValidateIndices(int row, int col)
+        {
+            if (row < 1 || row > RowsNumber || col < 1 || col > ColumnsNumber) throw new IndexOutOfRangeException();
+        }
+
+        private void ValidateLinearIndex(int i)
+        {
+            if (i < 0 || i >= (long)RowsNumber * ColumnsNumber) throw new IndexOutOfRangeException();
+        }
+
+        private void ValidateFactorizationInput()
+        {
+            GetDimension();
+            if (_values.Enumerate().Any(value => !double.IsFinite(value)))
+                throw new InvalidOperationException("LU requires finite matrix components.");
+        }
     }
 }

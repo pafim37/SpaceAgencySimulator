@@ -16,10 +16,9 @@ namespace Sas.Mathematica.Tests
         }
 
         [Fact]
-        public void VectorRoundComponentsWith13Precision()
+        public void VectorPreservesFullPrecision()
         {
-            int precision = 13;
-            double pi = Math.Round(Constants.PI, precision);
+            double pi = Constants.PI;
             Vector vector = new(pi, pi, pi);
             vector.X.Should().Be(pi);
             vector.Y.Should().Be(pi);
@@ -27,14 +26,14 @@ namespace Sas.Mathematica.Tests
         }
 
         [Fact]
-        public void VectorNotRoundComponentsWith14Precision()
+        public void VectorPreservesComponentsBeyond13DecimalPlaces()
         {
             int precision = 14;
             double pi = Math.Round(Constants.PI, precision);
             Vector vector = new(pi, pi, pi);
-            vector.X.Should().NotBe(pi);
-            vector.Y.Should().NotBe(pi);
-            vector.Z.Should().NotBe(pi);
+            vector.X.Should().Be(pi);
+            vector.Y.Should().Be(pi);
+            vector.Z.Should().Be(pi);
         }
 
         [Fact]
@@ -148,7 +147,7 @@ namespace Sas.Mathematica.Tests
 
         [Theory]
         [InlineData(new double[] { 1, 3, 5, 7, 9 }, new double[] { 2, 4, 6 }, new double[] { -1, -1, -1, 7, 9 })]
-        [InlineData(new double[] { 2, 4, 6 }, new double[] { 1, 3, 5, 7, 9 }, new double[] { 1, 1, 1, 7, 9 })]
+        [InlineData(new double[] { 2, 4, 6 }, new double[] { 1, 3, 5, 7, 9 }, new double[] { 1, 1, 1, -7, -9 })]
         [InlineData(new double[] { 1, 1, 1, 1, 1 }, new double[] { 2, 2, 2, 2, 2 }, new double[] { -1, -1, -1, -1, -1 })]
         public void SubtractionTwoVectorsReturnsVectors(double[] elements1, double[] elements2, double[] expected)
         {
@@ -263,11 +262,11 @@ namespace Sas.Mathematica.Tests
         public void VectorCanBeNormalized()
         {
             Vector vector = new Vector(1, 0, 1);
-            double value = Math.Round(Math.Sqrt(2) / 2, 13);
+            double value = Math.Sqrt(2) / 2;
             Vector normalizedVector = vector.GetNormalize();
-            normalizedVector.X.Should().Be(value);
+            normalizedVector.X.Should().BeApproximately(value, 1e-15);
             normalizedVector.Y.Should().Be(0);
-            normalizedVector.Z.Should().Be(value);
+            normalizedVector.Z.Should().BeApproximately(value, 1e-15);
         }
 
         [Fact]

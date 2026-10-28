@@ -1,366 +1,193 @@
-﻿using Sas.Mathematica.Service.Matrices;
+using Sas.Mathematica.Service.Matrices;
 
 namespace Sas.Mathematica.Service.Vectors
 {
-    /// <summary>
-    /// Class <c>Vector</c> models a vector in a three-dimensional space
-    /// </summary>
+    /// <summary>A mutable N-dimensional vector with full-precision components.</summary>
+    /// <remarks>Arrays are copied. Do not mutate a vector while it is a hash key.</remarks>
     public class Vector
     {
-        private double[] _elements;
-        private bool _isNormalize;
-        private double _magnitude;
-        private readonly int _dim;
-        private readonly int precision = 13;
+        private readonly double[] _elements;
+        private double? _magnitude;
 
-        #region Constructors
-        /// <summary>
-        /// Constructor of the vector
-        /// </summary>
-        /// <param name="elements"></param>
-        public Vector(params double[] elements)
+        /// <summary>Copies all supplied components, including an empty vector.</summary>
+        public Vector(params double[] elements) : this(elements, copy: true) { }
+
+        private Vector(double[] elements, bool copy)
         {
-            _elements = elements;
-            _dim = elements.Length;
-            AssignFields();
+            ArgumentNullException.ThrowIfNull(elements);
+            _elements = copy ? (double[])elements.Clone() : elements;
         }
 
-        /// <summary>
-        /// Constructor of the vector
-        /// </summary>
-        /// <param name="x">First component</param>
-        /// <param name="y">Secound component</param>
-        /// <param name="z">Third component</param>
-        public Vector(double x = 0, double y = 0, double z = 0)
-        {
-            _elements = [x, y, z];
-            _dim = 3;
-            AssignFields();
-        }
+        /// <summary>Creates a 3D vector with omitted coordinates set to zero.</summary>
+        public Vector(double x = 0, double y = 0, double z = 0) : this([x, y, z], copy: false) { }
 
-        /// <summary>
-        /// Vector zero 
-        /// </summary>
+        /// <summary>The 3D zero vector.</summary>
         public static Vector Zero => new(0, 0, 0);
-
-        /// <summary>
-        /// Vector unit 
-        /// </summary>
+        /// <summary>The vector (1, 1, 1), whose magnitude is sqrt(3).</summary>
         public static Vector Ones => new(1, 1, 1);
-
-        /// <summary>
-        /// Vector X = <1, 0, 0>
-        /// </summary>
+        /// <summary>The positive X unit vector.</summary>
         public static Vector Ox => new(1, 0, 0);
-
-        /// <summary>
-        /// Vector Y = <0, 1, 0>
-        /// </summary>
+        /// <summary>The positive Y unit vector.</summary>
         public static Vector Oy => new(0, 1, 0);
-
-        /// <summary>
-        /// Vector Z = <0, 0, 1>
-        /// </summary>
+        /// <summary>The positive Z unit vector.</summary>
         public static Vector Oz => new(0, 0, 1);
-        #endregion
 
-        #region Properties
-        /// <summary>
-        /// Component x of the vector
-        /// </summary>
-        public double X
-        {
-            get
-            {
-                return _dim > 0 ? Math.Round(_elements[0], precision) : 0;
-            }
-        }
+        /// <summary>The first component, or zero if absent.</summary>
+        public double X => ComponentOrZero(0);
+        /// <summary>The second component, or zero if absent.</summary>
+        public double Y => ComponentOrZero(1);
+        /// <summary>The third component, or zero if absent.</summary>
+        public double Z => ComponentOrZero(2);
+        /// <summary>The number of components.</summary>
+        public int Length => _elements.Length;
+        /// <summary>The Euclidean norm across all components, recalculated lazily after mutation.</summary>
+        public double Magnitude => _magnitude ??= CalculateMagnitude();
+        /// <summary>Whether the magnitude differs from one by at most 1e-12.</summary>
+        public bool IsNormalize => Math.Abs(Magnitude - 1) <= 1e-12;
 
-        /// <summary>
-        /// Component y of the vector
-        /// </summary>
-        public double Y
-        {
-            get
-            {
-                return _dim > 1 ? Math.Round(_elements[1], precision) : 0;
-            }
-        }
-
-        /// <summary>
-        /// Component z of the vector
-        /// </summary>
-        public double Z
-        {
-            get
-            {
-                return _dim > 2 ? Math.Round(_elements[2], precision) : 0;
-            }
-        }
-
-        /// <summary>
-        /// Returns length of the Vector
-        /// </summary>
-        public int Length => _dim;
-
-        /// <summary>
-        /// Magnitude of the vector
-        /// </summary>
-        /// <returns>Magnitude</returns>
-        public double Magnitude => _magnitude;
-
-        /// <summary>
-        /// Returns whether the vector is normalized
-        /// </summary>
-        public bool IsNormalize => _isNormalize;
-        #endregion
-
-        #region Operators
-        /// <summary>
-        /// Gets element of given index
-        /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
-        /// <exception cref="IndexOutOfRangeException"></exception>
+        /// <summary>Gets or sets a component using a zero-based index.</summary>
+        /// <exception cref="IndexOutOfRangeException">The index is outside the vector.</exception>
         public double this[int i]
         {
-            get
-            {
-                if (i >= 0 && i < _elements.Length) return _elements[i];
-                else throw new IndexOutOfRangeException();
-            }
-            set
-            {
-                if (i >= 0 && i < _elements.Length) _elements[i] = value;
-                else throw new IndexOutOfRangeException();
-            }
+            get => _elements[i];
+            set { _elements[i] = value; _magnitude = null; }
         }
 
-        /// <summary>
-        /// Overloaded addition operator for two vectors
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
-
+        /// <summary>Adds vectors, treating missing components as zero.</summary>
         public static Vector operator +(Vector v1, Vector v2)
         {
-            int longerSize = v1.Length > v2.Length ? v1.Length : v2.Length;
-            int shorterSize = v1.Length < v2.Length ? v1.Length : v2.Length;
-            double[] finalVector = new double[longerSize];
-            Vector longerVector = v1.Length > v2.Length ? v1 : v2;
-            for (int i = 0; i < longerSize; i++)
-            {
-                if (i < shorterSize)
-                {
-                    finalVector[i] = v1[i] + v2[i];
-                }
-                else
-                {
-                    finalVector[i] = longerVector[i];
-                }
-            }
-            return new Vector(finalVector);
+            double[] result = new double[Math.Max(v1.Length, v2.Length)];
+            for (int i = 0; i < result.Length; i++)
+                result[i] = v1.ComponentOrZero(i) + v2.ComponentOrZero(i);
+            return new(result, copy: false);
         }
 
-        /// <summary>
-        /// Overloaded subtraction operator for two vectors
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
+        /// <summary>Subtracts vectors, treating missing components as zero.</summary>
         public static Vector operator -(Vector v1, Vector v2)
         {
-            int longerSize = v1.Length > v2.Length ? v1.Length : v2.Length;
-            int shorterSize = v1.Length < v2.Length ? v1.Length : v2.Length;
-            double[] finalVector = new double[longerSize];
-            Vector longerVector = v1.Length > v2.Length ? v1 : v2;
-            for (int i = 0; i < longerSize; i++)
-            {
-                if (i < shorterSize)
-                {
-                    finalVector[i] = v1[i] - v2[i];
-                }
-                else
-                {
-                    finalVector[i] = longerVector[i];
-                }
-            }
-            return new Vector(finalVector);
+            double[] result = new double[Math.Max(v1.Length, v2.Length)];
+            for (int i = 0; i < result.Length; i++)
+                result[i] = v1.ComponentOrZero(i) - v2.ComponentOrZero(i);
+            return new(result, copy: false);
         }
 
-        /// <summary>
-        /// Overloaded multiplication operator for two vectors
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
+        /// <summary>Multiplies componentwise. Unmatched components are copied unchanged for compatibility.</summary>
+        /// <remarks>This is not a dot or cross product; missing factors are treated as one.</remarks>
         public static Vector operator *(Vector v1, Vector v2)
         {
-            int longerSize = v1.Length > v2.Length ? v1.Length : v2.Length;
-            int shorterSize = v1.Length < v2.Length ? v1.Length : v2.Length;
-            double[] finalVector = new double[longerSize];
-            Vector longerVector = v1.Length > v2.Length ? v1 : v2;
-            for (int i = 0; i < longerSize; i++)
-            {
-                if (i < shorterSize)
-                {
-                    finalVector[i] = v1[i] * v2[i];
-                }
-                else
-                {
-                    finalVector[i] = longerVector[i];
-                }
-            }
-            return new Vector(finalVector);
+            double[] result = new double[Math.Max(v1.Length, v2.Length)];
+            for (int i = 0; i < result.Length; i++)
+                result[i] = (i < v1.Length ? v1[i] : 1) * (i < v2.Length ? v2[i] : 1);
+            return new(result, copy: false);
         }
 
-        /// <summary>
-        /// Overloaded multiplication operator for two vectors
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
+        /// <summary>Scales every component without changing the input.</summary>
         public static Vector operator *(Vector v1, double s)
         {
-            double[] newElements = new double[v1.Length];
-            for (int i = 0; i < v1.Length; i++)
-            {
-                newElements[i] = v1[i] * s;
-            }
-            return new(newElements);
+            double[] result = new double[v1.Length];
+            for (int i = 0; i < result.Length; i++) result[i] = v1[i] * s;
+            return new(result, copy: false);
         }
 
-        /// <summary>
-        /// Overloaded multiplication operator for two vectors
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
-        public static Vector operator *(double s, Vector v1)
-        {
-            return v1 * s;
-        }
+        /// <summary>Scales every component.</summary>
+        public static Vector operator *(double s, Vector v1) => v1 * s;
+        /// <summary>Negates all components without changing the input.</summary>
+        public static Vector operator -(Vector v) => v * -1;
+        /// <summary>Compares all components exactly, with null support.</summary>
+        public static bool operator ==(Vector? v1, Vector? v2) => Equals(v1, v2);
+        /// <summary>Compares all components exactly, with null support.</summary>
+        public static bool operator !=(Vector? v1, Vector? v2) => !Equals(v1, v2);
 
-        /// <summary>
-        /// Overload minus operation for vector
-        /// </summary>
-        /// <param name="v"></param>
-        /// <returns></returns>
-        public static Vector operator -(Vector v)
-        {
-            return -1 * v;
-        }
+        /// <summary>Returns a copy of all components; editing it does not change this vector.</summary>
+        public double[] GetElements() => (double[])_elements.Clone();
 
-        public static bool operator ==(Vector v1, Vector v2)
-        {
-            return v1.Equals(v2);
-        }
-
-        public static bool operator !=(Vector v1, Vector v2)
-        {
-            return !v1.Equals(v2);
-        }
-        #endregion
-
-        #region Static
-        /// <summary>
-        /// Cross product of two vectors
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
-
-        public static Vector CrossProduct(Vector v1, Vector v2) => new(v1.Y * v2.Z - v1.Z * v2.Y, v1.Z * v2.X - v1.X * v2.Z, v1.X * v2.Y - v1.Y * v2.X);
-        #endregion
-
-        #region Public Functions
-        /// <summary>
-        /// Returns vector elements
-        /// </summary>
-        /// <returns></returns>
-        public double[] GetElements()
-        {
-            return _elements;
-        }
-
-
-        /// <summary>
-        /// Gets the normalize vector
-        /// </summary>
+        /// <summary>Returns an independent unit vector, using scaling to avoid overflow and underflow.</summary>
+        /// <exception cref="InvalidOperationException">The vector is zero, empty, or has nonfinite components.</exception>
         public Vector GetNormalize()
         {
-            if (!_isNormalize)
+            double scale = ComponentScale();
+            if (scale == 0 || !double.IsFinite(scale))
+                throw new InvalidOperationException("A unit vector requires finite components and a nonzero magnitude.");
+            double sum = 0;
+            for (int i = 0; i < Length; i++)
             {
-                return new Vector(_elements.Select(element => element / _magnitude).ToArray());
+                double scaled = _elements[i] / scale;
+                sum += scaled * scaled;
             }
-            return this;
+            double norm = Math.Sqrt(sum);
+            double[] result = new double[Length];
+            for (int i = 0; i < Length; i++) result[i] = (_elements[i] / scale) / norm;
+            return new(result, copy: false);
         }
 
-        /// <summary>
-        /// Cross product of current vector
-        /// </summary>
-        /// <param name="v"></param>
-        /// <returns></returns>
-        public Vector CrossProduct(Vector v) => new(Y * v.Z - Z * v.Y, Z * v.X - X * v.Z, X * v.Y - Y * v.X);
+        /// <summary>The right-handed cross product of two 3D vectors.</summary>
+        /// <exception cref="ArgumentException">Either vector does not have exactly three components.</exception>
+        public static Vector CrossProduct(Vector v1, Vector v2)
+        {
+            RequireThreeDimensions(v1, nameof(v1));
+            RequireThreeDimensions(v2, nameof(v2));
+            return new(v1.Y * v2.Z - v1.Z * v2.Y,
+                       v1.Z * v2.X - v1.X * v2.Z,
+                       v1.X * v2.Y - v1.Y * v2.X);
+        }
 
-        /// <summary>
-        /// Dot product of two vector
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns>Dot Product</returns>
-        public static double DotProduct(Vector v1, Vector v2) => v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+        /// <summary>The right-handed cross product; both vectors must have three components.</summary>
+        public Vector CrossProduct(Vector v) => CrossProduct(this, v);
 
+        /// <summary>The dot product over all dimensions, treating missing components as zero.</summary>
+        public static double DotProduct(Vector v1, Vector v2)
+        {
+            double result = 0;
+            for (int i = 0; i < Math.Min(v1.Length, v2.Length); i++) result += v1[i] * v2[i];
+            return result;
+        }
+
+        /// <summary>Copies all components to an N-by-1 column matrix.</summary>
+        /// <exception cref="InvalidOperationException">An empty vector cannot form a matrix.</exception>
         public Matrix AsMatrix()
         {
-            return new Matrix([X, Y, Z], 3, 1);
-        }
-        #endregion
-
-        #region Overrides
-        public override string ToString()
-        {
-            return $"<{X}, {Y}, {Z}>";
+            if (Length == 0) throw new InvalidOperationException("An empty vector cannot form a column matrix.");
+            return new(_elements, Length, 1);
         }
 
+        /// <summary>Formats all components using the current culture.</summary>
+        public override string ToString() => $"<{string.Join(", ", _elements)}>";
+        /// <summary>Compares all components exactly; numerical algorithms should use explicit tolerances.</summary>
+        public override bool Equals(object? obj) => obj is Vector vector && _elements.SequenceEqual(vector._elements);
+        /// <summary>Hashes all components. A vector used as a hash key must not be mutated.</summary>
         public override int GetHashCode()
         {
-            return HashCode.Combine(X, Y, Z, Magnitude, Length);
+            HashCode hash = new();
+            foreach (double element in _elements) hash.Add(element);
+            return hash.ToHashCode();
         }
 
-        public override bool Equals(object? obj)
+        private double ComponentOrZero(int i) => i < Length ? _elements[i] : 0;
+
+        private double ComponentScale()
         {
-            return obj is Vector vector
-                && X == vector.X
-                && Y == vector.Y
-                && Z == vector.Z
-                && Magnitude == vector.Magnitude
-                && Length == vector.Length;
+            double scale = 0;
+            foreach (double element in _elements) scale = Math.Max(scale, Math.Abs(element));
+            return scale;
         }
-        #endregion
 
-        #region Private methods
         private double CalculateMagnitude()
         {
-            return Math.Sqrt(_elements.Sum(element => element * element));
-        }
-
-        private bool CheckIfNormalize()
-        {
-            bool isNormalize = true;
+            double scale = ComponentScale();
+            if (scale == 0 || !double.IsFinite(scale)) return scale;
+            double sum = 0;
             foreach (double element in _elements)
             {
-                isNormalize &= element == element / _magnitude;
+                double scaled = element / scale;
+                sum += scaled * scaled;
             }
-            return isNormalize;
+            return scale * Math.Sqrt(sum);
         }
 
-        private void AssignFields()
+        private static void RequireThreeDimensions(Vector vector, string parameterName)
         {
-            _magnitude = CalculateMagnitude();
-            _isNormalize = CheckIfNormalize();
+            ArgumentNullException.ThrowIfNull(vector, parameterName);
+            if (vector.Length != 3) throw new ArgumentException("A cross product requires three-dimensional vectors.", parameterName);
         }
-        #endregion
     }
 }

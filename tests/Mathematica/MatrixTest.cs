@@ -15,7 +15,7 @@ namespace Sas.Mathematica.Tests
         [Fact]
         public void CreateMatrixThrowsExceptionWhenElementsAreNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new Matrix(elements: null, 2, 2));
+            Assert.Throws<ArgumentNullException>(() => new Matrix(elements: null!, 2, 2));
         }
 
         [Theory]
@@ -69,7 +69,7 @@ namespace Sas.Mathematica.Tests
         public void GetAllElementsReturnsElements()
         {
             Matrix matrix = new(_sixElements, 2, 3);
-            matrix.GetAllElements().SequenceEqual(_sixElements);
+            matrix.GetAllElements().Should().Equal(_sixElements);
         }
 
         [Theory]
@@ -79,7 +79,7 @@ namespace Sas.Mathematica.Tests
         public void GetColumnReturnsColumn(int column, double[] elements)
         {
             Matrix matrix = new Matrix(_nineElements, 3, 3);
-            matrix.GetColumn(column).Should().BeEquivalentTo(elements);
+            matrix.GetColumn(column).Should().Equal(elements);
         }
 
         [Fact]
@@ -104,8 +104,7 @@ namespace Sas.Mathematica.Tests
         {
             Matrix matrix = new Matrix(_nineElements, 3, 3);
 
-            double determinant = matrix.GetDeterminant();
-            matrix.GetDeterminant().Should().Be(0);
+            matrix.GetDeterminant().Should().BeApproximately(0, 1e-12);
         }
 
         [Fact]
@@ -113,7 +112,7 @@ namespace Sas.Mathematica.Tests
         {
             Matrix matrix = new Matrix(_threeElements, 1, 3);
 
-            Assert.Throws<Exception>(() => matrix.GetDeterminant());
+            Assert.Throws<InvalidOperationException>(() => matrix.GetDeterminant());
         }
 
         [Fact]
@@ -148,7 +147,7 @@ namespace Sas.Mathematica.Tests
         {
             Matrix matrix = new Matrix(_sixElements, 2, 3);
 
-            Assert.Throws<Exception>(() => matrix.GetDimension());
+            Assert.Throws<InvalidOperationException>(() => matrix.GetDimension());
         }
 
         [Theory]
@@ -178,7 +177,7 @@ namespace Sas.Mathematica.Tests
             Matrix invert = matrix.Invert();
             for (int i = 0; i < rows * cols; i++)
             {
-                invert[i].Should().Be(inverseElements[i]);
+                invert[i].Should().BeApproximately(inverseElements[i], 1e-12);
             }
         }
 

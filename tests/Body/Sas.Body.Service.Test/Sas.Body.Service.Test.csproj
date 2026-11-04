@@ -19,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Services\Body\Sas.Body.Service.csproj" />
+    <ProjectReference Include="..\..\..\src\Services\Body\Body.Business\Sas.Body.Business.csproj" />
+    <ProjectReference Include="..\..\..\src\Services\Body\Body.Service\Sas.Body.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

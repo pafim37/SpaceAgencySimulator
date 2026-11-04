@@ -1,4 +1,4 @@
-﻿using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
+using Sas.Body.Business.Models.Domain.Orbits.OrbitDescriptions;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 
@@ -32,8 +32,8 @@ namespace Sas.Body.Service.Test
         [Fact]
         public void OrbitReturnsOrbitalElements()
         {
-            Vector position = new Vector(5000, 10000, 2100);
-            Vector velocity = new Vector(-5.922, 1.926, 3.246);
+            Vector position = new(5000, 10000, 2100);
+            Vector velocity = new(-5.922, 1.926, 3.246);
             double u = 398600;
 
             OrbitDescription orbit = OrbitDescriptionFactory.GetOrbitDescription(position, velocity, u);

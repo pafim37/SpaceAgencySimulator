@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.9.12105.275 stable
@@ -23,13 +23,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{94C89791
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Mathematica.Tests", "..\tests\Mathematica\Sas.Mathematica.Tests.csproj", "{3310A228-E137-4574-8490-32DB90E48BAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Body.Service", "Services\Body\Sas.Body.Service.csproj", "{02820BC2-7D44-46CB-A67B-BE64E0B6C7CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Body.Service", "Services\Body\Body.Service\Sas.Body.Service.csproj", "{02820BC2-7D44-46CB-A67B-BE64E0B6C7CE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Body.Service.Test", "..\tests\Body\Sas.Body.Service.Test\Sas.Body.Service.Test.csproj", "{8848EBCA-9F1A-452C-A5B2-CCD8652413B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notification", "Notification", "{54CDF753-9F5D-43AB-8EC5-6BA12C7F0FB6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Notification.Service", "Services\Notification\Sas.Notification.Service\Sas.Notification.Service.csproj", "{C2DD312C-9A58-4410-887A-B5D79B57AE97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Body.Core", "Services\Body\Body.Core\Sas.Body.Core.csproj", "{53F92F09-A067-4F2F-B3B9-B2F976DD328C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Body.Business", "Services\Body\Body.Business\Sas.Body.Business.csproj", "{902ECA50-C922-4379-8139-C6A8483C7101}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Body.Infrastructure", "Services\Body\Body.Infrastructure\Sas.Body.Infrastructure.csproj", "{1FDCE8DC-8C3C-4884-B5B0-96E0905BC0A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +75,18 @@ Global
 		{C2DD312C-9A58-4410-887A-B5D79B57AE97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2DD312C-9A58-4410-887A-B5D79B57AE97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2DD312C-9A58-4410-887A-B5D79B57AE97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53F92F09-A067-4F2F-B3B9-B2F976DD328C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53F92F09-A067-4F2F-B3B9-B2F976DD328C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53F92F09-A067-4F2F-B3B9-B2F976DD328C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53F92F09-A067-4F2F-B3B9-B2F976DD328C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{902ECA50-C922-4379-8139-C6A8483C7101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{902ECA50-C922-4379-8139-C6A8483C7101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{902ECA50-C922-4379-8139-C6A8483C7101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{902ECA50-C922-4379-8139-C6A8483C7101}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FDCE8DC-8C3C-4884-B5B0-96E0905BC0A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FDCE8DC-8C3C-4884-B5B0-96E0905BC0A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FDCE8DC-8C3C-4884-B5B0-96E0905BC0A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FDCE8DC-8C3C-4884-B5B0-96E0905BC0A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +103,9 @@ Global
 		{8848EBCA-9F1A-452C-A5B2-CCD8652413B6} = {94C89791-6CF4-4EE2-8C75-32A4D6D3FB89}
 		{54CDF753-9F5D-43AB-8EC5-6BA12C7F0FB6} = {C6B36E63-FFFD-44E7-9B96-8091363DB646}
 		{C2DD312C-9A58-4410-887A-B5D79B57AE97} = {54CDF753-9F5D-43AB-8EC5-6BA12C7F0FB6}
+		{53F92F09-A067-4F2F-B3B9-B2F976DD328C} = {5A6C825A-9DE4-479C-A142-89C92B35829B}
+		{902ECA50-C922-4379-8139-C6A8483C7101} = {5A6C825A-9DE4-479C-A142-89C92B35829B}
+		{1FDCE8DC-8C3C-4884-B5B0-96E0905BC0A2} = {5A6C825A-9DE4-479C-A142-89C92B35829B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {134514F9-9E28-4183-AB9F-4B8B84DAC997}

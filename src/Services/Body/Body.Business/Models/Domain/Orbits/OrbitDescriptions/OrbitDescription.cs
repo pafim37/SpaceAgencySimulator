@@ -1,0 +1,196 @@
+using Sas.Body.Business.Models.Domain.Orbits.Primitives;
+using Sas.Mathematica.Service;
+using Sas.Mathematica.Service.Vectors;
+
+namespace Sas.Body.Business.Models.Domain.Orbits.OrbitDescriptions
+{
+    public abstract class OrbitDescription : IOrbitDescription
+    {
+        #region fields
+        protected OrbitType _type; // orbit type
+        protected double _u;       // G(m1+m2)
+        protected double _a;       // semi-major axis
+        protected double _b;       // semi-minor axis
+        protected double _e;       // eccentricity
+        protected double _w;       // argument of periapsis
+        protected double _i;       // inclination
+        protected double _omega;   // ascending node
+        protected double _trueAnomaly;     // true anomaly
+        protected double _ae;      // eccentric anomaly
+        protected double _m;       // mass 
+        protected double _period;  // period
+        protected double _radius;  // radius
+        protected double _n;       // fist node
+        protected Vector _eVector; // eccentricity Vector
+        protected double _meanMotion;
+        #endregion
+
+        #region properties
+        /// <summary>
+        /// Type of the orbit
+        /// </summary>
+        public OrbitType OrbitType => _type;
+
+        /// <summary>
+        /// Semi major axis
+        /// </summary>
+        public double? SemiMajorAxis => GetSemiMajorAxis();
+
+        /// <summary>
+        /// Semi minor axis
+        /// </summary>
+        public double? SemiMinorAxis => GetSemiMinorAxis();
+
+        /// <summary>
+        /// Eccentricity
+        /// </summary>
+        public double Eccentricity => _e;
+
+        /// <summary>
+        /// Argument of periapsis
+        /// </summary>
+        public double ArgumentOfPeriapsis => _w;
+
+        /// <summary>
+        /// Inclination
+        /// </summary>
+        public double Inclination => _i;
+
+        /// <summary>
+        /// Ascending node
+        /// </summary>
+        public double AscendingNode => _omega;
+
+        /// <summary>
+        /// True anomaly
+        /// </summary>
+        public double TrueAnomaly => _trueAnomaly;
+
+        /// <summary>
+        /// Eccentric Anomaly - angle that define position of the body at auxiliary circle 
+        /// </summary>
+        public double EccentricAnomaly => _ae;
+
+        /// <summary>
+        /// Vector of eccentric Anomaly
+        /// </summary>
+        public Vector EccentricityVector => _eVector;
+
+        /// <summary>
+        /// Mean anomaly
+        /// </summary>
+        public double MeanAnomaly => _m;
+
+        /// <summary>
+        /// Period - time for full circulation around focus point. 
+        /// Returns NaN when parabolic or hyperbolic orbit. 
+        /// </summary>
+        public double? Period => GetPeriod();
+
+        /// <summary>
+        /// Radius of the circular orbit 
+        /// </summary>
+        public double? Radius => GetRadius();
+
+        /// <summary>
+        /// Standard gravitational parameter G(m1+m2)
+        /// </summary>
+        public double GravitationalParameter => _u;
+
+        /// <summary>
+        /// Gets the value of the first node.
+        /// </summary>
+        public double FirstNode => _n;
+
+        /// <summary>
+        /// Mean Motion
+        /// </summary>
+        public double MeanMotion => _meanMotion;
+        #endregion
+
+        #region constructors
+        /// <summary>
+        /// Create Orbit from position and velocity
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="velocity"></param>
+        /// <param name="u">Standard gravitational parameter: G(m1+m2)</param>
+        public OrbitDescription(Vector position, Vector velocity, double u)
+        {
+            double r = position.Magnitude;
+            double v = velocity.Magnitude;
+            double a = 1 / (2 / r - v * v / u);
+            Vector hVector = Vector.CrossProduct(position, velocity);
+            double h = hVector.Magnitude;
+            Vector nVector = new(-hVector.Y, hVector.X, 0); //first node vector n
+            double n = nVector.Magnitude;
+            Vector eVector = 1 / u * Vector.CrossProduct(velocity, hVector) - 1 / r * position;
+            double e = eVector.Magnitude;
+            double b = a * Math.Sqrt(1 - e * e);
+            double trueAnomaly = GetTrueAnomaly(position, velocity, eVector, e);
+            double ae = GetEccentricAnomaly(e, trueAnomaly);
+            double m = GetMeanAnomaly(e, ae);
+            _a = a;
+            _b = b;
+            _eVector = eVector;
+            _e = eVector.Magnitude; // or Math.Sqrt(1 + v * v * h * h / (u * u) - 2 * (h * h / (u * r)));
+            _i = GetInclination(hVector, h);
+            _omega = GetAscendingNode(nVector, n);
+            _w = GetArgumentOfPeriapsis(eVector, e, nVector, n);
+            _trueAnomaly = trueAnomaly;
+            _ae = ae;
+            _m = m;
+            _meanMotion = Math.Sqrt(u / Math.Pow(a, 3));
+            _period = 2 * Constants.PI / _meanMotion;
+            _radius = r;
+            _u = u;
+            _n = n;
+        }
+        #endregion
+
+        #region protected abstracts
+        protected abstract double? GetRadius();
+        protected abstract double? GetPeriod();
+        protected abstract double? GetSemiMajorAxis();
+        protected abstract double? GetSemiMinorAxis();
+        protected abstract double GetMeanAnomaly(double e, double ae);
+        protected abstract double GetEccentricAnomaly(double e, double phi);
+        #endregion
+
+        #region private methods
+        private static double GetTrueAnomaly(Vector position, Vector velocity, Vector eVector, double e)
+        {
+            double cosine = Vector.DotProduct(eVector, position) / (e * position.Magnitude);
+            return GetOrientedAngle(cosine, Vector.DotProduct(position, velocity));
+        }
+
+        private static double GetArgumentOfPeriapsis(Vector eVector, double e, Vector nVector, double n)
+        {
+            if (n == 0)
+            {
+                return Math.Atan2(eVector.Y, eVector.X);
+            }
+            double cosine = Vector.DotProduct(nVector, eVector) / (n * e);
+            return GetOrientedAngle(cosine, eVector.Z);
+        }
+
+        private static double GetInclination(Vector hVector, double h)
+        {
+            return h != 0 ?
+                Math.Acos(Math.Clamp(hVector.Z / h, -1.0, 1.0)) :
+                double.NaN;
+        }
+
+        private static double GetAscendingNode(Vector nVector, double n)
+        {
+            return n == 0 ? double.NaN : GetOrientedAngle(nVector.X / n, nVector.Y);
+        }
+
+        private static double GetOrientedAngle(double cosine, double orientation)
+        {
+            double angle = Math.Acos(Math.Clamp(cosine, -1.0, 1.0));
+            return orientation >= 0 ? angle : 2 * Math.PI - angle;
+        }
+        #endregion
+    }
+}

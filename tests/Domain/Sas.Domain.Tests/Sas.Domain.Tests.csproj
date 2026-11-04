@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Sas.Domain\Sas.Domain.csproj" />
-    <ProjectReference Include="..\..\..\src\Services\Body\Sas.Body.Service.csproj" />
   </ItemGroup>
 
 </Project>

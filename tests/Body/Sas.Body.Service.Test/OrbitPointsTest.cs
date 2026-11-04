@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Moq;
-using Sas.Body.Service.Models.Domain.Orbits;
-using Sas.Body.Service.Models.Domain.Orbits.OrbitDescriptions;
-using Sas.Body.Service.Models.Domain.Orbits.Points;
+using Sas.Body.Business.Models.Domain.Orbits;
+using Sas.Body.Business.Models.Domain.Orbits.OrbitDescriptions;
+using Sas.Body.Business.Models.Domain.Orbits.Points;
 
 namespace Sas.Body.Service.Test;
 

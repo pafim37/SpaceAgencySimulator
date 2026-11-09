@@ -1,7 +1,6 @@
 using Sas.Body.Business.Extensions.BodyExtensions;
 using Sas.Body.Business.Models.Domain.Bodies;
 using Sas.Mathematica.Service.Vectors;
-using Xunit;
 
 namespace Sas.Body.Service.Test
 {

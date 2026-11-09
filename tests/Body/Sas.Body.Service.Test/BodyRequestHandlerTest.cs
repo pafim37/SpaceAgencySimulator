@@ -33,7 +33,7 @@ public class BodyRequestHandlerTest
         services.AddSingleton(notifications.Object);
         services.AddSingleton(mapper);
         services.AddMemoryCache();
-        services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(typeof(BodyRequestHandler).Assembly));
+        services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(typeof(GetBodiesHandler).Assembly));
         using var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
 
         var bodies = await provider.GetRequiredService<IMediator>().Send(new GetBodies(), cancellation.Token);
@@ -54,7 +54,7 @@ public class BodyRequestHandlerTest
             .Callback(() => repository.Verify(r => r.CreateBodyAsync(original, cancellation.Token), Times.Once))
             .Returns(Task.CompletedTask);
 
-        BodyEntity? clone = await Handler().Handle(new CloneBody("Earth", "sender"), cancellation.Token);
+        BodyEntity? clone = await new CloneBodyHandler(repository.Object, notifications.Object).Handle(new CloneBody("Earth", "sender"), cancellation.Token);
 
         Assert.NotNull(clone);
         Assert.Equal("EarthCopy", clone.Name);
@@ -69,7 +69,7 @@ public class BodyRequestHandlerTest
     {
         repository.Setup(r => r.GetBodyByNameAsync("Earth", It.IsAny<CancellationToken>())).ReturnsAsync(Body("Earth"));
 
-        await Assert.ThrowsAsync<BodyAlreadyExistsException>(() => Handler().Handle(
+        await Assert.ThrowsAsync<BodyAlreadyExistsException>(() => new CreateBodyHandler(repository.Object, notifications.Object, mapper).Handle(
             new CreateBody(new NewBodyDto { Name = "Earth" }, null), CancellationToken.None));
 
         repository.Verify(r => r.CreateBodyAsync(It.IsAny<BodyEntity>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -83,7 +83,7 @@ public class BodyRequestHandlerTest
         repository.Setup(r => r.CreateRangeBodyAsync(It.IsAny<List<BodyEntity>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((List<BodyEntity> bodies, CancellationToken _) => bodies);
 
-        var bodies = await Handler().Handle(new CreateDefaultBodies(["Sun", "Earth", "Earth", "Unknown"], "sender"), CancellationToken.None);
+        var bodies = await new CreateDefaultBodiesHandler(repository.Object, notifications.Object, mapper).Handle(new CreateDefaultBodies(["Sun", "Earth", "Earth", "Unknown"], "sender"), CancellationToken.None);
 
         Assert.Equal("Earth", Assert.Single(bodies).Name);
         notifications.Verify(n => n.SendBodyDatabaseChangedNotification("sender", CancellationToken.None), Times.Once);
@@ -95,7 +95,7 @@ public class BodyRequestHandlerTest
         repository.Setup(r => r.CreateBodyAsync(It.IsAny<BodyEntity>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Save failed"));
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => Handler().Handle(
+        await Assert.ThrowsAsync<InvalidOperationException>(() => new CreateBodyHandler(repository.Object, notifications.Object, mapper).Handle(
             new CreateBody(new NewBodyDto { Name = "Earth" }, null), CancellationToken.None));
 
         notifications.Verify(n => n.SendBodyDatabaseChangedNotification(It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -104,14 +104,13 @@ public class BodyRequestHandlerTest
     [Fact]
     public async Task MissingBodyCannotBeUpdated()
     {
-        await Assert.ThrowsAsync<NoBodyInDatabaseException>(() => Handler().Handle(
+        await Assert.ThrowsAsync<NoBodyInDatabaseException>(() => new UpdateBodyHandler(repository.Object, notifications.Object, mapper).Handle(
             new UpdateBody(new BodyDto { Id = 42, Name = "Earth" }, null), CancellationToken.None));
 
         repository.Verify(r => r.UpdateBodyAsync(It.IsAny<BodyEntity>(), It.IsAny<CancellationToken>()), Times.Never);
         notifications.Verify(n => n.SendBodyDatabaseChangedNotification(It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
-    private BodyRequestHandler Handler() => new(repository.Object, notifications.Object, mapper);
 
     private static BodyEntity Body(string name) => new()
     {

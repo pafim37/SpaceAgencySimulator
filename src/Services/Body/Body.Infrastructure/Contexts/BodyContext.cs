@@ -14,7 +14,7 @@ namespace Sas.Body.Infrastructure.Contexts
                 .HasOne(b => b.Position)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
             modelBuilder.Entity<BodyEntity>()
                 .HasOne(b => b.Velocity)
                 .WithOne()

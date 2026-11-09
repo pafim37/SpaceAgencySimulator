@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -27,4 +27,4 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-</Project>
+<ItemGroup><ProjectReference Include="../../../src/Services/BodySystem/Sas.BodySystem.Service/Sas.BodySystem.Service.csproj" /></ItemGroup></Project>

@@ -279,7 +279,7 @@ namespace Sas.Mathematica.Tests
         [Fact]
         public void VectorSetElementByIndexThrowsExceptionWhenIndexOutOfRange()
         {
-            Action comparison = () => 
+            Action comparison = () =>
             {
                 Vector vector = Vector.Ones;
                 vector[4] = 2;

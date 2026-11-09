@@ -22,7 +22,7 @@ namespace Sas.Body.Infrastructure.Contexts
                 Y = 0,
                 Z = 0,
             };
-            
+
             BodyEntity sunBody = new()
             {
                 Id = 1,

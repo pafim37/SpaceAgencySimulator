@@ -9,7 +9,9 @@ public sealed class BodyExceptionFilter : IExceptionFilter
     public void OnException(ExceptionContext context)
     {
         if (context.Exception is OperationCanceledException && context.HttpContext.RequestAborted.IsCancellationRequested)
+        {
             return;
+        }
 
         string? action = context.RouteData.Values["action"]?.ToString();
         context.Result = context.Exception switch

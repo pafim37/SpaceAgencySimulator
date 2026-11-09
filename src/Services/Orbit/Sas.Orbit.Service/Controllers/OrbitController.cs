@@ -1,10 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Sas.Orbit.Service.Exceptions;
+using Sas.Orbit.Service.Models;
 using Sas.Orbit.Service.Models.DataTransferObject;
 using Sas.Orbit.Service.Models.Requests;
-using Sas.Orbit.Service.Orbits;
-using Sas.Orbit.Service.Orbits.OrbitalElements;
 
 namespace Sas.Orbit.Service.Controllers
 {
@@ -39,8 +38,7 @@ namespace Sas.Orbit.Service.Controllers
             string orbitName = !string.IsNullOrEmpty(twoBodyState.Name) ? twoBodyState.Name : new Guid().ToString();
             try
             {
-                OrbitElements orbitElements = await mediator.Send(new GetOrbitRequest(twoBodyState.Position, twoBodyState.Velocity, twoBodyState.GravitationalParameter));
-                return Ok(new PositionedOrbit(orbitName, twoBodyState.GravitationalSourcePosition, orbitElements));
+                return Ok(await mediator.Send(new GetPositionedOrbitRequest(orbitName, twoBodyState.Position, twoBodyState.Velocity, twoBodyState.GravitationalSourcePosition, twoBodyState.GravitationalParameter)).ConfigureAwait(false));
             }
             catch (UnknownOrbitTypeException)
             {

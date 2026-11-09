@@ -1,7 +1,6 @@
 using FluentAssertions;
-using Sas.Body.Business.Models.Domain.Bodies;
-using Sas.Body.Business.Models.Domain.BodySystems;
 using Sas.Mathematica.Service.Vectors;
+using BodySystemsModel = Sas.BodySystem.Service.BodySystems.BodySystem;
 
 namespace Sas.Body.Service.Test
 {
@@ -11,17 +10,17 @@ namespace Sas.Body.Service.Test
         public void BodySystemReturnsBarycentrum()
         {
             // Arrange
-            BodyDomain body1 = new("B1", 10, new Vector(50), new Vector(0, 1));
-            BodyDomain body2 = new("B2", 10, new Vector(0), new Vector(0, -1));
+            BodySystem.Service.Models.Domain.Bodies.Body body1 = new("B1", 10, new Vector(50), new Vector(0, 1));
+            BodySystem.Service.Models.Domain.Bodies.Body body2 = new("B2", 10, new Vector(0), new Vector(0, -1));
 
-            List<BodyDomain> bodies = [body1, body2];
+            List<BodySystem.Service.Models.Domain.Bodies.Body> bodies = [body1, body2];
 
             // Act
-            BodySystem bodySystem = new(bodies);
+            BodySystemsModel bodySystem = new(null!, bodies); // TODO: Mock mediatR
             bodySystem.UpdateBodySystem();
 
             // Assert
-            BodyDomain? barycentrum = bodySystem.Barycentrum;
+            BodySystem.Service.Models.Domain.Bodies.Body? barycentrum = bodySystem.Barycentrum;
             barycentrum.Should().NotBeNull();
             barycentrum!.Name.Should().Be("Barycentrum");
             barycentrum.Mass.Should().Be(20);
@@ -35,17 +34,17 @@ namespace Sas.Body.Service.Test
         [Fact]
         public void BodySystemReturnsBarycentrumAsNullWhenNoBodies()
         {
-            BodySystem bodySystem = new([]);
+            BodySystemsModel bodySystem = new(null!, []);  // TODO: Mock mediatR
             bodySystem.Barycentrum.Should().BeNull();
         }
 
         [Fact]
         public void BodySystemReturnsBarycentrumAsBodyWhenOneBody()
         {
-            BodyDomain body1 = new("B1", 10, Vector.Ones, Vector.Ones);
-            BodySystem bodySystem = new([body1]);
+            BodySystem.Service.Models.Domain.Bodies.Body body1 = new("B1", 10, Vector.Ones, Vector.Ones);
+            BodySystemsModel bodySystem = new(null!, [body1]); // TODO: Mock mediatR
             bodySystem.UpdateBodySystem();
-            BodyDomain? barycentrum = bodySystem.Barycentrum;
+            BodySystem.Service.Models.Domain.Bodies.Body? barycentrum = bodySystem.Barycentrum;
             barycentrum.Should().NotBeNull();
             barycentrum!.Name.Should().Be("Barycentrum");
             barycentrum.Mass.Should().Be(body1.Mass);
@@ -56,11 +55,11 @@ namespace Sas.Body.Service.Test
         [Fact]
         public void CalibrateBodyForBarycentrum()
         {
-            BodyDomain body1 = new("B1", 10, Vector.Ones, Vector.Ones);
-            BodySystem bodySystem = new([body1]);
+            BodySystem.Service.Models.Domain.Bodies.Body body1 = new("B1", 10, Vector.Ones, Vector.Ones);
+            BodySystemsModel bodySystem = new(null!, [body1]); // TODO: Mock mediatR
             bodySystem.UpdateBodySystem();
             bodySystem.CalibrateBarycenterToZero();
-            BodyDomain? barycenter = bodySystem.Barycentrum;
+            BodySystem.Service.Models.Domain.Bodies.Body? barycenter = bodySystem.Barycentrum;
             body1.Position.Should().Be(Vector.Zero);
             body1.Velocity.Should().Be(Vector.Zero);
             barycenter.Should().NotBeNull();
@@ -72,16 +71,16 @@ namespace Sas.Body.Service.Test
         public void CalibrateBodiesVelocityForBarycentrum()
         {
             // Arrange
-            BodyDomain body1 = new("B1", 100, new Vector(0), new Vector(0, 1));
-            BodyDomain body2 = new("B2", 1, new Vector(50), new Vector(0, 2));
-            BodySystem bodySystem = new([body1, body2]);
+            BodySystem.Service.Models.Domain.Bodies.Body body1 = new("B1", 100, new Vector(0), new Vector(0, 1));
+            BodySystem.Service.Models.Domain.Bodies.Body body2 = new("B2", 1, new Vector(50), new Vector(0, 2));
+            BodySystemsModel bodySystem = new(null!, [body1, body2]); // TODO: Mock mediatR
             bodySystem.UpdateBodySystem();
 
             // Act
             bodySystem.CalibrateBarycenterToZero();
 
             // Assert
-            BodyDomain? barycenter = bodySystem.Barycentrum;
+            BodySystem.Service.Models.Domain.Bodies.Body? barycenter = bodySystem.Barycentrum;
             body1.Velocity.Should().Be(Vector.Zero);
             body2.Velocity.Should().Be(new Vector(0, 1));
             barycenter!.Velocity.Should().Be(Vector.Zero);

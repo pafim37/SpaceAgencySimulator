@@ -30,16 +30,6 @@ namespace Sas.Body.Business.Models.Domain.Bodies
         /// </summary>
         public double Radius { get; set; }
 
-        /// <summary>
-        /// Name of the revolving body
-        /// </summary>
-        public string? ParentName { get; set; }
-
-        /// <summary>
-        /// Radius of the sphere of influence
-        /// </summary>
-        public double? SphereOfInfluenceRadius { get; set; }
-
         #endregion
 
         #region constructors
@@ -54,7 +44,7 @@ namespace Sas.Body.Business.Models.Domain.Bodies
         public BodyDomain(string name, double mass, Vector position, Vector velocity, double radius = 0)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(mass, nameof(mass));
-            ArgumentOutOfRangeException.ThrowIfNegative(mass, nameof(radius));
+            ArgumentOutOfRangeException.ThrowIfNegative(radius, nameof(radius));
 
             Name = name;
             Mass = mass;

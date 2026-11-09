@@ -19,7 +19,9 @@ namespace Sas.Mathematica.Service.Rotation
             ValidateVector(axis, nameof(axis));
             ValidateAngle(angle, nameof(angle));
             if (axis.X == 0 && axis.Y == 0 && axis.Z == 0)
+            {
                 throw new ArgumentException("The rotation axis must be nonzero.", nameof(axis));
+            }
 
             Vector unit = axis.GetNormalize();
             double cos = Math.Cos(angle);
@@ -65,12 +67,17 @@ namespace Sas.Mathematica.Service.Rotation
         {
             ArgumentNullException.ThrowIfNull(vector, parameterName);
             if (vector.Length != 3 || !double.IsFinite(vector.X) || !double.IsFinite(vector.Y) || !double.IsFinite(vector.Z))
+            {
                 throw new ArgumentException("Expected a three-dimensional vector with finite components.", parameterName);
+            }
         }
 
         private static void ValidateAngle(double angle, string parameterName)
         {
-            if (!double.IsFinite(angle)) throw new ArgumentOutOfRangeException(parameterName, "Angles must be finite radians.");
+            if (!double.IsFinite(angle))
+            {
+                throw new ArgumentOutOfRangeException(parameterName, "Angles must be finite radians.");
+            }
         }
     }
 }

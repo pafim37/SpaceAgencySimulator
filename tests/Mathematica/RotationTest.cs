@@ -20,7 +20,7 @@ namespace Sas.Mathematica.Tests
             };
             yield return new object[]
             {
-                
+
                 double.DegreesToRadians(180),
                 -Vector.Ox,
             };
@@ -260,7 +260,9 @@ namespace Sas.Mathematica.Tests
         private static void Assert(Vector expected, Vector result)
         {
             for (int i = 0; i < expected.Length; i++)
+            {
                 result[i].Should().BeApproximately(expected[i], 1e-12);
+            }
         }
     }
 }

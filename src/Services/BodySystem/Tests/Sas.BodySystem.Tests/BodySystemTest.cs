@@ -25,6 +25,37 @@ namespace Sas.BodySystem.Tests
         }
 
         [Fact]
+        public void BodySystem_ShouldReturnBodySystemWithCustomGravitationalConstant()
+        {
+            Process.Models.Domain.Bodies.Body body1 = new("B1", 10, Vector.Ones, Vector.Ones);
+            BodySystemModel bodySystem = new([body1], CreateOrbitFactory(), 1);
+            Assert.Equal(1, bodySystem.GravitationalConstant);
+        }
+
+        [Fact]
+        public void BodySystem_UpdateBodySystem_ShouldUpdateBodySystem()
+        {
+            // Arrange
+            Process.Models.Domain.Bodies.Body star = new("Sun", 100, Vector.Zero, Vector.Zero);
+            Process.Models.Domain.Bodies.Body planet = new("Earth", 1, Vector.Ox, Vector.Oy);
+            BodySystemModel bodySystem = new([star, planet], CreateOrbitFactory(), gravitationalConstant: 1);
+
+            // Act
+            bodySystem.UpdateBodySystem(CancellationToken.None);
+
+            // Assert
+            // Create barycenter
+            Assert.NotNull(bodySystem.Barycentrum);
+            // Perform hierarchy
+            Assert.Equal(null!, star.ParentName);
+            Assert.Equal("Sun", planet.ParentName);
+            // Calibrate barycenter to zero
+            Assert.Equal(Vector.Zero, bodySystem.Barycentrum.Position);
+            // Finds orbits
+            Assert.Single(bodySystem.Orbits);
+        }
+
+        [Fact]
         public void BodySystemReturnsBarycentrum()
         {
             // Arrange

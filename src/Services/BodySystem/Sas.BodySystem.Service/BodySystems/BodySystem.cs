@@ -42,6 +42,16 @@ namespace Sas.BodySystem.Process.BodySystems
 
         #region public methods
 
+        /// <summary>
+        /// Finds the barycenter, establishes the body hierarchy, and centers the system.
+        /// </summary>
+        public void UpdateBodySystem(CancellationToken cancellationToken)
+        {
+            barycenter = FindBarycenter();
+            EstablishHierarchy();
+            CalibrateBarycenterToZero();
+            FindOrbits(cancellationToken);
+        }
         public void FindOrbits(CancellationToken cancellationToken = default)
         {
             List<OrbitData> calculatedOrbits = [];
@@ -70,18 +80,6 @@ namespace Sas.BodySystem.Process.BodySystems
 
             orbits.Clear();
             orbits.AddRange(calculatedOrbits);
-        }
-
-        /// <summary>
-        /// Finds the barycenter, establishes the body hierarchy, and centers the system.
-        /// </summary>
-        public void UpdateBodySystem(CancellationToken cancellationToken)
-        {
-            // TODO: DO THIS method Task not void
-            barycenter = FindBarycenter();
-            EstablishHierarchy();
-            CalibrateBarycenterToZero();
-            FindOrbits(cancellationToken);
         }
 
         /// <summary>
@@ -130,36 +128,40 @@ namespace Sas.BodySystem.Process.BodySystems
         {
             if (barycenter != null)
             {
-                foreach (Body body in bodies)
+                bodies.ForEach(body =>
                 {
                     body.Position -= barycenter.Position;
                     body.Velocity -= barycenter.Velocity;
-                }
+                });
                 barycenter.Position = Vector.Zero;
                 barycenter.Velocity = Vector.Zero;
             }
         }
 
-        #endregion
-
-        #region private methods
-        private Body? FindBarycenter()
+        public Body? FindBarycenter()
         {
             if (bodies.Count > 1)
             {
-                double maxMass = bodies.Max(b => b.Mass);
-                IEnumerable<Body> mostMassiveBodies = bodies.Where(b => b.Mass == maxMass);
                 Vector position = Vector.Zero;
                 Vector velocity = Vector.Zero;
-                foreach (Body body in mostMassiveBodies)
-                {
-                    velocity += body.Velocity;
-                }
+                double maxMass = double.MinValue;
+                double totalMass = 0;
                 foreach (Body body in bodies)
                 {
                     position += body.Mass * body.Position;
+                    totalMass += body.Mass;
+
+                    if (body.Mass > maxMass)
+                    {
+                        maxMass = body.Mass;
+                        velocity = body.Velocity;
+                    }
+                    else if (body.Mass == maxMass)
+                    {
+                        velocity += body.Velocity;
+                    }
                 }
-                double totalMass = bodies.Sum(body => body.Mass);
+
                 position = 1 / totalMass * position;
                 return new Body(BarycentrumName, totalMass, position, velocity);
             }

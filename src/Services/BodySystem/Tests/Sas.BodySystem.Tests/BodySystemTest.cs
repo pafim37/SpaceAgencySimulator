@@ -135,6 +135,27 @@ namespace Sas.BodySystem.Tests
             Assert.Equal(body1.Velocity, barycentrum.Velocity);
         }
 
+        [Fact]
+        public Task BodySystem_EstablishHierarchy()
+        {
+            // Arrange
+            BodySystem.Process.Models.Domain.Bodies.Body star = new("Sun", 1000, Vector.Zero, Vector.Zero);
+            BodySystem.Process.Models.Domain.Bodies.Body planet = new("Earth", 10, 100 * Vector.Ox, Vector.Oy);
+            BodySystem.Process.Models.Domain.Bodies.Body sattelite = new("Probe", 0.01, 100 * Vector.Ox + Vector.Oy, -Vector.Ox);
+            BodySystemModel bodySystem = new([planet, sattelite, star], CreateOrbitFactory());
+
+            // Act
+            bodySystem.UpdateBodySystem(CancellationToken.None);
+
+            // Assert
+            Assert.Equal(null!, star.ParentName);
+            Assert.Equal("Sun", planet.ParentName);
+            Assert.Equal("Earth", sattelite.ParentName);
+            Assert.NotNull(planet.SphereOfInfluenceRadius);
+            Assert.NotNull(sattelite.SphereOfInfluenceRadius);
+            return Task.CompletedTask;
+        }
+
         private static IPositionedOrbitFactory CreateOrbitFactory()
         {
             Mock<IPositionedOrbit> orbit = new();

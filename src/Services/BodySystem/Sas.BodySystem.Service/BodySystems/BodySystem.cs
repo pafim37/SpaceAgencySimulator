@@ -1,21 +1,19 @@
-using MediatR;
-using Sas.BodySystem.Service.Extensions;
-using Sas.BodySystem.Service.Models.Domain.Orbits;
+using Sas.BodySystem.Process.Extensions;
+using Sas.BodySystem.Process.Models.Domain.Orbits;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
-using Sas.Orbit.Service.Models.Requests;
 using Sas.Orbit.Service.Orbits;
 
-namespace Sas.BodySystem.Service.BodySystems
+namespace Sas.BodySystem.Process.BodySystems
 {
-    using Body = Sas.BodySystem.Service.Models.Domain.Bodies.Body;
+    using Body = Sas.BodySystem.Process.Models.Domain.Bodies.Body;
 
-    public class BodySystem(IMediator mediator, IEnumerable<Body> bodies, double gravitationalConst = Constants.G)
+    public class BodySystem(IEnumerable<Body> bodies, IPositionedOrbitFactory orbitFactory,
+        double gravitationalConstant = Constants.G)
     {
         #region fields
         private readonly List<Body> bodies = [.. bodies];
-
-        public List<OrbitData> Orbits { get; } = [];
+        private readonly List<OrbitData> orbits = [];
         private const string BarycentrumName = "Barycentrum";
         private Body? barycenter;
         #endregion
@@ -24,7 +22,7 @@ namespace Sas.BodySystem.Service.BodySystems
         /// <summary>
         /// Gets gravitational constant.
         /// </summary>
-        public double G => gravitationalConst;
+        public double GravitationalConstant => gravitationalConstant;
 
         /// <summary>
         /// Gets center of mass of the system (Barycentrum).
@@ -36,18 +34,54 @@ namespace Sas.BodySystem.Service.BodySystems
         /// </summary>
         public List<Body> Bodies => bodies;
 
+        /// <summary>
+        /// Gets list of orbits
+        /// </summary>
+        public IReadOnlyList<OrbitData> Orbits => orbits;
         #endregion
 
         #region public methods
 
-        /// <summary>
-        /// It finds barycenter, establishes hierarchy between bodies and finds orbits. 
-        /// </summary>
-        public void UpdateBodySystem()
+        public void FindOrbits(CancellationToken cancellationToken = default)
         {
+            List<OrbitData> calculatedOrbits = [];
+            foreach (Body body in bodies)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (body.ParentName is null)
+                {
+                    continue;
+                }
+
+                Body parent = bodies.Single(candidate => candidate.Name == body.ParentName);
+                double gravitationalParameter = GravitationalConstant * (parent.Mass + body.Mass);
+                IPositionedOrbit orbit = orbitFactory.Create(
+                    body.Name,
+                    body.GetPositionRelatedTo(parent),
+                    body.GetVelocityRelatedTo(parent),
+                    gravitationalSourcePosition: parent.Position,
+                    gravitationalParameter);
+                calculatedOrbits.Add(new OrbitData
+                {
+                    Name = orbit.Name,
+                    Points = [.. orbit.Points.Select(point => new OrbitPointData(point.X, point.Y, point.Z))]
+                });
+            }
+
+            orbits.Clear();
+            orbits.AddRange(calculatedOrbits);
+        }
+
+        /// <summary>
+        /// Finds the barycenter, establishes the body hierarchy, and centers the system.
+        /// </summary>
+        public void UpdateBodySystem(CancellationToken cancellationToken)
+        {
+            // TODO: DO THIS method Task not void
             barycenter = FindBarycenter();
             EstablishHierarchy();
             CalibrateBarycenterToZero();
+            FindOrbits(cancellationToken);
         }
 
         /// <summary>
@@ -86,42 +120,6 @@ namespace Sas.BodySystem.Service.BodySystems
                 }
                 body.ParentName = parentBody.Name;
                 body.SphereOfInfluenceRadius = body.GetSphereOfInfluenceRelatedTo(parentBody);
-            }
-        }
-
-        /// <summary>
-        /// Finds orbits of the bodies.
-        /// </summary>
-        public async Task FindOrbits()
-        {
-            foreach (Body body in bodies)
-            {
-                if (body.ParentName is null)
-                {
-                    continue;
-                }
-                Body? ParentBody = bodies.FirstOrDefault(b => b.Name == body.ParentName);
-                if (ParentBody is null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    double gravitationalParameter = G * (ParentBody.Mass + body.Mass);
-                    PositionedOrbit orbit = await mediator.Send(new GetPositionedOrbitRequest(body.Name, body.Position, body.Velocity, ParentBody.Position, gravitationalParameter));
-
-                    // TODO: Consider it
-                    Orbits.Add(new OrbitData
-                    {
-                        Name = body.Name,
-                        Points = [.. orbit.Points.Select(p => new OrbitPointData(p.X, p.Y, p.Z))],
-                    });
-                }
-                catch
-                {
-                    // TODO: Don't leave it empty. Consider logging or handling the exception appropriately.
-                }
             }
         }
 
@@ -174,6 +172,7 @@ namespace Sas.BodySystem.Service.BodySystems
                 return null;
             }
         }
+
         #endregion
     }
 }

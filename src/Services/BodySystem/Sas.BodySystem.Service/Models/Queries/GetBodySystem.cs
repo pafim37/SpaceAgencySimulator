@@ -1,5 +1,5 @@
 using MediatR;
 
-namespace Sas.BodySystem.Service.Models.Queries;
+namespace Sas.BodySystem.Process.Models.Queries;
 
-public sealed record GetBodySystem(double AtTime) : IRequest<BodySystems.BodySystem>;
+public sealed record GetBodySystem() : IRequest<BodySystems.BodySystem>;

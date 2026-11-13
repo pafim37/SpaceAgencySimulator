@@ -6,6 +6,7 @@ namespace Sas.Body.Service.Filters;
 
 public sealed class BodyExceptionFilter : IExceptionFilter
 {
+    // TODO: Check this out
     public void OnException(ExceptionContext context)
     {
         if (context.Exception is OperationCanceledException && context.HttpContext.RequestAborted.IsCancellationRequested)

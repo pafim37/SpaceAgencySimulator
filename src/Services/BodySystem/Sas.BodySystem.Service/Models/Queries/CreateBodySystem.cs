@@ -1,6 +1,7 @@
 using MediatR;
+using Sas.Mathematica.Service;
 
-namespace Sas.BodySystem.Service.Models.Queries
+namespace Sas.BodySystem.Process.Models.Queries
 {
-    public sealed record CreateBodySystem(bool SkipStaticPoints = false) : IRequest<BodySystems.BodySystem>;
+    public sealed record CreateBodySystem(double GravitationalConstant = Constants.G) : IRequest<BodySystems.BodySystem>;
 }

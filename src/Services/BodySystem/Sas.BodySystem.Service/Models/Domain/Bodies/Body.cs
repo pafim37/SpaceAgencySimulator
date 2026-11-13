@@ -1,6 +1,6 @@
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.BodySystem.Service.Models.Domain.Bodies
+namespace Sas.BodySystem.Process.Models.Domain.Bodies
 {
     public class Body
     {

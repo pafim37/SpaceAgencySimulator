@@ -6,7 +6,7 @@ namespace Sas.Body.Core.Repositories
     {
         public Task<IEnumerable<BodyEntity>> GetAllBodiesAsync(CancellationToken cancellationToken);
         public Task<IEnumerable<string>> GetAllBodiesNamesAsync(CancellationToken cancellationToken);
-        public Task<IEnumerable<BodyEntity>> GetAllEnabledBodiesAsync(CancellationToken cancellation);
+        public Task<IEnumerable<BodyEntity>> GetEnabledBodiesAsync(CancellationToken cancellation);
         public Task<BodyEntity?> GetBodyByNameAsync(string name, CancellationToken cancellationToken);
         public Task<BodyEntity?> GetBodyByNameAsNoTrackingAsync(string name, CancellationToken cancellationToken);
         public Task<BodyEntity?> GetBodyById(int id, CancellationToken cancellationToken);

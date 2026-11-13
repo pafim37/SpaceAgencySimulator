@@ -26,6 +26,11 @@ namespace Sas.Orbit.Service.Orbits
                 points = GetOrbitPointsFactory.GetPoints(OrbitElements);
             }
 
+            if (points.Count == 0)
+            {
+                return points;
+            }
+
             Vector center = CalculateOrbitCenter(gravitationalSourcePosition);
             int count = points.Count;
             List<Point> translatedPoints = new(count);

@@ -1,8 +1,8 @@
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.BodySystem.Service.Extensions
+namespace Sas.BodySystem.Process.Extensions
 {
-    using Body = Sas.BodySystem.Service.Models.Domain.Bodies.Body;
+    using Body = Models.Domain.Bodies.Body;
 
     public static class BodyExtension
     {

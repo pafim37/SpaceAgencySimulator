@@ -57,7 +57,7 @@ namespace Sas.Body.Infrastructure.Repositories
             return bodies.Select(b => b.Name);
         }
 
-        public async Task<IEnumerable<BodyEntity>> GetAllEnabledBodiesAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<BodyEntity>> GetEnabledBodiesAsync(CancellationToken cancellationToken)
         {
             return await context.Bodies.Where(body => body.Enabled).ToListAsync(cancellationToken).ConfigureAwait(false);
         }

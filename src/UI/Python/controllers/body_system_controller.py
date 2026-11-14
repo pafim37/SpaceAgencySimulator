@@ -1,5 +1,4 @@
 from ursina import *
-from scaler import Scaler
 from http_client import HttpClient
 from entities.player_entity import PlayerEntity
 from entities.body_entity import BodyEntity
@@ -13,7 +12,6 @@ class BodySystemController:
     def create_body_system_entities(self, transformSOI = False):
         self.__clear_body_system()
         bodies, orbits = self.__fetch_body_system_data()
-        Scaler.scale(bodies, orbits)
         self.orbits = orbits
         entity_bodies = self.transform_bodies_to_entities(bodies, transformSOI)
         self.transform_orbits_to_entities(orbits)
@@ -36,7 +34,6 @@ class BodySystemController:
 
     def update_body_positions(self):
         bodies, orbits = self.__fetch_body_system_data_at_time(self.dt)
-        Scaler.scale(bodies, orbits)
         
         # Update existing body entities
         for body, entity in zip(bodies, [e for e in scene.entities if isinstance(e, BodyEntity)]):
@@ -45,8 +42,6 @@ class BodySystemController:
         # Update existing orbit entities
         for orbit, entity in zip(orbits, [e for e in scene.entities if isinstance(e, OrbitEntity)]):
             entity.update_points(orbit.points)
-
-        self.dt += Scaler.dt 
 
     def __clear_body_system(self):
         for e in scene.entities[:]:

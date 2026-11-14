@@ -45,11 +45,12 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Finds the barycenter, establishes the body hierarchy, and centers the system.
         /// </summary>
-        public void UpdateBodySystem(CancellationToken cancellationToken)
+        public void UpdateBodySystem(float scale = 1000, CancellationToken cancellationToken = default)
         {
             barycenter = FindBarycenter();
             EstablishHierarchy();
             CalibrateBarycenterToZero();
+            ScaleBodySystem(scale: scale);
             FindOrbits(cancellationToken);
         }
         public void FindOrbits(CancellationToken cancellationToken = default)
@@ -172,6 +173,24 @@ namespace Sas.BodySystem.Process.BodySystems
             else
             {
                 return null;
+            }
+        }
+
+        public void ScaleBodySystem(float scale = 1000)
+        {
+            if (barycenter is null || scale == 0)
+            {
+                return;
+            }
+            double maxDistance = bodies.Max(body => body.GetPositionRelatedTo(barycenter).Magnitude);
+            if (maxDistance > 0)
+            {
+                double scaleFactor = scale / maxDistance;
+                bodies.ForEach(body =>
+                {
+                    body.Position *= scaleFactor;
+                    body.Velocity *= 1 / Math.Sqrt(scaleFactor);
+                });
             }
         }
 

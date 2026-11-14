@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Sas.BodySystem.Process.Filters;
+using Sas.BodySystem.Process.Models.DataTransferObject;
 using Sas.BodySystem.Process.Models.Queries;
 
 namespace Sas.BodySystem.Process.Controllers;
@@ -12,9 +13,9 @@ public class BodySystemController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
-        => Ok(await mediator.Send(new CreateBodySystem(), cancellationToken));
+        => Ok(await mediator.Send(new CreateBodySystemRequest(), cancellationToken));
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] double gravitationalConstant, CancellationToken cancellationToken)
-        => Ok(await mediator.Send(new CreateBodySystem(gravitationalConstant), cancellationToken));
+    public async Task<IActionResult> Create([FromBody] BodySystemConfigurationDTO config, CancellationToken cancellationToken)
+        => Ok(await mediator.Send(new CreateBodySystemRequest(config.Scale, config.GravitationalConstant), cancellationToken));
 }

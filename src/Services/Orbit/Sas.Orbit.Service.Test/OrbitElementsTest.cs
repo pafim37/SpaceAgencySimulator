@@ -33,17 +33,17 @@ namespace Sas.Orbit.Service.Test
         public void OrbitReturnsOrbitalElements()
         {
             Vector position = new(5000, 10000, 2100);
-            Vector velocity = new(-5.922, 1.926, 3.246);
+            Vector velocity = new(-5.992, 1.926, 3.246);
             double u = 398600;
 
             OrbitElements orbit = OrbitElementsFactory.GetOrbitElements(position, velocity, u);
 
-            Assert.Equal(19198.3565, orbit.SemiMajorAxis!.Value, 4);
-            Assert.Equal(0.4095, orbit.Eccentricity, 4);
-            Assert.Equal(0.5302, orbit.Inclination, 4);
-            Assert.Equal(0.7810, orbit.AscendingNode, 4);
-            Assert.Equal(0.5261, orbit.ArgumentOfPeriapsis, 4);
-            Assert.Equal(6.1307, orbit.TrueAnomaly, 4);
+            Assert.Equal(20001.7925, orbit.SemiMajorAxis!.Value, 4);
+            Assert.Equal(0.4334, orbit.Eccentricity, 4);
+            Assert.Equal(0.5270, orbit.Inclination, 4);
+            Assert.Equal(0.7784, orbit.AscendingNode, 4);
+            Assert.Equal(0.5355, orbit.ArgumentOfPeriapsis, 4);
+            Assert.Equal(6.1235, orbit.TrueAnomaly, 4);
         }
     }
 }

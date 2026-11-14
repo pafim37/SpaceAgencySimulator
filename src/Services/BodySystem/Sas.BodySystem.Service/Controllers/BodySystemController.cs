@@ -9,6 +9,10 @@ namespace Sas.BodySystem.Process.Controllers;
 public class BodySystemController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get([FromBody] double gravitationalConstant, CancellationToken cancellationToken)
+    public async Task<IActionResult> Get(CancellationToken cancellationToken)
+        => Ok(await mediator.Send(new CreateBodySystem(), cancellationToken));
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] double gravitationalConstant, CancellationToken cancellationToken)
         => Ok(await mediator.Send(new CreateBodySystem(gravitationalConstant), cancellationToken));
 }

@@ -21,7 +21,7 @@ public sealed class CreateBodySystemHandler(IMediator mediator, IPositionedOrbit
 
     private async Task<IEnumerable<Body>> GetEnabledBodies(CancellationToken cancellationToken)
     {
-        IEnumerable<BodyDto?> bodies = await mediator.Send(new GetEnabledBodyRequest(), cancellationToken);
+        IEnumerable<BodyDto> bodies = await mediator.Send(new GetEnabledBodiesRequest(), cancellationToken);
         IEnumerable<Body> enabledBodies = bodies.Where(b => b?.Enabled == true).Select(b => new Body(
             b?.Name ?? throw new InvalidOperationException("Body name is missing."),
             b?.Mass ?? throw new InvalidOperationException("Body mass is missing."),

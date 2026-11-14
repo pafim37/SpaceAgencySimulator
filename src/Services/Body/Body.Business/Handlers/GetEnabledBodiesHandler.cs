@@ -6,8 +6,6 @@ using Sas.Body.Core.Repositories;
 
 namespace Sas.Body.Business.Handlers
 {
-    // TODO: Consider renaming this handler to GetEnabledBodiesHandler for clarity.
-    // TODO: SHould it return null?
     public class GetEnabledBodiesHandler(IBodyRepository repository, IMapper mapper) : IRequestHandler<GetEnabledBodiesRequest, IEnumerable<BodyDto>>
     {
         public async Task<IEnumerable<BodyDto>> Handle(GetEnabledBodiesRequest request, CancellationToken cancellationToken)

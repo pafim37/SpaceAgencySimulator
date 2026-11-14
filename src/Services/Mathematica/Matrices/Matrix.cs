@@ -1,6 +1,6 @@
-using System.Text;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
+using System.Text;
 using SasVector = Sas.Mathematica.Service.Vectors.Vector;
 
 namespace Sas.Mathematica.Service.Matrices
@@ -20,7 +20,10 @@ namespace Sas.Mathematica.Service.Matrices
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfRows);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColumns);
             if ((long)numberOfRows * numberOfColumns != elements.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(elements), "Element count must equal rows times columns.");
+            }
+
             _values = DenseMatrix.Create(numberOfRows, numberOfColumns,
                 (row, col) => elements[row * numberOfColumns + col]);
         }
@@ -39,7 +42,11 @@ namespace Sas.Mathematica.Service.Matrices
         /// <exception cref="InvalidOperationException">The matrix is not square.</exception>
         public int GetDimension()
         {
-            if (RowsNumber != ColumnsNumber) throw new InvalidOperationException("The matrix must be square.");
+            if (RowsNumber != ColumnsNumber)
+            {
+                throw new InvalidOperationException("The matrix must be square.");
+            }
+
             return RowsNumber;
         }
 
@@ -47,7 +54,11 @@ namespace Sas.Mathematica.Service.Matrices
         /// <exception cref="IndexOutOfRangeException">The column is outside 1..ColumnsNumber.</exception>
         public double[] GetColumn(int col)
         {
-            if (col < 1 || col > ColumnsNumber) throw new IndexOutOfRangeException(nameof(col));
+            if (col < 1 || col > ColumnsNumber)
+            {
+                throw new IndexOutOfRangeException(nameof(col));
+            }
+
             return _values.Column(col - 1).ToArray();
         }
 
@@ -95,13 +106,24 @@ namespace Sas.Mathematica.Service.Matrices
             var factor = _values.LU();
             Matrix<double> upper = factor.U;
             if (upper.Enumerate().Any(value => !double.IsFinite(value)))
+            {
                 throw new InvalidOperationException("LU cannot be represented with finite components.");
+            }
             // Testing the determinant would incorrectly reject small invertible matrices when it underflows.
             for (int i = 0; i < RowsNumber; i++)
-                if (upper[i, i] == 0) throw new InvalidOperationException("The matrix is singular.");
+            {
+                if (upper[i, i] == 0)
+                {
+                    throw new InvalidOperationException("The matrix is singular.");
+                }
+            }
+
             Matrix<double> inverse = factor.Inverse();
             if (inverse.Enumerate().Any(value => !double.IsFinite(value)))
+            {
                 throw new InvalidOperationException("The inverse cannot be represented with finite components.");
+            }
+
             _values = inverse;
             return this;
         }
@@ -116,7 +138,10 @@ namespace Sas.Mathematica.Service.Matrices
             ArgumentNullException.ThrowIfNull(matrix);
             ArgumentNullException.ThrowIfNull(vector);
             if (matrix.ColumnsNumber != vector.Length)
+            {
                 throw new ArgumentException("Vector length must match the matrix columns.", nameof(vector));
+            }
+
             Vector<double> input = new DenseVector(vector.GetElements());
             return new SasVector((matrix._values * input).ToArray());
         }
@@ -131,7 +156,10 @@ namespace Sas.Mathematica.Service.Matrices
         public static Matrix operator *(Matrix left, Matrix right)
         {
             if (left.ColumnsNumber != right.RowsNumber)
+            {
                 throw new InvalidOperationException("The inner matrix dimensions must match.");
+            }
+
             return new(left._values * right._values);
         }
 
@@ -142,7 +170,10 @@ namespace Sas.Mathematica.Service.Matrices
             for (int row = 0; row < RowsNumber; row++)
             {
                 for (int col = 0; col < ColumnsNumber; col++)
+                {
                     text.Append(_values[row, col]).Append(", ");
+                }
+
                 text.Append('\n');
             }
             return text.ToString();
@@ -159,25 +190,37 @@ namespace Sas.Mathematica.Service.Matrices
             HashCode hash = new();
             hash.Add(RowsNumber);
             hash.Add(ColumnsNumber);
-            foreach (double value in _values.Enumerate()) hash.Add(value);
+            foreach (double value in _values.Enumerate())
+            {
+                hash.Add(value);
+            }
+
             return hash.ToHashCode();
         }
 
         private void ValidateIndices(int row, int col)
         {
-            if (row < 1 || row > RowsNumber || col < 1 || col > ColumnsNumber) throw new IndexOutOfRangeException();
+            if (row < 1 || row > RowsNumber || col < 1 || col > ColumnsNumber)
+            {
+                throw new IndexOutOfRangeException();
+            }
         }
 
         private void ValidateLinearIndex(int i)
         {
-            if (i < 0 || i >= (long)RowsNumber * ColumnsNumber) throw new IndexOutOfRangeException();
+            if (i < 0 || i >= (long)RowsNumber * ColumnsNumber)
+            {
+                throw new IndexOutOfRangeException();
+            }
         }
 
         private void ValidateFactorizationInput()
         {
             GetDimension();
             if (_values.Enumerate().Any(value => !double.IsFinite(value)))
+            {
                 throw new InvalidOperationException("LU requires finite matrix components.");
+            }
         }
     }
 }

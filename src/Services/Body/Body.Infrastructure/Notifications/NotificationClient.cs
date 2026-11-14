@@ -58,7 +58,7 @@ namespace Sas.Body.Infrastructure.Notifications
                 {
                     await connection.InvokeAsync("SendBodyDatabaseChangedNotificationToAll", cancellationToken);
                 }
-                else 
+                else
                 {
                     await connection.InvokeAsync("SendBodyDatabaseChangedNotificationExcept", senderId, cancellationToken);
                 }

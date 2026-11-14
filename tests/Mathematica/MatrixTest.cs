@@ -152,7 +152,7 @@ namespace Sas.Mathematica.Tests
 
         [Theory]
         [InlineData(new double[] { 1 }, 1, 1, new double[] { 1 })]
-        [InlineData(new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 3, 3, new double[] { 1, 4, 7, 2, 5, 8, 3, 6, 9 } )]
+        [InlineData(new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 3, 3, new double[] { 1, 4, 7, 2, 5, 8, 3, 6, 9 })]
         [InlineData(new double[] { 1, 2, 3, 4, 5, 6 }, 2, 3, new double[] { 1, 4, 2, 5, 3, 6 })]
         [InlineData(new double[] { 1, 2, 3, 4, 5, 6 }, 3, 2, new double[] { 1, 3, 5, 2, 4, 6 })]
         public void TransposeReturnsTransposeMatrix(double[] elements, int rows, int cols, double[] trasposeElements)
@@ -169,7 +169,7 @@ namespace Sas.Mathematica.Tests
         }
 
         [Theory]
-        [InlineData(new double[] { 1, 1, 1, 0, 0, 1, 0, 1, 0 }, 3, 3, new double[] { 1, -1, -1, 0, 0, 1, 0, 1, 0 } )]
+        [InlineData(new double[] { 1, 1, 1, 0, 0, 1, 0, 1, 0 }, 3, 3, new double[] { 1, -1, -1, 0, 0, 1, 0, 1, 0 })]
         public void InvertMatrixReturnsInvertedMatrix(double[] elements, int rows, int cols, double[] inverseElements)
         {
             Matrix matrix = new(elements, rows, cols);
@@ -184,7 +184,7 @@ namespace Sas.Mathematica.Tests
         [Fact]
         public void MatrixGetElementByIndexThrowsExceptionWhenIndexOutOfRange()
         {
-            Matrix matrix = new Matrix([1], 1,1);
+            Matrix matrix = new Matrix([1], 1, 1);
             Action comparison = () => { double a = matrix[2]; };
             comparison.Should().Throw<IndexOutOfRangeException>();
         }

@@ -183,7 +183,11 @@ public class NumericalRegressionTest
         matrix.GetDeterminant().Should().BeApproximately(-2, 1e-14);
         double[] expected = [-1.5, 1, 0.5, 0];
         Matrix inverse = new Matrix(matrix.GetAllElements(), 2, 2).Invert();
-        for (int i = 0; i < expected.Length; i++) Close(inverse[i], expected[i]);
+        for (int i = 0; i < expected.Length; i++)
+        {
+            Close(inverse[i], expected[i]);
+        }
+
         Identity(matrix * inverse);
         matrix.GetAllElements().Should().Equal(0, 2, 1, 3);
     }
@@ -207,14 +211,23 @@ public class NumericalRegressionTest
         Random random = new(17);
         double[] elements = new double[size * size];
         for (int row = 0; row < size; row++)
+        {
             for (int col = 0; col < size; col++)
+            {
                 elements[row * size + col] = row == col ? size + 1 : random.NextDouble() - 0.5;
+            }
+        }
+
         Matrix matrix = new(elements, size, size);
         Matrix inverse = new Matrix(elements, size, size).Invert();
         Identity(matrix * inverse);
         Identity(inverse * matrix);
         Matrix identity = new Matrix(new double[size * size], size, size);
-        for (int i = 1; i <= size; i++) identity[i, i] = 1;
+        for (int i = 1; i <= size; i++)
+        {
+            identity[i, i] = 1;
+        }
+
         (matrix * identity).Should().Be(matrix);
         Matrix twiceTransposed = new Matrix(elements, size, size).Transpose().Transpose();
         twiceTransposed.Should().Be(matrix);
@@ -329,7 +342,11 @@ public class NumericalRegressionTest
         Vector input = new(2, 5, -3);
         Vector expected = Rotation.Rotate(Rotation.Rotate(Rotation.Rotate(input, Vector.Oz, periapsis), Vector.Ox, inclination), Vector.Oz, node);
         Vector actual = rotation * input;
-        for (int i = 0; i < 3; i++) Close(actual[i], expected[i]);
+        for (int i = 0; i < 3; i++)
+        {
+            Close(actual[i], expected[i]);
+        }
+
         Matrix transpose = new Matrix(rotation.GetAllElements(), 3, 3).Transpose();
         Identity(rotation * transpose);
         Identity(transpose * rotation);
@@ -339,8 +356,12 @@ public class NumericalRegressionTest
     private static void Identity(Matrix matrix)
     {
         for (int row = 1; row <= matrix.RowsNumber; row++)
+        {
             for (int col = 1; col <= matrix.ColumnsNumber; col++)
+            {
                 Close(matrix[row, col], row == col ? 1 : 0);
+            }
+        }
     }
 
     private static void Close(double actual, double expected) =>

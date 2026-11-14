@@ -58,7 +58,10 @@ namespace Sas.Mathematica.Service.Vectors
         {
             double[] result = new double[Math.Max(v1.Length, v2.Length)];
             for (int i = 0; i < result.Length; i++)
+            {
                 result[i] = v1.ComponentOrZero(i) + v2.ComponentOrZero(i);
+            }
+
             return new(result, copy: false);
         }
 
@@ -67,7 +70,10 @@ namespace Sas.Mathematica.Service.Vectors
         {
             double[] result = new double[Math.Max(v1.Length, v2.Length)];
             for (int i = 0; i < result.Length; i++)
+            {
                 result[i] = v1.ComponentOrZero(i) - v2.ComponentOrZero(i);
+            }
+
             return new(result, copy: false);
         }
 
@@ -77,7 +83,10 @@ namespace Sas.Mathematica.Service.Vectors
         {
             double[] result = new double[Math.Max(v1.Length, v2.Length)];
             for (int i = 0; i < result.Length; i++)
+            {
                 result[i] = (i < v1.Length ? v1[i] : 1) * (i < v2.Length ? v2[i] : 1);
+            }
+
             return new(result, copy: false);
         }
 
@@ -85,7 +94,11 @@ namespace Sas.Mathematica.Service.Vectors
         public static Vector operator *(Vector v1, double s)
         {
             double[] result = new double[v1.Length];
-            for (int i = 0; i < result.Length; i++) result[i] = v1[i] * s;
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = v1[i] * s;
+            }
+
             return new(result, copy: false);
         }
 
@@ -107,7 +120,10 @@ namespace Sas.Mathematica.Service.Vectors
         {
             double scale = ComponentScale();
             if (scale == 0 || !double.IsFinite(scale))
+            {
                 throw new InvalidOperationException("A unit vector requires finite components and a nonzero magnitude.");
+            }
+
             double sum = 0;
             for (int i = 0; i < Length; i++)
             {
@@ -116,7 +132,11 @@ namespace Sas.Mathematica.Service.Vectors
             }
             double norm = Math.Sqrt(sum);
             double[] result = new double[Length];
-            for (int i = 0; i < Length; i++) result[i] = (_elements[i] / scale) / norm;
+            for (int i = 0; i < Length; i++)
+            {
+                result[i] = (_elements[i] / scale) / norm;
+            }
+
             return new(result, copy: false);
         }
 
@@ -138,7 +158,11 @@ namespace Sas.Mathematica.Service.Vectors
         public static double DotProduct(Vector v1, Vector v2)
         {
             double result = 0;
-            for (int i = 0; i < Math.Min(v1.Length, v2.Length); i++) result += v1[i] * v2[i];
+            for (int i = 0; i < Math.Min(v1.Length, v2.Length); i++)
+            {
+                result += v1[i] * v2[i];
+            }
+
             return result;
         }
 
@@ -146,7 +170,11 @@ namespace Sas.Mathematica.Service.Vectors
         /// <exception cref="InvalidOperationException">An empty vector cannot form a matrix.</exception>
         public Matrix AsMatrix()
         {
-            if (Length == 0) throw new InvalidOperationException("An empty vector cannot form a column matrix.");
+            if (Length == 0)
+            {
+                throw new InvalidOperationException("An empty vector cannot form a column matrix.");
+            }
+
             return new(_elements, Length, 1);
         }
 
@@ -158,7 +186,11 @@ namespace Sas.Mathematica.Service.Vectors
         public override int GetHashCode()
         {
             HashCode hash = new();
-            foreach (double element in _elements) hash.Add(element);
+            foreach (double element in _elements)
+            {
+                hash.Add(element);
+            }
+
             return hash.ToHashCode();
         }
 
@@ -167,14 +199,22 @@ namespace Sas.Mathematica.Service.Vectors
         private double ComponentScale()
         {
             double scale = 0;
-            foreach (double element in _elements) scale = Math.Max(scale, Math.Abs(element));
+            foreach (double element in _elements)
+            {
+                scale = Math.Max(scale, Math.Abs(element));
+            }
+
             return scale;
         }
 
         private double CalculateMagnitude()
         {
             double scale = ComponentScale();
-            if (scale == 0 || !double.IsFinite(scale)) return scale;
+            if (scale == 0 || !double.IsFinite(scale))
+            {
+                return scale;
+            }
+
             double sum = 0;
             foreach (double element in _elements)
             {
@@ -187,7 +227,10 @@ namespace Sas.Mathematica.Service.Vectors
         private static void RequireThreeDimensions(Vector vector, string parameterName)
         {
             ArgumentNullException.ThrowIfNull(vector, parameterName);
-            if (vector.Length != 3) throw new ArgumentException("A cross product requires three-dimensional vectors.", parameterName);
+            if (vector.Length != 3)
+            {
+                throw new ArgumentException("A cross product requires three-dimensional vectors.", parameterName);
+            }
         }
     }
 }

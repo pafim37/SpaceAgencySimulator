@@ -4,14 +4,14 @@ using Sas.Orbit.Service.Orbits.OrbitalElements;
 
 namespace Sas.Orbit.Service.Test
 {
-    public class OrbitTest
+    public class OrbitElementsTest
     {
         [Fact]
         public void OrbitReturnsOrbitalElementsForEarthInApoapsis()
         {
             // Arrange
-            Vector position = new Vector(Constants.EarthApoapsis, 0, 0);
-            Vector velocity = new Vector(0, Constants.EarthMinVelocity, 0);
+            Vector position = new(Constants.EarthApoapsis, 0, 0);
+            Vector velocity = new(0, Constants.EarthMinVelocity, 0);
             double u = Constants.G * (Constants.SolarMass + Constants.EarthMass);
 
             // Act

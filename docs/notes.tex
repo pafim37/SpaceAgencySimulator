@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+
+\begin{document}
+Notes based on the book Alessandro de Iaco Veris - Practical Astrodynamics
+\section{The Two-Body Problem}
+\subsection{Position of the problem}
+Gravitational Parameter
+\begin{equation}
+    \mu = G(M+m) \approx GM
+\end{equation}
+Differential equation of the motion
+\begin{equation}
+    \ddot{r} = -\frac{\mu}{r^3} \hat{r}
+\end{equation}
+Specific angular momentum
+\begin{equation}
+    h = r \times \dot{r} = r \times v = \text{const}
+\end{equation}
+Eccentricity vector
+\begin{equation}
+    e = \frac{\vec{v} \times \vec{h}}{\mu} - \frac{\vec{r}}{r}
+\end{equation}
+True anomaly
+\begin{equation}
+    \cos \theta = \frac{\vec{e}\cdot\vec{r}}{e\,r}
+\end{equation}
+\begin{table}[h]
+    \centering
+    \caption{Dependence of orbital type on eccentricity $e$}
+    \begin{tabular}{lll}
+        \hline
+        Orbital type & Eccentricity $e$ & Description           \\
+        \hline
+        Circular     & $e = 0$          & Constant radius orbit \\
+        Elliptic     & $0 < e < 1$      & Closed orbit          \\
+        Parabolic    & $e = 1$          & Escape boundary       \\
+        Hyperbolic   & $e > 1$          & Open escape orbit     \\
+        \hline
+    \end{tabular}
+\end{table}
+Orbital equation
+\begin{equation}
+    r = \frac{h^2/\mu}{1 + e\cos\theta} = \frac{p}{1 + e\cos\theta}
+\end{equation}
+Vis-viva equation - specific mechanical energy
+\begin{equation}
+    \epsilon = \frac{v^2}{2} - \frac{\mu}{r} = -\frac{\mu}{2a}
+\end{equation}
+\begin{table}[h]
+    \centering
+    \caption{Dependence of orbital type on specific mechanical energy $\epsilon$}
+    \begin{tabular}{lll}
+        \hline
+        Orbital type & Specific energy $\epsilon$ & Interpretation       \\
+        \hline
+        Circular     & $\epsilon < 0$             & Bound orbit          \\
+        Elliptic     & $\epsilon < 0$             & Bound closed orbit   \\
+        Parabolic    & $\epsilon = 0$             & Marginal escape      \\
+        Hyperbolic   & $\epsilon > 0$             & Unbound escape orbit \\
+        \hline
+    \end{tabular}
+\end{table}
+\begin{equation}
+    T = 2\pi \sqrt{\frac{a^3}{\mu}}
+\end{equation}
+
+\end{document}
+

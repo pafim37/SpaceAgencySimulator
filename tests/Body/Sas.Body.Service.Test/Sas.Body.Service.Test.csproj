@@ -26,5 +26,4 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
-
-<ItemGroup><ProjectReference Include="../../../src/Services/BodySystem/Sas.BodySystem.Service/Sas.BodySystem.Service.csproj" /></ItemGroup></Project>
+</Project>

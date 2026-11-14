@@ -45,7 +45,7 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Finds the barycenter, establishes the body hierarchy, and centers the system.
         /// </summary>
-        public void UpdateBodySystem(float scale, CancellationToken cancellationToken)
+        public void UpdateBodySystem(float scale = 1000, CancellationToken cancellationToken = default)
         {
             barycenter = FindBarycenter();
             EstablishHierarchy();
@@ -178,7 +178,7 @@ namespace Sas.BodySystem.Process.BodySystems
 
         public void ScaleBodySystem(float scale = 1000)
         {
-            if (barycenter is null)
+            if (barycenter is null || scale == 0)
             {
                 return;
             }

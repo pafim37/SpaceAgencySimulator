@@ -9,13 +9,14 @@ namespace Sas.BodySystem.Process.Handlers;
 
 using Body = Models.Domain.Bodies.Body;
 
-public sealed class CreateBodySystemHandler(IMediator mediator, IPositionedOrbitFactory orbitFactory) : IRequestHandler<CreateBodySystem, BodySystems.BodySystem>
+public sealed class CreateBodySystemHandler(IMediator mediator, IPositionedOrbitFactory orbitFactory) : IRequestHandler<CreateBodySystemRequest, BodySystems.BodySystem>
 {
-    public async Task<BodySystems.BodySystem> Handle(CreateBodySystem request, CancellationToken cancellationToken)
+
+    public async Task<BodySystems.BodySystem> Handle(CreateBodySystemRequest request, CancellationToken cancellationToken)
     {
         IEnumerable<Body> enabledBodies = await GetEnabledBodies(cancellationToken);
         BodySystems.BodySystem system = new(enabledBodies, orbitFactory, request.GravitationalConstant);
-        system.UpdateBodySystem(cancellationToken);
+        system.UpdateBodySystem(request.Scale, cancellationToken);
         return system;
     }
 

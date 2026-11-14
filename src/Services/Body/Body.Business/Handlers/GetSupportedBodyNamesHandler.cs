@@ -3,8 +3,8 @@ using Sas.Body.Business.Models.Queries;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class GetSupportedBodyNamesHandler : IRequestHandler<GetSupportedBodyNames, IReadOnlyList<string>>
+public sealed class GetSupportedBodyNamesHandler : IRequestHandler<GetSupportedBodyNamesRequest, IReadOnlyList<string>>
 {
-    public Task<IReadOnlyList<string>> Handle(GetSupportedBodyNames request, CancellationToken cancellationToken)
+    public Task<IReadOnlyList<string>> Handle(GetSupportedBodyNamesRequest request, CancellationToken cancellationToken)
         => Task.FromResult(SupportedBodyNames.All);
 }

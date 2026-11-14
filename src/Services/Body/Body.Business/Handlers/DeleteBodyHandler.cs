@@ -6,9 +6,9 @@ using Sas.Body.Core.Notifications;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class DeleteBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications) : IRequestHandler<DeleteBody, BodyEntity>
+public sealed class DeleteBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications) : IRequestHandler<DeleteBodyRequest, BodyEntity>
 {
-    public async Task<BodyEntity> Handle(DeleteBody request, CancellationToken cancellationToken)
+    public async Task<BodyEntity> Handle(DeleteBodyRequest request, CancellationToken cancellationToken)
     {
         BodyEntity deleted = await repository.DeleteBodyAsync(request.Name, cancellationToken);
         await notifications.SendBodyDatabaseChangedNotification(request.SenderId, cancellationToken);

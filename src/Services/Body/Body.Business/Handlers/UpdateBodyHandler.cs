@@ -9,9 +9,9 @@ using Sas.Body.Core.Notifications;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class UpdateBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications, IMapper mapper) : IRequestHandler<UpdateBody, BodyEntity>
+public sealed class UpdateBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications, IMapper mapper) : IRequestHandler<UpdateBodyRequest, BodyEntity>
 {
-    public async Task<BodyEntity> Handle(UpdateBody request, CancellationToken cancellationToken)
+    public async Task<BodyEntity> Handle(UpdateBodyRequest request, CancellationToken cancellationToken)
     {
         BodyDto update = request.Body;
         ArgumentException.ThrowIfNullOrWhiteSpace(update.Name);

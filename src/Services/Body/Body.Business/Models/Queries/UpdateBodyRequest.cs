@@ -4,4 +4,4 @@ using Sas.Body.Core.Models.Entities;
 
 namespace Sas.Body.Business.Models.Queries;
 
-public sealed record UpdateBody(BodyDto Body, string? SenderId) : IRequest<BodyEntity>;
+public sealed record UpdateBodyRequest(BodyDto Body, string? SenderId) : IRequest<BodyEntity>;

@@ -3,4 +3,4 @@ using Sas.Body.Core.DataTransferObject;
 
 namespace Sas.Body.Business.Models.Queries;
 
-public sealed record GetBodyByName(string Name) : IRequest<BodyDto?>;
+public sealed record GetBodiesRequest : IRequest<IEnumerable<BodyDto>>;

@@ -8,9 +8,9 @@ using Sas.Body.Core.Notifications;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class CreateDefaultBodiesHandler(IBodyRepository repository, IBodyNotificationClient notifications, IMapper mapper) : IRequestHandler<CreateDefaultBodies, List<BodyEntity>>
+public sealed class CreateDefaultBodiesHandler(IBodyRepository repository, IBodyNotificationClient notifications, IMapper mapper) : IRequestHandler<CreateDefaultBodiesRequest, List<BodyEntity>>
 {
-    public async Task<List<BodyEntity>> Handle(CreateDefaultBodies request, CancellationToken cancellationToken)
+    public async Task<List<BodyEntity>> Handle(CreateDefaultBodiesRequest request, CancellationToken cancellationToken)
     {
         IEnumerable<string> currentNames = await repository.GetAllBodiesNamesAsync(cancellationToken);
         List<string> names = [.. SupportedBodyNames.All.Intersect(request.Names.Except(currentNames))];

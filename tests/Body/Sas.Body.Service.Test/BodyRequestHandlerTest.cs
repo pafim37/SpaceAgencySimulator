@@ -24,10 +24,10 @@ public class BodyRequestHandlerTest
     [Fact]
     public async Task MediatorResolvesBusinessHandlersAndMapsBodies()
     {
-        using var cancellation = new CancellationTokenSource();
+        using CancellationTokenSource cancellation = new CancellationTokenSource();
         repository.Setup(r => r.GetAllBodiesAsync(cancellation.Token))
             .ReturnsAsync(new[] { Body("Earth") });
-        var services = new ServiceCollection();
+        ServiceCollection services = new ServiceCollection();
         services.AddLogging();
         services.AddSingleton(repository.Object);
         services.AddSingleton(notifications.Object);
@@ -36,7 +36,7 @@ public class BodyRequestHandlerTest
         services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(typeof(GetBodiesHandler).Assembly));
         using var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
 
-        var bodies = await provider.GetRequiredService<IMediator>().Send(new GetBodies(), cancellation.Token);
+        var bodies = await provider.GetRequiredService<IMediator>().Send(new GetBodiesRequest(), cancellation.Token);
 
         Assert.Equal("Earth", Assert.Single(bodies).Name);
         repository.Verify(r => r.GetAllBodiesAsync(cancellation.Token), Times.Once);
@@ -45,7 +45,7 @@ public class BodyRequestHandlerTest
     [Fact]
     public async Task CloneResetsIdsAndNotifiesAfterSaving()
     {
-        using var cancellation = new CancellationTokenSource();
+        using CancellationTokenSource cancellation = new CancellationTokenSource();
         BodyEntity original = Body("Earth");
         repository.Setup(r => r.GetBodyByNameAsNoTrackingAsync("Earth", cancellation.Token)).ReturnsAsync(original);
         repository.Setup(r => r.CreateBodyAsync(It.IsAny<BodyEntity>(), cancellation.Token))
@@ -54,7 +54,7 @@ public class BodyRequestHandlerTest
             .Callback(() => repository.Verify(r => r.CreateBodyAsync(original, cancellation.Token), Times.Once))
             .Returns(Task.CompletedTask);
 
-        BodyEntity? clone = await new CloneBodyHandler(repository.Object, notifications.Object).Handle(new CloneBody("Earth", "sender"), cancellation.Token);
+        BodyEntity? clone = await new CloneBodyHandler(repository.Object, notifications.Object).Handle(new CloneBodyRequest("Earth", "sender"), cancellation.Token);
 
         Assert.NotNull(clone);
         Assert.Equal("EarthCopy", clone.Name);
@@ -70,7 +70,7 @@ public class BodyRequestHandlerTest
         repository.Setup(r => r.GetBodyByNameAsync("Earth", It.IsAny<CancellationToken>())).ReturnsAsync(Body("Earth"));
 
         await Assert.ThrowsAsync<BodyAlreadyExistsException>(() => new CreateBodyHandler(repository.Object, notifications.Object, mapper).Handle(
-            new CreateBody(new NewBodyDto { Name = "Earth" }, null), CancellationToken.None));
+            new CreateBodyRequest(new NewBodyDto { Name = "Earth" }, null), CancellationToken.None));
 
         repository.Verify(r => r.CreateBodyAsync(It.IsAny<BodyEntity>(), It.IsAny<CancellationToken>()), Times.Never);
         notifications.Verify(n => n.SendBodyDatabaseChangedNotification(It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -83,7 +83,7 @@ public class BodyRequestHandlerTest
         repository.Setup(r => r.CreateRangeBodyAsync(It.IsAny<List<BodyEntity>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((List<BodyEntity> bodies, CancellationToken _) => bodies);
 
-        var bodies = await new CreateDefaultBodiesHandler(repository.Object, notifications.Object, mapper).Handle(new CreateDefaultBodies(["Sun", "Earth", "Earth", "Unknown"], "sender"), CancellationToken.None);
+        var bodies = await new CreateDefaultBodiesHandler(repository.Object, notifications.Object, mapper).Handle(new CreateDefaultBodiesRequest(["Sun", "Earth", "Earth", "Unknown"], "sender"), CancellationToken.None);
 
         Assert.Equal("Earth", Assert.Single(bodies).Name);
         notifications.Verify(n => n.SendBodyDatabaseChangedNotification("sender", CancellationToken.None), Times.Once);
@@ -96,7 +96,7 @@ public class BodyRequestHandlerTest
             .ThrowsAsync(new InvalidOperationException("Save failed"));
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => new CreateBodyHandler(repository.Object, notifications.Object, mapper).Handle(
-            new CreateBody(new NewBodyDto { Name = "Earth" }, null), CancellationToken.None));
+            new CreateBodyRequest(new NewBodyDto { Name = "Earth" }, null), CancellationToken.None));
 
         notifications.Verify(n => n.SendBodyDatabaseChangedNotification(It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -105,7 +105,7 @@ public class BodyRequestHandlerTest
     public async Task MissingBodyCannotBeUpdated()
     {
         await Assert.ThrowsAsync<NoBodyInDatabaseException>(() => new UpdateBodyHandler(repository.Object, notifications.Object, mapper).Handle(
-            new UpdateBody(new BodyDto { Id = 42, Name = "Earth" }, null), CancellationToken.None));
+            new UpdateBodyRequest(new BodyDto { Id = 42, Name = "Earth" }, null), CancellationToken.None));
 
         repository.Verify(r => r.UpdateBodyAsync(It.IsAny<BodyEntity>(), It.IsAny<CancellationToken>()), Times.Never);
         notifications.Verify(n => n.SendBodyDatabaseChangedNotification(It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.Never);

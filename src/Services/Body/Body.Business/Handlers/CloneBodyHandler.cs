@@ -7,9 +7,9 @@ using Sas.Body.Core.Notifications;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class CloneBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications) : IRequestHandler<CloneBody, BodyEntity?>
+public sealed class CloneBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications) : IRequestHandler<CloneBodyRequest, BodyEntity?>
 {
-    public async Task<BodyEntity?> Handle(CloneBody request, CancellationToken cancellationToken)
+    public async Task<BodyEntity?> Handle(CloneBodyRequest request, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(request.Name);
         BodyEntity? body = await repository.GetBodyByNameAsNoTrackingAsync(request.Name, cancellationToken);

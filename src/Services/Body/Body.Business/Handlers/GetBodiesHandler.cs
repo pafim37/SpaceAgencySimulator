@@ -6,8 +6,8 @@ using Sas.Body.Core.Repositories;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class GetBodiesHandler(IBodyRepository repository, IMapper mapper) : IRequestHandler<GetBodies, IEnumerable<BodyDto>>
+public sealed class GetBodiesHandler(IBodyRepository repository, IMapper mapper) : IRequestHandler<GetBodiesRequest, IEnumerable<BodyDto>>
 {
-    public async Task<IEnumerable<BodyDto>> Handle(GetBodies request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<BodyDto>> Handle(GetBodiesRequest request, CancellationToken cancellationToken)
         => mapper.Map<IEnumerable<BodyDto>>(await repository.GetAllBodiesAsync(cancellationToken));
 }

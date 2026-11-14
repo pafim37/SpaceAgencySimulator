@@ -8,9 +8,9 @@ using Sas.Body.Core.Notifications;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class CreateBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications, IMapper mapper) : IRequestHandler<CreateBody, BodyEntity>
+public sealed class CreateBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications, IMapper mapper) : IRequestHandler<CreateBodyRequest, BodyEntity>
 {
-    public async Task<BodyEntity> Handle(CreateBody request, CancellationToken cancellationToken)
+    public async Task<BodyEntity> Handle(CreateBodyRequest request, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(request.Body.Name);
         BodyEntity body = mapper.Map<BodyEntity>(request.Body);

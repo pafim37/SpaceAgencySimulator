@@ -7,9 +7,9 @@ using Sas.Body.Core.Notifications;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class ChangeBodyStateHandler(IBodyRepository repository, IBodyNotificationClient notifications) : IRequestHandler<ChangeBodyState, BodyEntity>
+public sealed class ChangeBodyStateHandler(IBodyRepository repository, IBodyNotificationClient notifications) : IRequestHandler<ChangeBodyStateRequest, BodyEntity>
 {
-    public async Task<BodyEntity> Handle(ChangeBodyState request, CancellationToken cancellationToken)
+    public async Task<BodyEntity> Handle(ChangeBodyStateRequest request, CancellationToken cancellationToken)
     {
         BodyEntity body = await repository.GetBodyByNameAsync(request.Name, cancellationToken)
             ?? throw new NoBodyInDatabaseException($"There is no body in database with name {request.Name}");

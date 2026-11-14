@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Sas.Orbit.Service.Exceptions;
+using Sas.Orbit.Service.Filters;
 using Sas.Orbit.Service.Models;
 using Sas.Orbit.Service.Models.DataTransferObject;
 using Sas.Orbit.Service.Models.Requests;
@@ -8,6 +8,7 @@ using Sas.Orbit.Service.Models.Requests;
 namespace Sas.Orbit.Service.Controllers
 {
     [ApiController]
+    [TypeFilter(typeof(OrbitExceptionFilter))]
     [Route("[controller]")]
     public class OrbitController(IMediator mediator) : ControllerBase
     {
@@ -18,14 +19,7 @@ namespace Sas.Orbit.Service.Controllers
             {
                 return BadRequest("Position and Velocity must be provided.");
             }
-            try
-            {
-                return Ok(await mediator.Send(new GetOrbitRequest(orbitalStateDto.Position, orbitalStateDto.Velocity, orbitalStateDto.GravitationalParameter)).ConfigureAwait(false));
-            }
-            catch (UnknownOrbitTypeException)
-            {
-                return BadRequest("Cannot predict orbit type. Unsupported value of eccentricity.");
-            }
+            return Ok(await mediator.Send(new GetOrbitRequest(orbitalStateDto.Position, orbitalStateDto.Velocity, orbitalStateDto.GravitationalParameter)).ConfigureAwait(false));
         }
 
         [HttpGet]
@@ -36,19 +30,7 @@ namespace Sas.Orbit.Service.Controllers
                 return BadRequest("Position, Velocity and Gravitational Source Position must be provided.");
             }
             string orbitName = !string.IsNullOrEmpty(twoBodyState.Name) ? twoBodyState.Name : new Guid().ToString();
-            try
-            {
-                return Ok(await mediator.Send(new GetPositionedOrbitRequest(orbitName, twoBodyState.Position, twoBodyState.Velocity, twoBodyState.GravitationalSourcePosition, twoBodyState.GravitationalParameter)).ConfigureAwait(false));
-            }
-            catch (UnknownOrbitTypeException)
-            {
-                return BadRequest("Cannot predict orbit type. Unsupported value of eccentricity.");
-            }
-            catch (InvalidOperationException)
-            {
-                // TODO: Change this Exception to custom
-                return BadRequest("Cannot predict center of the orbit");
-            }
+            return Ok(await mediator.Send(new GetPositionedOrbitRequest(orbitName, twoBodyState.Position, twoBodyState.Velocity, twoBodyState.GravitationalSourcePosition, twoBodyState.GravitationalParameter)).ConfigureAwait(false));
         }
     }
 }

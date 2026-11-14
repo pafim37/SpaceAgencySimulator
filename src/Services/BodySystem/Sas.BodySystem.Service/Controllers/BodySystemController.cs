@@ -1,10 +1,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sas.BodySystem.Process.Filters;
 using Sas.BodySystem.Process.Models.Queries;
 
 namespace Sas.BodySystem.Process.Controllers;
 
 [ApiController]
+[TypeFilter(typeof(BodySystemExceptionFilter))]
 [Route("body-system")]
 public class BodySystemController(IMediator mediator) : ControllerBase
 {

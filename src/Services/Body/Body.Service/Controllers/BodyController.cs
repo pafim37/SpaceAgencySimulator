@@ -1,11 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sas.Body.Service.Filters;
 using Sas.Body.Business.Models.Queries;
 using Sas.Body.Core.DataTransferObject;
 
 namespace Sas.Body.Service.Controllers;
 
 [ApiController]
+[TypeFilter(typeof(BodyExceptionFilter))]
 [Route("body")]
 public class BodyController(IMediator mediator) : ControllerBase
 {

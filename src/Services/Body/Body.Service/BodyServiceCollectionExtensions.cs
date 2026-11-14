@@ -9,7 +9,6 @@ using Sas.Body.Infrastructure.Contexts;
 using Sas.Body.Infrastructure.Notifications;
 using Sas.Body.Infrastructure.Repositories;
 using Sas.Body.Service.Controllers;
-using Sas.Body.Service.Filters;
 
 namespace Sas.Body.Service;
 
@@ -22,7 +21,7 @@ public static class BodyServiceCollectionExtensions
         services.AddAutoMapper(_ => { }, typeof(BodyMapper).Assembly);
         services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(GetBodiesHandler).Assembly));
         services.AddDbContext<BodyContext>(options => options.UseSqlServer(configuration["ConnectionStrings:Default"]));
-        services.AddControllers(options => options.Filters.Add<BodyExceptionFilter>())
+        services.AddControllers()
             .AddApplicationPart(typeof(BodyController).Assembly)
             .AddJsonOptions(options => options.JsonSerializerOptions.NumberHandling =
                 System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals);

@@ -5,13 +5,17 @@ namespace Sas.Body.Infrastructure.Notifications
 {
     public sealed class NotificationClient : IBodyNotificationClient, IAsyncDisposable
     {
-        private static readonly string url = "http://localhost:6443/notification";
         private readonly CancellationTokenSource cancellationTokenSource = new();
+        private readonly HubConnection connection;
 
-        private readonly HubConnection connection = new HubConnectionBuilder()
-                .WithUrl(url)
+        public NotificationClient(string? url = null)
+        {
+            // TODO: Make the URL configurable via appsettings.json or environment variables
+            connection = new HubConnectionBuilder()
+                .WithUrl(url ?? "http://localhost:3737/notification")
                 .WithAutomaticReconnect()
                 .Build();
+        }
 
         public void StartConnection()
         {

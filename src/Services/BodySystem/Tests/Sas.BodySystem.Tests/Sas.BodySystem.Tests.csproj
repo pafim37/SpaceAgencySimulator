@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
-    <ProjectReference Include="../../Sas.BodySystem.Service/Sas.BodySystem.Process.csproj" />
+    <ProjectReference Include="../../Sas.BodySystem.Process/Sas.BodySystem.Process.csproj" />
   </ItemGroup>
 
 </Project>

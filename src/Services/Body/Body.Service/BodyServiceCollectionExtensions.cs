@@ -25,7 +25,7 @@ public static class BodyServiceCollectionExtensions
             .AddApplicationPart(typeof(BodyController).Assembly)
             .AddJsonOptions(options => options.JsonSerializerOptions.NumberHandling =
                 System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals);
-        services.AddSingleton<NotificationClient>();
+        services.AddSingleton(_ => new NotificationClient(configuration["Notification:Url"]));
         services.AddSingleton<IBodyNotificationClient>(provider => provider.GetRequiredService<NotificationClient>());
         services.AddHostedService<BodyNotificationHostedService>();
         return services;

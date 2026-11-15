@@ -1,4 +1,5 @@
 using Sas.BodySystem.Process.Extensions;
+using Sas.BodySystem.Process.Models.Domain.Bodies;
 using Sas.BodySystem.Process.Models.Domain.Orbits;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
@@ -6,16 +7,15 @@ using Sas.Orbit.Service.Orbits;
 
 namespace Sas.BodySystem.Process.BodySystems
 {
-    using Body = Sas.BodySystem.Process.Models.Domain.Bodies.Body;
 
-    public class BodySystem(IEnumerable<Body> bodies, IPositionedOrbitFactory orbitFactory,
+    public class BodySystem(IEnumerable<BodyDomain> bodies, IPositionedOrbitFactory orbitFactory,
         double gravitationalConstant = Constants.G)
     {
         #region fields
-        private readonly List<Body> bodies = [.. bodies];
+        private readonly List<BodyDomain> bodies = [.. bodies];
         private readonly List<OrbitData> orbits = [];
         private const string BarycentrumName = "Barycentrum";
-        private Body? barycenter;
+        private BodyDomain? barycenter;
         #endregion
 
         #region properties
@@ -27,12 +27,12 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Gets center of mass of the system (Barycentrum).
         /// </summary>
-        public Body? Barycentrum => barycenter;
+        public BodyDomain? Barycentrum => barycenter;
 
         /// <summary>
         /// Gets list of bodies in current body system.
         /// </summary>
-        public List<Body> Bodies => bodies;
+        public IReadOnlyList<BodyDomain> Bodies => bodies;
 
         /// <summary>
         /// Gets list of orbits
@@ -56,7 +56,7 @@ namespace Sas.BodySystem.Process.BodySystems
         public void FindOrbits(CancellationToken cancellationToken = default)
         {
             List<OrbitData> calculatedOrbits = [];
-            foreach (Body body in bodies)
+            foreach (BodyDomain body in bodies)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (body.ParentName is null)
@@ -64,7 +64,7 @@ namespace Sas.BodySystem.Process.BodySystems
                     continue;
                 }
 
-                Body parent = bodies.Single(candidate => candidate.Name == body.ParentName);
+                BodyDomain parent = bodies.Single(candidate => candidate.Name == body.ParentName);
                 double gravitationalParameter = GravitationalConstant * (parent.Mass + body.Mass);
                 IPositionedOrbit orbit = orbitFactory.Create(
                     body.Name,
@@ -88,28 +88,28 @@ namespace Sas.BodySystem.Process.BodySystems
         /// </summary>
         public void EstablishHierarchy()
         {
-            List<Body> sortBodies = [.. bodies.OrderByDescending(x => x.Mass)]; // Sun, Earth, Moon, Satellite...
+            List<BodyDomain> sortBodies = [.. bodies.OrderByDescending(x => x.Mass)]; // Sun, Earth, Moon, Satellite...
             if (sortBodies.Count == 0)
             {
                 return;
             }
-            Body mostMassiveBody = sortBodies[0];
+            BodyDomain mostMassiveBody = sortBodies[0];
             if (sortBodies.Count > 1)
             {
-                Body planet = sortBodies[1];
+                BodyDomain planet = sortBodies[1];
                 planet.ParentName = mostMassiveBody.Name;
                 planet.SphereOfInfluenceRadius = planet.GetSphereOfInfluenceRelatedTo(mostMassiveBody);
             }
             for (int i = 2; i < sortBodies.Count; i++)
             {
-                Body body = sortBodies[i];
-                Body parentBody = mostMassiveBody;
+                BodyDomain body = sortBodies[i];
+                BodyDomain parentBody = mostMassiveBody;
                 double tmpDistance = double.MaxValue;
                 for (int j = 1; j < i; j++)
                 {
-                    Body other = sortBodies[j];
+                    BodyDomain other = sortBodies[j];
                     double relativeDistance = body.GetPositionRelatedTo(other).Magnitude;
-                    Body parentOtherBody = sortBodies.Find(b => b.Name == other.ParentName) ?? sortBodies.First();
+                    BodyDomain parentOtherBody = sortBodies.Find(b => b.Name == other.ParentName) ?? sortBodies.First();
                     double sphereOfInfluenceOfParentOtherBodyRadius = other.GetSphereOfInfluenceRelatedTo(parentOtherBody);
                     if (relativeDistance < tmpDistance && sphereOfInfluenceOfParentOtherBodyRadius >= relativeDistance)
                     {
@@ -139,7 +139,7 @@ namespace Sas.BodySystem.Process.BodySystems
             }
         }
 
-        public Body? FindBarycenter()
+        public BodyDomain? FindBarycenter()
         {
             if (bodies.Count > 1)
             {
@@ -147,7 +147,7 @@ namespace Sas.BodySystem.Process.BodySystems
                 Vector velocity = Vector.Zero;
                 double maxMass = double.MinValue;
                 double totalMass = 0;
-                foreach (Body body in bodies)
+                foreach (BodyDomain body in bodies)
                 {
                     position += body.Mass * body.Position;
                     totalMass += body.Mass;
@@ -164,11 +164,23 @@ namespace Sas.BodySystem.Process.BodySystems
                 }
 
                 position = 1 / totalMass * position;
-                return new Body(BarycentrumName, totalMass, position, velocity);
+                return new BodyDomain()
+                {
+                    Name = BarycentrumName,
+                    Mass = totalMass,
+                    Position = position,
+                    Velocity = velocity
+                };
             }
             else if (bodies.Count == 1)
             {
-                return new Body(BarycentrumName, bodies[0].Mass, bodies[0].Position, bodies[0].Velocity);
+                return new BodyDomain
+                {
+                    Name = BarycentrumName,
+                    Mass = bodies[0].Mass,
+                    Position = bodies[0].Position,
+                    Velocity = bodies[0].Velocity
+                };
             }
             else
             {

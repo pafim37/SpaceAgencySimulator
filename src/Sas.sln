@@ -54,7 +54,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1C40E9AB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.BodySystem.Tests", "Services\BodySystem\Tests\Sas.BodySystem.Tests\Sas.BodySystem.Tests.csproj", "{7A489999-9DCC-4FB5-A0C8-3F80ED2E2C8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Docker.Tests", "..\tests\Docker\Sas.Docker.Tests.csproj", "{BF478FF1-A260-5709-A015-CF23A696BAFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Integration.Tests", "..\tests\Docker\Sas.Integration.Tests.csproj", "{BF478FF1-A260-5709-A015-CF23A696BAFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

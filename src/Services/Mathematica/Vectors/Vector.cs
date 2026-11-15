@@ -19,6 +19,7 @@ namespace Sas.Mathematica.Service.Vectors
         }
 
         /// <summary>Creates a 3D vector with omitted coordinates set to zero.</summary>
+        [System.Text.Json.Serialization.JsonConstructor]
         public Vector(double x = 0, double y = 0, double z = 0) : this([x, y, z], copy: false) { }
 
         /// <summary>The 3D zero vector.</summary>

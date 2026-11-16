@@ -23,6 +23,7 @@ public sealed class UpdateBodyHandler(IBodyRepository repository, IBodyNotificat
         body.Position = mapper.Map<VectorEntity>(update.Position) ?? body.Position;
         body.Velocity = mapper.Map<VectorEntity>(update.Velocity) ?? body.Velocity;
         body.Radius = update.Radius ?? body.Radius;
+        body.Enabled = update.Enabled ?? body.Enabled;
         BodyEntity updated = await repository.UpdateBodyAsync(body, cancellationToken);
         await notifications.SendBodyDatabaseChangedNotification(request.SenderId, cancellationToken);
         return updated;

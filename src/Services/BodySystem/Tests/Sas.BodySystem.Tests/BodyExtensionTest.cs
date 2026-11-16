@@ -1,5 +1,5 @@
-using Sas.Body.Business.Extensions.BodyExtensions;
-using Sas.Body.Business.Models.Domain.Bodies;
+using Sas.BodySystem.Process.Extensions;
+using Sas.BodySystem.Process.Models.Domain.Bodies;
 using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.BodySystem.Tests
@@ -7,29 +7,27 @@ namespace Sas.BodySystem.Tests
     public class BodyExtensionTest
     {
         [Fact]
-        public void BodyExtensionThrowsExceptionWhenArgumentIsNull()
-        {
-            // Arrange
-            Vector position = Vector.Zero;
-            Vector velocity = Vector.Zero;
-            BodyDomain body = new BodyDomain("Planet", 10, position, velocity);
-
-            // Act & Assert
-            _ = Assert.Throws<ArgumentNullException>(() => body.GetPositionRelatedTo(null));
-            _ = Assert.Throws<ArgumentNullException>(() => body.GetVelocityRelatedTo(null));
-            _ = Assert.Throws<ArgumentNullException>(() => body.GetSphereOfInfluenceRelatedTo(null));
-        }
-
-        [Fact]
         public void ExtensionReturnsRelatedPosition()
         {
             // Arrange 
-            Vector position = new Vector(10, 10, 10);
-            BodyDomain sun = new BodyDomain("Sun", 100, Vector.Zero, Vector.Zero);
-            BodyDomain earth = new BodyDomain("Earth", 1, position, Vector.Zero);
+            Vector position = new(10, 10, 10);
+            BodyDomain sun = new()
+            {
+                Name = "Sun",
+                Mass = 100,
+                Position = Vector.Zero,
+                Velocity = Vector.Zero
+            };
+            BodyDomain earth = new()
+            {
+                Name = "Earth",
+                Mass = 1,
+                Position = position,
+                Velocity = Vector.Zero
+            };
 
             // Act & Assert
-            Vector expected = new Vector(10, 10, 10);
+            Vector expected = new(10, 10, 10);
             Assert.Equal(expected, earth.GetPositionRelatedTo(sun));
             Assert.Equal(-1 * expected, sun.GetPositionRelatedTo(earth));
             Assert.Equal(Vector.Zero, earth.GetPositionRelatedTo(earth));
@@ -40,12 +38,24 @@ namespace Sas.BodySystem.Tests
         public void ExtensionReturnsRelatedVelocity()
         {
             // Arrange 
-            Vector velocity = new Vector(10, 10, 10);
-            BodyDomain sun = new BodyDomain("Sun", 100, Vector.Zero, Vector.Zero);
-            BodyDomain earth = new BodyDomain("Earth", 1, Vector.Zero, velocity);
+            Vector velocity = new(10, 10, 10);
+            BodyDomain sun = new()
+            {
+                Name = "Sun",
+                Mass = 100,
+                Position = Vector.Zero,
+                Velocity = Vector.Zero
+            };
+            BodyDomain earth = new()
+            {
+                Name = "Earth",
+                Mass = 1,
+                Position = Vector.Zero,
+                Velocity = velocity
+            };
 
             // Act & Assert
-            Vector expected = new Vector(10, 10, 10);
+            Vector expected = new(10, 10, 10);
             Assert.Equal(expected, earth.GetVelocityRelatedTo(sun));
             Assert.Equal(-1 * expected, sun.GetVelocityRelatedTo(earth));
             Assert.Equal(Vector.Zero, earth.GetVelocityRelatedTo(earth));

@@ -2,6 +2,7 @@
 
 namespace Sas.Orbit.Service.Models
 {
+    // TODO: change Vector to VectorDto
     public record TwoBodyState
     {
         public string? Name { get; init; }

@@ -1,0 +1,25 @@
+name: Unit tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Run unit tests
+        run: |
+          dotnet test tests/Domain/Sas.Domain.Tests/Sas.Domain.Tests.csproj --configuration Release
+          dotnet test tests/Mathematica/Sas.Mathematica.Tests.csproj --configuration Release
+          dotnet test src/Services/Orbit/Sas.Orbit.Service.Test/Sas.Orbit.Service.Test.csproj --configuration Release
+          dotnet test src/Services/BodySystem/Tests/Sas.BodySystem.Tests/Sas.BodySystem.Tests.csproj --configuration Release

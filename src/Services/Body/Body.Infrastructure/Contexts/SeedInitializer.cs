@@ -24,15 +24,17 @@ namespace Sas.Body.Infrastructure.Contexts
                 Z = 0,
             };
 
-            var sunBody = new
+            BodyEntity sunBody = new()
             {
                 Id = 1,
                 Name = "Sun",
                 Mass = Constants.SolarMass,
                 PositionId = sunPosition.Id,
+                Position = sunPosition,
                 VelocityId = sunVelocity.Id,
-                Radius = 0d,
-                Enabled = false
+                Velocity = sunVelocity,
+                Radius = 0,
+                Enabled = true
             };
 
             modelBuilder.Entity<VectorEntity>().HasData(sunPosition);

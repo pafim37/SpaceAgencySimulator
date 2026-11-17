@@ -17,11 +17,11 @@ namespace Sas.Body.Core.Models.Entities
         [ForeignKey(nameof(PositionId))]
         public int PositionId { get; set; }
         [Required]
-        public required VectorEntity Position { get; set; } = null!;
+        public required VectorEntity Position { get; set; }
 
         [ForeignKey(nameof(VelocityId))]
         public int VelocityId { get; set; }
         [Required]
-        public required VectorEntity Velocity { get; set; } = null!;
+        public required VectorEntity Velocity { get; set; }
     }
 }

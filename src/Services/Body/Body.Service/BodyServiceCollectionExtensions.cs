@@ -19,7 +19,7 @@ public static class BodyServiceCollectionExtensions
     {
         services.AddScoped<IBodyRepository, BodyRepository>();
         services.AddAutoMapper(_ => { }, typeof(BodyMapper).Assembly);
-        services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(GetBodiesHandler).Assembly));
+        services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(GetEnabledBodiesHandler).Assembly));
         services.AddDbContext<BodyContext>(options => options.UseSqlServer(configuration["ConnectionStrings:Default"]));
         services.AddControllers()
             .AddApplicationPart(typeof(BodyController).Assembly)

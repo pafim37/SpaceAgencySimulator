@@ -1,24 +1,22 @@
+using AutoMapper;
 using MediatR;
 using Sas.Body.Business.Models.Queries;
-using AutoMapper;
 using Sas.Body.Core.DataTransferObject;
-using Sas.Body.Core.Models.Entities;
 using Sas.Body.Core.Exceptions;
-using Sas.Body.Core.Repositories;
+using Sas.Body.Core.Models.Entities;
 using Sas.Body.Core.Notifications;
+using Sas.Body.Core.Repositories;
 
 namespace Sas.Body.Business.Handlers;
 
-public sealed class UpdateBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications, IMapper mapper) : IRequestHandler<UpdateBodyRequest, BodyEntity>
+public sealed class UpdateBodyHandler(IBodyRepository repository, IBodyNotificationClient notifications, IMapper mapper) : IRequestHandler<UpdateBodyRequest, BodyDto>
 {
-    public async Task<BodyEntity> Handle(UpdateBodyRequest request, CancellationToken cancellationToken)
+    public async Task<BodyDto> Handle(UpdateBodyRequest request, CancellationToken cancellationToken)
     {
-        BodyDto update = request.Body;
-        ArgumentException.ThrowIfNullOrWhiteSpace(update.Name);
-        ArgumentNullException.ThrowIfNull(update.Id);
-        BodyEntity body = await repository.GetBodyById(update.Id.Value, cancellationToken)
-            ?? throw new NoBodyInDatabaseException($"There is no body in database with name {update.Name}");
-        body.Name = update.Name;
+        BodyPatchDto update = request.Body;
+        BodyEntity body = await repository.GetBodyById(update.Id, cancellationToken)
+            ?? throw new NoBodyInDatabaseException($"There is no body in database with id {update.Id}");
+        body.Name = update.Name ?? body.Name;
         body.Mass = update.Mass ?? body.Mass;
         body.Position = mapper.Map<VectorEntity>(update.Position) ?? body.Position;
         body.Velocity = mapper.Map<VectorEntity>(update.Velocity) ?? body.Velocity;
@@ -26,6 +24,6 @@ public sealed class UpdateBodyHandler(IBodyRepository repository, IBodyNotificat
         body.Enabled = update.Enabled ?? body.Enabled;
         BodyEntity updated = await repository.UpdateBodyAsync(body, cancellationToken);
         await notifications.SendBodyDatabaseChangedNotification(request.SenderId, cancellationToken);
-        return updated;
+        return mapper.Map<BodyDto>(updated);
     }
 }

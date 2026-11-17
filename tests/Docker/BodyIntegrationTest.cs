@@ -1,5 +1,4 @@
 using Sas.Body.Core.DataTransferObject;
-using Sas.Body.Core.Models.Entities;
 using System.Net;
 using System.Net.Http.Json;
 using Xunit;
@@ -13,7 +12,7 @@ public sealed class BodyIntegrationTest(DockerFixture fixture)
     {
         // Act
         using HttpResponseMessage response = await fixture.Client.GetAsync("/body");
-        List<BodyEntity>? bodySystem = await response.Content.ReadFromJsonAsync<List<BodyEntity>>();
+        List<BodyDto>? bodySystem = await response.Content.ReadFromJsonAsync<List<BodyDto>>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -154,25 +153,18 @@ public sealed class BodyIntegrationTest(DockerFixture fixture)
             Position = new VectorDto { X = 100, Y = 0, Z = 0 },
             Velocity = new VectorDto { X = 0, Y = 6, Z = 0 }
         };
-        NewBodyDto bodyPatch = new()
-        {
-            Name = name,
-            Mass = 2.0,
-            Radius = 2.0,
-            Enabled = false,
-        };
         using HttpResponseMessage responseDefaults = await fixture.Client.PostAsJsonAsync("/body", newBody);
         Assert.Equal(HttpStatusCode.Created, responseDefaults.StatusCode);
         BodyDto createdBody = await responseDefaults.Content.ReadFromJsonAsync<BodyDto>()
             ?? throw new InvalidOperationException("The created body response did not contain a body.");
         // Act
-        BodyDto patch = new()
+        BodyPatchDto patch = new()
         {
             Id = createdBody.Id,
-            Name = bodyPatch.Name,
-            Mass = bodyPatch.Mass,
-            Radius = bodyPatch.Radius,
-            Enabled = bodyPatch.Enabled
+            Name = name,
+            Mass = 2.0,
+            Radius = 2.0,
+            Enabled = false
         };
         using HttpResponseMessage responsePatch = await fixture.Client.SendAsync(new HttpRequestMessage(HttpMethod.Patch, "/body")
         {

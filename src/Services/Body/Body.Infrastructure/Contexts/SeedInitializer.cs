@@ -24,23 +24,20 @@ namespace Sas.Body.Infrastructure.Contexts
                 Z = 0,
             };
 
-            BodyEntity sunBody = new()
+            modelBuilder.Entity<VectorEntity>().HasData(sunPosition);
+            modelBuilder.Entity<VectorEntity>().HasData(sunVelocity);
+
+
+            modelBuilder.Entity<BodyEntity>().HasData(new
             {
                 Id = 1,
                 Name = "Sun",
                 Mass = Constants.SolarMass,
                 PositionId = sunPosition.Id,
-                Position = sunPosition,
                 VelocityId = sunVelocity.Id,
-                Velocity = sunVelocity,
-                Radius = 0,
+                Radius = 0.0,
                 Enabled = true
-            };
-
-            modelBuilder.Entity<VectorEntity>().HasData(sunPosition);
-            modelBuilder.Entity<VectorEntity>().HasData(sunVelocity);
-
-            modelBuilder.Entity<BodyEntity>().HasData(sunBody);
+            });
         }
     }
 }

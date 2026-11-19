@@ -8,5 +8,6 @@ public sealed class OrbitData
         // Default constructor for serialization
     }
     public required string Name { get; init; }
+    public required OrbitElementsData OrbitElements { get; init; }
     public required List<OrbitPointData> Points { get; init; }
 }

@@ -1,6 +1,6 @@
 using Sas.Mathematica.Service.Vectors;
 
-namespace Sas.Orbit.Service.Orbits;
+namespace Sas.BodySystem.Process.Models.Domain.Orbits;
 
 public interface IPositionedOrbitFactory
 {

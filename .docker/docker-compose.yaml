@@ -3,6 +3,8 @@ services:
     build:
       context: ..
       dockerfile: src/Services/BodySystem/Sas.BodySystem.Process/Dockerfile
+      args:
+        BUILD_CONFIGURATION: ${SAS_BODYSYSTEM_BUILD_CONFIGURATION:-Release}
     environment:
       ConnectionStrings__Default: "Server=sql-server;Database=SasBodyDatabase;User ID=sa;Password=${SAS_SQL_PASSWORD:-SasComposeDev!42};Encrypt=True;TrustServerCertificate=True"
       Body__EnsureDatabaseCreated: "true"

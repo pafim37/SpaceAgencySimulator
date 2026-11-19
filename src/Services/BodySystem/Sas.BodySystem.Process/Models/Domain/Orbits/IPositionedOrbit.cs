@@ -2,7 +2,7 @@ using Sas.Mathematica.Service.Vectors;
 using Sas.Orbit.Service.Orbits.OrbitalElements;
 using Sas.Orbit.Service.Orbits.Points;
 
-namespace Sas.Orbit.Service.Orbits
+namespace Sas.BodySystem.Process.Models.Domain.Orbits
 {
     public interface IPositionedOrbit
     {

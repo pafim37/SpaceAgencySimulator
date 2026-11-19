@@ -42,7 +42,9 @@ class BodySystemController:
         # Update existing orbit entities
         for orbit, entity in zip(orbits, [e for e in scene.entities if isinstance(e, OrbitEntity)]):
             entity.update_points(orbit.points)
-
+        
+        self.dt += 365.25 * 24 * 3600 / 1000 # math.pow(10, -14) # Increment time for the next update
+    
     def __clear_body_system(self):
         for e in scene.entities[:]:
             if hasattr(e, 'tag') and e.tag == "bodysystemelement":
@@ -52,4 +54,5 @@ class BodySystemController:
         return HttpClient.get_body_system() # bodies, orbits
     
     def __fetch_body_system_data_at_time(self, time):
+        print(f"Fetching body system data at time: {time}")
         return HttpClient.get_body_system_at_time(time) # bodies, orbits

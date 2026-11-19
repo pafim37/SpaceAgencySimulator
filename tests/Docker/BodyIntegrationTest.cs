@@ -2,7 +2,7 @@ using Sas.Body.Core.DataTransferObject;
 using System.Net;
 using System.Net.Http.Json;
 using Xunit;
-namespace Sas.Docker.Tests;
+namespace Sas.Integration.Tests;
 
 [Collection("Docker")]
 public sealed class BodyIntegrationTest(DockerFixture fixture)

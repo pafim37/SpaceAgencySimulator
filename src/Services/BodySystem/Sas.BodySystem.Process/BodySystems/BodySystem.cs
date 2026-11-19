@@ -3,7 +3,6 @@ using Sas.BodySystem.Process.Models.Domain.Bodies;
 using Sas.BodySystem.Process.Models.Domain.Orbits;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
-using Sas.Orbit.Service.Orbits;
 
 namespace Sas.BodySystem.Process.BodySystems
 {
@@ -13,7 +12,7 @@ namespace Sas.BodySystem.Process.BodySystems
     {
         #region fields
         private readonly List<BodyDomain> bodies = [.. bodies];
-        private readonly List<OrbitData> orbits = [];
+        private readonly List<IPositionedOrbit> orbits = [];
         private const string BarycentrumName = "Barycentrum";
         private BodyDomain? barycenter;
         #endregion
@@ -37,7 +36,7 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Gets list of orbits
         /// </summary>
-        public IReadOnlyList<OrbitData> Orbits => orbits;
+        public List<IPositionedOrbit> Orbits => orbits;
         #endregion
 
         #region public methods
@@ -45,17 +44,28 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Finds the barycenter, establishes the body hierarchy, and centers the system.
         /// </summary>
-        public void UpdateBodySystem(float scale = 1000, CancellationToken cancellationToken = default)
+        public void UpdateBodySystem(float scale = 1000, double? atTime = 0, CancellationToken cancellationToken = default)
         {
             barycenter = FindBarycenter();
             EstablishHierarchy();
             CalibrateBarycenterToZero();
-            ScaleBodySystem(scale: scale);
+            double scaleFactor = ScaleBodySystem(scale: scale);
             FindOrbits(cancellationToken);
+            if (atTime is not null)
+            {
+                atTime *= Math.Pow(scaleFactor, 1.5);
+                Move(atTime.Value);
+            }
         }
+
+        public void Move(double t)
+        {
+            Movement.Move(Orbits, bodies, t);
+        }
+
         public void FindOrbits(CancellationToken cancellationToken = default)
         {
-            List<OrbitData> calculatedOrbits = [];
+            orbits.Clear();
             foreach (BodyDomain body in bodies)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -72,15 +82,8 @@ namespace Sas.BodySystem.Process.BodySystems
                     body.GetVelocityRelatedTo(parent),
                     gravitationalSourcePosition: parent.Position,
                     gravitationalParameter);
-                calculatedOrbits.Add(new OrbitData
-                {
-                    Name = orbit.Name,
-                    Points = [.. orbit.Points.Select(point => new OrbitPointData(point.X, point.Y, point.Z))]
-                });
+                Orbits.Add(orbit);
             }
-
-            orbits.Clear();
-            orbits.AddRange(calculatedOrbits);
         }
 
         /// <summary>
@@ -188,11 +191,11 @@ namespace Sas.BodySystem.Process.BodySystems
             }
         }
 
-        public void ScaleBodySystem(float scale = 1000)
+        public double ScaleBodySystem(float scale = 1000)
         {
             if (barycenter is null || scale == 0)
             {
-                return;
+                return 0;
             }
             double maxDistance = bodies.Max(body => body.GetPositionRelatedTo(barycenter).Magnitude);
             if (maxDistance > 0)
@@ -202,8 +205,12 @@ namespace Sas.BodySystem.Process.BodySystems
                 {
                     body.Position *= scaleFactor;
                     body.Velocity *= 1 / Math.Sqrt(scaleFactor);
+                    body.SphereOfInfluenceRadius *= scaleFactor;
                 });
+
+                return scaleFactor;
             }
+            return 0;
         }
 
         #endregion

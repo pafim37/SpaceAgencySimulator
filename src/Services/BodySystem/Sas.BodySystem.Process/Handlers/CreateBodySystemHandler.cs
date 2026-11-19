@@ -3,9 +3,10 @@ using Sas.Body.Business.Models.Queries;
 using Sas.Body.Core.DataTransferObject;
 using Sas.BodySystem.Process.Models.DataTransferObject;
 using Sas.BodySystem.Process.Models.Domain.Bodies;
+using Sas.BodySystem.Process.Models.Domain.Orbits;
 using Sas.BodySystem.Process.Models.Queries;
 using Sas.Mathematica.Service.Vectors;
-using Sas.Orbit.Service.Orbits;
+using Sas.Orbit.Service.Orbits.OrbitalElements;
 
 namespace Sas.BodySystem.Process.Handlers;
 
@@ -17,13 +18,41 @@ public sealed class CreateBodySystemHandler(IMediator mediator, IPositionedOrbit
     {
         IEnumerable<BodyDomain> enabledBodies = await GetEnabledBodies(cancellationToken);
         BodySystems.BodySystem system = new(enabledBodies, orbitFactory, request.GravitationalConstant);
-        system.UpdateBodySystem(request.Scale, cancellationToken);
+        system.UpdateBodySystem(request.Scale, request.AtTime, cancellationToken);
         return new BodySystemDto()
         {
             GravitationalConstant = system.GravitationalConstant,
             Barycentrum = system.Barycentrum,
             Bodies = system.Bodies,
-            Orbits = system.Orbits
+            Orbits = [.. system.Orbits.Select(ToOrbitData)]
+        };
+    }
+
+    private static OrbitData ToOrbitData(IPositionedOrbit orbit)
+    {
+        IOrbitElements elements = orbit.OrbitElements;
+        return new OrbitData
+        {
+            Name = orbit.Name,
+            OrbitElements = new OrbitElementsData
+            {
+                OrbitType = elements.OrbitType,
+                SemiMajorAxis = elements.SemiMajorAxis,
+                SemiMinorAxis = elements.SemiMinorAxis,
+                Eccentricity = elements.Eccentricity,
+                ArgumentOfPeriapsis = elements.ArgumentOfPeriapsis,
+                Inclination = elements.Inclination,
+                AscendingNode = elements.AscendingNode,
+                TrueAnomaly = elements.TrueAnomaly,
+                EccentricAnomaly = elements.EccentricAnomaly,
+                MeanAnomaly = elements.MeanAnomaly,
+                Period = elements.Period,
+                Radius = elements.Radius,
+                GravitationalParameter = elements.GravitationalParameter,
+                FirstNode = elements.FirstNode,
+                MeanMotion = elements.MeanMotion
+            },
+            Points = [.. orbit.Points.Select(point => new OrbitPointData(point.X, point.Y, point.Z))]
         };
     }
 

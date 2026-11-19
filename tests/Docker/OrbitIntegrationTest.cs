@@ -1,7 +1,4 @@
-using Sas.Docker.Tests;
 using Sas.Mathematica.Service;
-using Sas.Mathematica.Service.Vectors;
-using Sas.Orbit.Service.Models;
 using Sas.Orbit.Service.Models.DataTransferObject;
 using Sas.Orbit.Service.Orbits.Primitives;
 using System.Net;
@@ -16,42 +13,6 @@ namespace Sas.Integration.Tests
     {
         private static readonly double EarthGravitationalParameter =
             Constants.G * (Constants.SolarMass + Constants.EarthMass);
-
-        [Fact]
-        public async Task GetPositionedOrbit_ReturnsOrbit()
-        {
-            // Arrange
-            TwoBodyState twoBodyState = new()
-            {
-                Name = "Earth",
-                Position = new(Constants.EarthPeriapsis, 0, 0),
-                Velocity = new(0, Constants.EarthMaxVelocity, 0),
-                GravitationalParameter = EarthGravitationalParameter,
-                GravitationalSourcePosition = Vector.Zero
-            };
-            using HttpRequestMessage request = new(HttpMethod.Get, "/orbit")
-            {
-                Content = JsonContent.Create(twoBodyState)
-            };
-
-            // Act
-            using HttpResponseMessage response = await fixture.Client.SendAsync(request);
-
-            // Assert TODO: improve this assertion
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            JsonElement orbit = await response.Content.ReadFromJsonAsync<JsonElement>();
-            Assert.Equal("Earth", orbit.GetProperty("name").GetString());
-            Assert.Equal((int)OrbitType.Elliptic, orbit.GetProperty("orbitElements").GetProperty("orbitType").GetInt32());
-
-            JsonElement.ArrayEnumerator points = orbit.GetProperty("points").EnumerateArray();
-            Assert.NotEmpty(points);
-            Assert.All(points, point =>
-            {
-                Assert.True(double.IsFinite(point.GetProperty("x").GetDouble()));
-                Assert.True(double.IsFinite(point.GetProperty("y").GetDouble()));
-                Assert.Equal(0.0, point.GetProperty("z").GetDouble(), precision: 6);
-            });
-        }
 
         [Fact]
         public async Task GetOrbitElements_ReturnsOrbitElements()

@@ -4,5 +4,5 @@ using Sas.Mathematica.Service;
 
 namespace Sas.BodySystem.Process.Models.Queries
 {
-    public sealed record CreateBodySystemRequest(float Scale = 1000, double GravitationalConstant = Constants.G) : IRequest<BodySystemDto>;
+    public sealed record CreateBodySystemRequest(float Scale = 500, double? AtTime = 0, double GravitationalConstant = Constants.G) : IRequest<BodySystemDto>;
 }

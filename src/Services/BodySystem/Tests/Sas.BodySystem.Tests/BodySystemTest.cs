@@ -1,8 +1,8 @@
 ﻿using Moq;
 using Sas.BodySystem.Process.Models.Domain.Bodies;
+using Sas.BodySystem.Process.Models.Domain.Orbits;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
-using Sas.Orbit.Service.Orbits;
 using BodySystemModel = global::Sas.BodySystem.Process.BodySystems.BodySystem;
 
 namespace Sas.BodySystem.Tests
@@ -72,7 +72,7 @@ namespace Sas.BodySystem.Tests
             BodySystemModel bodySystem = new([star, planet], CreateOrbitFactory(), gravitationalConstant: 1);
 
             // Act
-            bodySystem.UpdateBodySystem(scale: 0, CancellationToken.None);
+            bodySystem.UpdateBodySystem(scale: 0, atTime: 0, CancellationToken.None);
 
             // Assert
             // Create barycenter
@@ -109,7 +109,7 @@ namespace Sas.BodySystem.Tests
 
             // Act
             BodySystemModel bodySystem = new(bodies, CreateOrbitFactory());
-            bodySystem.UpdateBodySystem(scale: 0, CancellationToken.None);
+            bodySystem.UpdateBodySystem(scale: 0, atTime: 0, CancellationToken.None);
 
             // Assert
             BodyDomain? barycentrum = bodySystem.Barycentrum;
@@ -134,7 +134,7 @@ namespace Sas.BodySystem.Tests
                 Velocity = Vector.Ones
             };
             BodySystemModel bodySystem = new([body1], CreateOrbitFactory());
-            bodySystem.UpdateBodySystem(scale: 0, CancellationToken.None);
+            bodySystem.UpdateBodySystem(scale: 0, atTime: 0, CancellationToken.None);
             bodySystem.CalibrateBarycenterToZero();
             BodyDomain? barycenter = bodySystem.Barycentrum;
             Assert.Equal(Vector.Zero, body1.Position);
@@ -163,7 +163,7 @@ namespace Sas.BodySystem.Tests
                 Velocity = new Vector(0, 2)
             };
             BodySystemModel bodySystem = new([body1, body2], CreateOrbitFactory());
-            bodySystem.UpdateBodySystem(scale: 0, CancellationToken.None);
+            bodySystem.UpdateBodySystem(scale: 0, atTime: 0, CancellationToken.None);
 
             // Act
             bodySystem.CalibrateBarycenterToZero();
@@ -193,7 +193,7 @@ namespace Sas.BodySystem.Tests
                 Velocity = Vector.Ones
             };
             BodySystemModel bodySystem = new([body1], CreateOrbitFactory());
-            bodySystem.UpdateBodySystem(scale: 0, CancellationToken.None);
+            bodySystem.UpdateBodySystem(scale: 0, atTime: 0, CancellationToken.None);
             BodyDomain? barycentrum = bodySystem.Barycentrum;
             Assert.NotNull(barycentrum);
             Assert.Equal("Barycentrum", barycentrum!.Name);
@@ -230,7 +230,7 @@ namespace Sas.BodySystem.Tests
             BodySystemModel bodySystem = new([planet, sattelite, star], CreateOrbitFactory());
 
             // Act
-            bodySystem.UpdateBodySystem(scale: 0, CancellationToken.None);
+            bodySystem.UpdateBodySystem(scale: 0, atTime: 0, CancellationToken.None);
 
             // Assert
             Assert.Equal(null!, star.ParentName);

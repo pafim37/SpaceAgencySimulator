@@ -12,6 +12,6 @@ namespace Sas.BodySystem.Process.Models.DataTransferObject
         public double GravitationalConstant { get; set; }
         public BodyDomain? Barycentrum { get; set; }
         public IReadOnlyList<BodyDomain> Bodies { get; set; } = [];
-        public IReadOnlyList<OrbitData> Orbits { get; set; } = [];
+        public List<OrbitData> Orbits { get; set; } = [];
     }
 }

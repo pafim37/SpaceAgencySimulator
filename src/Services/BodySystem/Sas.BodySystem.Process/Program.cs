@@ -9,7 +9,8 @@ builder.Services.AddBodyService(builder.Configuration);
 builder.Services.AddSingleton<IPositionedOrbitFactory, PositionedOrbitFactory>();
 
 builder.Services.AddOrbitService();
-builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(CreateBodySystemHandler).Assembly));
+builder.Services.AddMemoryCache();
+builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(CreateOrUpdateBodySystemHandler).Assembly));
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals);
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader()));

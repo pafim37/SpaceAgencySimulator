@@ -47,10 +47,10 @@ namespace Sas.BodySystem.Process.BodySystems
         public void UpdateBodySystem(float scale = 1000, double? atTime = 0, CancellationToken cancellationToken = default)
         {
             barycenter = FindBarycenter();
-            EstablishHierarchy();
+            List<string> orbitsToUpdates = EstablishHierarchy(); // body name is also name of the orbit
             CalibrateBarycenterToZero();
             double scaleFactor = ScaleBodySystem(scale: scale);
-            FindOrbits(cancellationToken);
+            FindOrbits(orbitsToUpdates, cancellationToken);
             if (atTime is not null)
             {
                 atTime *= Math.Pow(scaleFactor, 1.5);
@@ -63,13 +63,17 @@ namespace Sas.BodySystem.Process.BodySystems
             Movement.Move(Orbits, bodies, t);
         }
 
-        public void FindOrbits(CancellationToken cancellationToken = default)
+        public void FindOrbits(List<string> orbitsToUpdate, CancellationToken cancellationToken = default)
         {
-            orbits.Clear();
+            // TODO: refactor this loop
+            foreach (string orbitName in orbitsToUpdate)
+            {
+                orbits.Remove(Orbits.Single(o => o.Name == orbitName));
+            }
             foreach (BodyDomain body in bodies)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (body.ParentName is null)
+                if (body.ParentName is null || !orbitsToUpdate.Contains(body.Name))
                 {
                     continue;
                 }
@@ -89,17 +93,22 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Finds parents of the bodies.
         /// </summary>
-        public void EstablishHierarchy()
+        public List<string> EstablishHierarchy()
         {
+            List<string> bodiesThatChangedParent = [];
             List<BodyDomain> sortBodies = [.. bodies.OrderByDescending(x => x.Mass)]; // Sun, Earth, Moon, Satellite...
             if (sortBodies.Count == 0)
             {
-                return;
+                return [];
             }
             BodyDomain mostMassiveBody = sortBodies[0];
             if (sortBodies.Count > 1)
             {
                 BodyDomain planet = sortBodies[1];
+                if (planet.ParentName != mostMassiveBody.Name)
+                {
+                    bodiesThatChangedParent.Add(planet.Name);
+                }
                 planet.ParentName = mostMassiveBody.Name;
                 planet.SphereOfInfluenceRadius = planet.GetSphereOfInfluenceRelatedTo(mostMassiveBody);
             }
@@ -120,9 +129,14 @@ namespace Sas.BodySystem.Process.BodySystems
                         parentBody = other;
                     }
                 }
+                if (body.ParentName != parentBody.Name)
+                {
+                    bodiesThatChangedParent.Add(body.Name);
+                }
                 body.ParentName = parentBody.Name;
                 body.SphereOfInfluenceRadius = body.GetSphereOfInfluenceRelatedTo(parentBody);
             }
+            return bodiesThatChangedParent;
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.Extensions.Caching.Memory;
 using Sas.Body.Business.Models.Queries;
 using Sas.Body.Core.DataTransferObject;
 using Sas.BodySystem.Process.Models.DataTransferObject;
@@ -11,21 +12,37 @@ using Sas.Orbit.Service.Orbits.OrbitalElements;
 namespace Sas.BodySystem.Process.Handlers;
 
 
-public sealed class CreateBodySystemHandler(IMediator mediator, IPositionedOrbitFactory orbitFactory) : IRequestHandler<CreateBodySystemRequest, BodySystemDto>
+public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IPositionedOrbitFactory orbitFactory, IMemoryCache memoryCache) : IRequestHandler<CreateBodySystemRequest, BodySystemDto>
 {
-
+    private const string BodySytemCacheKey = "BodySystem";
     public async Task<BodySystemDto> Handle(CreateBodySystemRequest request, CancellationToken cancellationToken)
     {
-        IEnumerable<BodyDomain> enabledBodies = await GetEnabledBodies(cancellationToken);
-        BodySystems.BodySystem system = new(enabledBodies, orbitFactory, request.GravitationalConstant);
-        system.UpdateBodySystem(request.Scale, request.AtTime, cancellationToken);
-        return new BodySystemDto()
+        if (!memoryCache.TryGetValue(BodySytemCacheKey, out BodySystems.BodySystem? bodySystem))
         {
-            GravitationalConstant = system.GravitationalConstant,
-            Barycentrum = system.Barycentrum,
-            Bodies = system.Bodies,
-            Orbits = [.. system.Orbits.Select(ToOrbitData)]
-        };
+            IEnumerable<BodyDomain> enabledBodies = await GetEnabledBodies(cancellationToken);
+            BodySystems.BodySystem system = new(enabledBodies, orbitFactory, request.GravitationalConstant);
+            system.UpdateBodySystem(request.Scale, request.AtTime, cancellationToken);
+            memoryCache.Set(BodySytemCacheKey, system);
+            return new BodySystemDto() // TODO: extract this method
+            {
+                GravitationalConstant = system.GravitationalConstant,
+                Barycentrum = system.Barycentrum,
+                Bodies = system.Bodies,
+                Orbits = [.. system.Orbits.Select(ToOrbitData)]
+            };
+        }
+        else
+        {
+            ArgumentNullException.ThrowIfNull(bodySystem); // TODO: catch this one
+            bodySystem.UpdateBodySystem(cancellationToken: cancellationToken);
+            return new BodySystemDto() // TODO: extract this
+            {
+                GravitationalConstant = bodySystem.GravitationalConstant,
+                Barycentrum = bodySystem.Barycentrum,
+                Bodies = bodySystem.Bodies,
+                Orbits = [.. bodySystem.Orbits.Select(ToOrbitData)]
+            };
+        }
     }
 
     private static OrbitData ToOrbitData(IPositionedOrbit orbit)

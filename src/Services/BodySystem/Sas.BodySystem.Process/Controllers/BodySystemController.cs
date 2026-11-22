@@ -21,5 +21,5 @@ public class BodySystemController(IMediator mediator) : ControllerBase
 
     [HttpGet("{atTime}")]
     public async Task<IActionResult> GetAtTime(double atTime)
-        => Ok(await mediator.Send(new CreateBodySystemRequest(AtTime: atTime), cancellationToken: default).ConfigureAwait(false));
+        => Ok(await mediator.Send(new CreateBodySystemRequest(AtTime: atTime, IsMovementRequest: true), cancellationToken: default).ConfigureAwait(false));
 }

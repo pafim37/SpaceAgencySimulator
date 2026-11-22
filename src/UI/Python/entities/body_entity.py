@@ -1,11 +1,13 @@
 import os
 from ursina import *
+from coordinates import to_scene
+
 class BodyEntity(Entity):
     def __init__(self, body, **kwargs):
         super().__init__(
             model='sphere',
             name=body.name,
-            position=(body.position.x, body.position.y, body.position.z),
+            position=to_scene(body.position),
             rotation=(-90, 0, 0),
             scale=body.radius,
             **kwargs
@@ -21,4 +23,4 @@ class BodyEntity(Entity):
             self.color = color.red
 
     def update_position(self, new_position):
-        self.position = (new_position.x, new_position.y, new_position.z)
+        self.position = to_scene(new_position)

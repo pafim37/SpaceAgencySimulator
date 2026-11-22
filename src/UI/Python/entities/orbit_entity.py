@@ -1,7 +1,10 @@
 from ursina import *
+from coordinates import to_scene
+
+
 class OrbitEntity(Entity):
     def __init__(self, orbit, **kwargs):
-        vertices = [Vec3(point.x, point.y, point.z) for point in orbit.points]
+        vertices = [to_scene(point) for point in orbit.points]
         mesh = Mesh(vertices=vertices, mode='line', thickness=1)
         super().__init__(
             model=mesh,
@@ -12,6 +15,6 @@ class OrbitEntity(Entity):
         self.tag = "bodysystemelement"
 
     def update_points(self, new_points):
-        vertices = [Vec3(point.x, point.y, point.z) for point in new_points]
+        vertices = [to_scene(point) for point in new_points]
         self.model.vertices = vertices
         self.model.generate()

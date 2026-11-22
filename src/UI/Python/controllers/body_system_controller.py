@@ -11,7 +11,6 @@ class BodySystemController:
 
     def create_body_system_entities(self, transformSOI = False):
         self.__clear_body_system()
-        self.sois = []
         bodies, orbits = self.__fetch_body_system_data()
         self.orbits = orbits
         entity_bodies = self.__transform_bodies_to_entities(bodies, transformSOI)
@@ -23,19 +22,14 @@ class BodySystemController:
         
         bodies, orbits = self.__fetch_body_system_data_at_time(self.dt)
         
-        # Update existing body entities
-        for body, entity in zip(bodies, [e for e in scene.entities if isinstance(e, BodyEntity)]):
-            entity.update_position(body.position)
+        positions = {body.name: body.position for body in bodies}
+        for entity in scene.entities:
+            if isinstance(entity, (BodyEntity, PlayerEntity, SoiEntity)) and entity.name in positions:
+                entity.update_position(positions[entity.name])
 
         # Update existing orbit entities
         for orbit, entity in zip(orbits, [e for e in scene.entities if isinstance(e, OrbitEntity)]):
             entity.update_points(orbit.points)
-
-        # Update SOI TODO: fix it
-        for soi, entity in zip(self.sois, [e for e in scene.entities if isinstance(e, SoiEntity)]):
-            body = next((b for b in bodies if b.name == entity.name), None)
-            entity.update_position(body.position)
-        
 
     def __transform_orbits_to_entities(self, orbits):
         for orbit in orbits:
@@ -49,8 +43,7 @@ class BodySystemController:
             else:
                 entity_bodies.append(BodyEntity(body))
                 if transformSOI and body.sphereOfInfluenceRadius is not None:
-                    soi = SoiEntity(body)
-                    self.sois.append(soi)
+                    SoiEntity(body)
         return entity_bodies
 
     def __clear_body_system(self):

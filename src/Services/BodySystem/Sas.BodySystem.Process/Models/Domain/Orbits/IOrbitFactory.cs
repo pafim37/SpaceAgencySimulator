@@ -2,8 +2,8 @@ using Sas.Mathematica.Service.Vectors;
 
 namespace Sas.BodySystem.Process.Models.Domain.Orbits;
 
-public interface IPositionedOrbitFactory
+public interface IOrbitFactory
 {
-    IPositionedOrbit Create(string name, Vector relativePosition, Vector relativeVelocity,
+    IOrbit Create(string name, Vector relativePosition, Vector relativeVelocity,
         Vector gravitationalSourcePosition, double gravitationalParameter);
 }

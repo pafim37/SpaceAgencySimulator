@@ -12,7 +12,7 @@ using Sas.Orbit.Service.Orbits.OrbitalElements;
 namespace Sas.BodySystem.Process.Handlers;
 
 
-public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IPositionedOrbitFactory orbitFactory, IMemoryCache memoryCache) : IRequestHandler<CreateBodySystemRequest, BodySystemDto>
+public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IOrbitFactory orbitFactory, IMemoryCache memoryCache) : IRequestHandler<CreateBodySystemRequest, BodySystemDto>
 {
     private const string BodySytemCacheKey = "BodySystem";
     public async Task<BodySystemDto> Handle(CreateBodySystemRequest request, CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IPositio
         else
         {
             ArgumentNullException.ThrowIfNull(bodySystem); // TODO: catch this one
-            bodySystem.UpdateBodySystem(cancellationToken: cancellationToken);
+            bodySystem.UpdateBodySystem(atTime: request.AtTime, cancellationToken: cancellationToken);
             return new BodySystemDto() // TODO: extract this
             {
                 GravitationalConstant = bodySystem.GravitationalConstant,
@@ -45,7 +45,7 @@ public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IPositio
         }
     }
 
-    private static OrbitData ToOrbitData(IPositionedOrbit orbit)
+    private static OrbitData ToOrbitData(IOrbit orbit)
     {
         IOrbitElements elements = orbit.OrbitElements;
         return new OrbitData

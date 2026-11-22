@@ -10,9 +10,9 @@ namespace Sas.BodySystem.Process
 {
     public static class Movement
     {
-        public static void Move(List<IPositionedOrbit> orbits, List<BodyDomain> bodies, double t)
+        public static void Move(List<IOrbit> orbits, List<BodyDomain> bodies, double t)
         {
-            foreach (IPositionedOrbit orbit in orbits)
+            foreach (IOrbit orbit in orbits)
             {
                 BodyDomain? body = bodies.FirstOrDefault(b => b.Name == orbit.Name);
                 if (body is null)

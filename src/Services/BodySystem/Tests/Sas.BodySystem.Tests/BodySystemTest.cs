@@ -241,13 +241,13 @@ namespace Sas.BodySystem.Tests
             return Task.CompletedTask;
         }
 
-        private static IPositionedOrbitFactory CreateOrbitFactory()
+        private static IOrbitFactory CreateOrbitFactory()
         {
-            Mock<IPositionedOrbit> orbit = new();
+            Mock<IOrbit> orbit = new();
             orbit.SetupGet(o => o.Name).Returns("Test orbit");
             orbit.SetupGet(o => o.Points).Returns([]);
 
-            Mock<IPositionedOrbitFactory> factory = new();
+            Mock<IOrbitFactory> factory = new();
             factory.Setup(f => f.Create(It.IsAny<string>(), It.IsAny<Vector>(), It.IsAny<Vector>(),
                 It.IsAny<Vector>(), It.IsAny<double>())).Returns(orbit.Object);
             return factory.Object;

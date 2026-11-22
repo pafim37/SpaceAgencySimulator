@@ -48,7 +48,7 @@ namespace Sas.Integration.Tests
 
             // Orbits
             Assert.NotEmpty(bodySystem.Orbits);
-            Assert.Equal(2, bodySystem.Orbits.Count);
+            Assert.Single(bodySystem.Orbits);
             Assert.Collection(bodySystem.Orbits,
                 orbit1 => Assert.Equal("Earth", orbit1.Name)
             );

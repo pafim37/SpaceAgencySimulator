@@ -7,12 +7,12 @@ using Sas.Mathematica.Service.Vectors;
 namespace Sas.BodySystem.Process.BodySystems
 {
 
-    public class BodySystem(IEnumerable<BodyDomain> bodies, IPositionedOrbitFactory orbitFactory,
+    public class BodySystem(IEnumerable<BodyDomain> bodies, IOrbitFactory orbitFactory,
         double gravitationalConstant = Constants.G)
     {
         #region fields
         private readonly List<BodyDomain> bodies = [.. bodies];
-        private readonly List<IPositionedOrbit> orbits = [];
+        private readonly List<IOrbit> orbits = [];
         private const string BarycentrumName = "Barycentrum";
         private BodyDomain? barycenter;
         #endregion
@@ -36,7 +36,7 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Gets list of orbits
         /// </summary>
-        public List<IPositionedOrbit> Orbits => orbits;
+        public List<IOrbit> Orbits => orbits;
         #endregion
 
         #region public methods
@@ -49,7 +49,7 @@ namespace Sas.BodySystem.Process.BodySystems
             barycenter = FindBarycenter();
             List<string> orbitsToUpdates = EstablishHierarchy(); // body name is also name of the orbit
             CalibrateBarycenterToZero();
-            double scaleFactor = ScaleBodySystem(scale: scale);
+            double scaleFactor = ScaleBodySystem(scale: scale); // TODO: fix it, it scale already scaled body system if getting from Memory Cache
             FindOrbits(orbitsToUpdates, cancellationToken);
             if (atTime is not null)
             {
@@ -65,11 +65,7 @@ namespace Sas.BodySystem.Process.BodySystems
 
         public void FindOrbits(List<string> orbitsToUpdate, CancellationToken cancellationToken = default)
         {
-            // TODO: refactor this loop
-            foreach (string orbitName in orbitsToUpdate)
-            {
-                orbits.Remove(Orbits.Single(o => o.Name == orbitName));
-            }
+            orbits.RemoveAll(o => orbitsToUpdate.Contains(o.Name));
             foreach (BodyDomain body in bodies)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -80,7 +76,7 @@ namespace Sas.BodySystem.Process.BodySystems
 
                 BodyDomain parent = bodies.Single(candidate => candidate.Name == body.ParentName);
                 double gravitationalParameter = GravitationalConstant * (parent.Mass + body.Mass);
-                IPositionedOrbit orbit = orbitFactory.Create(
+                IOrbit orbit = orbitFactory.Create(
                     body.Name,
                     body.GetPositionRelatedTo(parent),
                     body.GetVelocityRelatedTo(parent),

@@ -4,7 +4,7 @@ using Sas.Orbit.Service.Orbits.Points;
 
 namespace Sas.BodySystem.Process.Models.Domain.Orbits
 {
-    public interface IPositionedOrbit
+    public interface IOrbit
     {
         public IOrbitElements OrbitElements { get; init; }
         public string Name { get; init; }

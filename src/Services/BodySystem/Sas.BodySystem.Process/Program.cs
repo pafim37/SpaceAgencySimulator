@@ -6,7 +6,7 @@ using Sas.Orbit.Service;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddBodyService(builder.Configuration);
-builder.Services.AddSingleton<IPositionedOrbitFactory, PositionedOrbitFactory>();
+builder.Services.AddSingleton<IOrbitFactory, OrbitFactory>();
 
 builder.Services.AddOrbitService();
 builder.Services.AddMemoryCache();

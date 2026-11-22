@@ -5,7 +5,7 @@ using Sas.Orbit.Service.PointExtensions;
 
 namespace Sas.BodySystem.Process.Models.Domain.Orbits
 {
-    public class PositionedOrbit : IPositionedOrbit
+    public class Orbit : IOrbit
     {
         private List<Point> points;
         private List<Point>? centeredPoints;
@@ -14,7 +14,7 @@ namespace Sas.BodySystem.Process.Models.Domain.Orbits
 
         public List<Point> Points => points;
 
-        public PositionedOrbit(string name, Vector gravitationalSourcePosition, IOrbitElements orbitElements)
+        public Orbit(string name, Vector gravitationalSourcePosition, IOrbitElements orbitElements)
         {
             Name = name;
             OrbitElements = orbitElements;

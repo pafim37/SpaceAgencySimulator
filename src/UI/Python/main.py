@@ -14,7 +14,7 @@ def add_get_body_system_function_to_task_queue():
     def update_body_system():
         global entity_bodies
         entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
-        camera_controller.entity_bodies = entity_bodies
+        camera_controller.update_entities(entity_bodies)
     task_queue.put(update_body_system)
 
 def run_tasks_from_queue():
@@ -34,7 +34,7 @@ def update(): # app update
         camera_controller.follow_body()
 
 def input(key):
-    global camera_controller
+    global entity_bodies
     if key == "v":
         camera_controller.change_body_view()
     if key == "n":
@@ -52,7 +52,7 @@ def input(key):
     if key == 'r':
         isMovementPaused = True
         entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
-        camera_controller = CameraController(entity_bodies)
+        camera_controller.set_camera(entity_bodies)
 
 if __name__ == '__main__':
     isMovementPaused = True

@@ -3,17 +3,16 @@ using Sas.BodySystem.Process.Models.Domain.Bodies;
 using Sas.BodySystem.Process.Models.Domain.Orbits;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
-using Sas.Orbit.Service.Orbits;
 
 namespace Sas.BodySystem.Process.BodySystems
 {
 
-    public class BodySystem(IEnumerable<BodyDomain> bodies, IPositionedOrbitFactory orbitFactory,
+    public class BodySystem(IEnumerable<BodyDomain> bodies, IOrbitFactory orbitFactory,
         double gravitationalConstant = Constants.G)
     {
         #region fields
         private readonly List<BodyDomain> bodies = [.. bodies];
-        private readonly List<OrbitData> orbits = [];
+        private readonly List<IOrbit> orbits = [];
         private const string BarycentrumName = "Barycentrum";
         private BodyDomain? barycenter;
         #endregion
@@ -37,7 +36,7 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Gets list of orbits
         /// </summary>
-        public IReadOnlyList<OrbitData> Orbits => orbits;
+        public List<IOrbit> Orbits => orbits;
         #endregion
 
         #region public methods
@@ -45,58 +44,71 @@ namespace Sas.BodySystem.Process.BodySystems
         /// <summary>
         /// Finds the barycenter, establishes the body hierarchy, and centers the system.
         /// </summary>
-        public void UpdateBodySystem(float scale = 1000, CancellationToken cancellationToken = default)
+        public void UpdateBodySystem(float scale = 1000, double? atTime = 0, CancellationToken cancellationToken = default)
         {
             barycenter = FindBarycenter();
-            EstablishHierarchy();
+            List<string> orbitsToUpdates = EstablishHierarchy(); // body name is also name of the orbit
             CalibrateBarycenterToZero();
-            ScaleBodySystem(scale: scale);
-            FindOrbits(cancellationToken);
+            double scaleFactor = ScaleBodySystem(scale: scale);
+            FindOrbits(orbitsToUpdates, cancellationToken);
+            if (atTime is not null)
+            {
+                atTime *= Math.Pow(scaleFactor, 1.5);
+                Move(atTime.Value);
+            }
         }
-        public void FindOrbits(CancellationToken cancellationToken = default)
+        public void Move(double t)
         {
-            List<OrbitData> calculatedOrbits = [];
+            Movement.Move(Orbits, bodies, t);
+        }
+
+        public void FindAllOrbits(CancellationToken cancellationToken = default)
+        {
+            FindOrbits(Orbits.Select(o => o.Name).ToList(), cancellationToken = default);
+        }
+
+        public void FindOrbits(List<string> orbitsToUpdate, CancellationToken cancellationToken = default)
+        {
+            orbits.RemoveAll(o => orbitsToUpdate.Contains(o.Name));
             foreach (BodyDomain body in bodies)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (body.ParentName is null)
+                if (body.ParentName is null || !orbitsToUpdate.Contains(body.Name))
                 {
                     continue;
                 }
 
                 BodyDomain parent = bodies.Single(candidate => candidate.Name == body.ParentName);
                 double gravitationalParameter = GravitationalConstant * (parent.Mass + body.Mass);
-                IPositionedOrbit orbit = orbitFactory.Create(
+                IOrbit orbit = orbitFactory.Create(
                     body.Name,
                     body.GetPositionRelatedTo(parent),
                     body.GetVelocityRelatedTo(parent),
                     gravitationalSourcePosition: parent.Position,
                     gravitationalParameter);
-                calculatedOrbits.Add(new OrbitData
-                {
-                    Name = orbit.Name,
-                    Points = [.. orbit.Points.Select(point => new OrbitPointData(point.X, point.Y, point.Z))]
-                });
+                Orbits.Add(orbit);
             }
-
-            orbits.Clear();
-            orbits.AddRange(calculatedOrbits);
         }
 
         /// <summary>
         /// Finds parents of the bodies.
         /// </summary>
-        public void EstablishHierarchy()
+        public List<string> EstablishHierarchy()
         {
+            List<string> bodiesThatChangedParent = [];
             List<BodyDomain> sortBodies = [.. bodies.OrderByDescending(x => x.Mass)]; // Sun, Earth, Moon, Satellite...
             if (sortBodies.Count == 0)
             {
-                return;
+                return [];
             }
             BodyDomain mostMassiveBody = sortBodies[0];
             if (sortBodies.Count > 1)
             {
                 BodyDomain planet = sortBodies[1];
+                if (planet.ParentName != mostMassiveBody.Name)
+                {
+                    bodiesThatChangedParent.Add(planet.Name);
+                }
                 planet.ParentName = mostMassiveBody.Name;
                 planet.SphereOfInfluenceRadius = planet.GetSphereOfInfluenceRelatedTo(mostMassiveBody);
             }
@@ -117,9 +129,14 @@ namespace Sas.BodySystem.Process.BodySystems
                         parentBody = other;
                     }
                 }
+                if (body.ParentName != parentBody.Name)
+                {
+                    bodiesThatChangedParent.Add(body.Name);
+                }
                 body.ParentName = parentBody.Name;
                 body.SphereOfInfluenceRadius = body.GetSphereOfInfluenceRelatedTo(parentBody);
             }
+            return bodiesThatChangedParent;
         }
 
         /// <summary>
@@ -188,11 +205,11 @@ namespace Sas.BodySystem.Process.BodySystems
             }
         }
 
-        public void ScaleBodySystem(float scale = 1000)
+        public double ScaleBodySystem(float scale = 1000)
         {
             if (barycenter is null || scale == 0)
             {
-                return;
+                return 0;
             }
             double maxDistance = bodies.Max(body => body.GetPositionRelatedTo(barycenter).Magnitude);
             if (maxDistance > 0)
@@ -202,8 +219,12 @@ namespace Sas.BodySystem.Process.BodySystems
                 {
                     body.Position *= scaleFactor;
                     body.Velocity *= 1 / Math.Sqrt(scaleFactor);
+                    body.SphereOfInfluenceRadius *= scaleFactor;
                 });
+
+                return scaleFactor;
             }
+            return 0;
         }
 
         #endregion

@@ -140,7 +140,7 @@ namespace Sas.Orbit.Service.Orbits.OrbitalElements
             _trueAnomaly = trueAnomaly;
             _ae = ae;
             _m = m;
-            _meanMotion = Math.Sqrt(u / Math.Pow(a, 3));
+            _meanMotion = Math.Sqrt(u / Math.Pow(Math.Abs(a), 3));
             _period = 2 * Constants.PI / _meanMotion;
             _radius = r;
             _u = u;

@@ -1,14 +1,14 @@
 using Sas.Mathematica.Service.Vectors;
 using Sas.Orbit.Service.Orbits.OrbitalElements;
 
-namespace Sas.Orbit.Service.Orbits;
+namespace Sas.BodySystem.Process.Models.Domain.Orbits;
 
-internal sealed class PositionedOrbitFactory : IPositionedOrbitFactory
+public sealed class OrbitFactory : IOrbitFactory
 {
-    public IPositionedOrbit Create(string name, Vector relativePosition, Vector relativeVelocity,
+    public IOrbit Create(string name, Vector relativePosition, Vector relativeVelocity,
         Vector gravitationalSourcePosition, double gravitationalParameter)
     {
         OrbitElements elements = OrbitElementsFactory.GetOrbitElements(relativePosition, relativeVelocity, gravitationalParameter);
-        return new PositionedOrbit(name, gravitationalSourcePosition, elements);
+        return new Orbit(name, gravitationalSourcePosition, elements);
     }
 }

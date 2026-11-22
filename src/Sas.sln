@@ -25,6 +25,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Body.Service", "Services\Body\Body.Service\Sas.Body.Service.csproj", "{02820BC2-7D44-46CB-A67B-BE64E0B6C7CE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notification", "Notification", "{54CDF753-9F5D-43AB-8EC5-6BA12C7F0FB6}"
+	ProjectSection(SolutionItems) = preProject
+		Services\BodySystem\Sas.BodySystem.Process\Program.cs = Services\BodySystem\Sas.BodySystem.Process\Program.cs
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sas.Notification.Process", "Services\Notification\Sas.Notification.Process\Sas.Notification.Process.csproj", "{C2DD312C-9A58-4410-887A-B5D79B57AE97}"
 EndProject

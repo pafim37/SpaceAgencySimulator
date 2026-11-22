@@ -1,6 +1,7 @@
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 using Sas.Orbit.Service.Orbits.OrbitalElements;
+using Sas.Orbit.Service.Orbits.Primitives;
 
 namespace Sas.Orbit.Service.Test
 {
@@ -30,20 +31,35 @@ namespace Sas.Orbit.Service.Test
         }
 
         [Fact]
-        public void OrbitReturnsOrbitalElements()
+        public void OrbitElementsFactoryReturnsOrbitalElementsAndPoints()
         {
+            // Arrange
             Vector position = new(5000, 10000, 2100);
             Vector velocity = new(-5.992, 1.926, 3.246);
             double u = 398600;
 
-            OrbitElements orbit = OrbitElementsFactory.GetOrbitElements(position, velocity, u);
+            // Act
+            OrbitElements orbitElements = OrbitElementsFactory.GetOrbitElements(position, velocity, u);
 
-            Assert.Equal(20001.7925, orbit.SemiMajorAxis!.Value, 4);
-            Assert.Equal(0.4334, orbit.Eccentricity, 4);
-            Assert.Equal(0.5270, orbit.Inclination, 4);
-            Assert.Equal(0.7784, orbit.AscendingNode, 4);
-            Assert.Equal(0.5355, orbit.ArgumentOfPeriapsis, 4);
-            Assert.Equal(6.1235, orbit.TrueAnomaly, 4);
+            // Assert
+            Assert.Equal(OrbitType.Elliptic, orbitElements.OrbitType);
+            Assert.Equal(20001.7925, orbitElements.SemiMajorAxis!.Value, 4);
+            Assert.Equal(18025.2071, orbitElements.SemiMinorAxis!.Value, 4);
+            Assert.Equal(0.4334, orbitElements.Eccentricity, 4);
+            Assert.Equal(0.5270, orbitElements.Inclination, 4);
+            Assert.Equal(0.7784, orbitElements.AscendingNode, 4);
+            Assert.Equal(0.5355, orbitElements.ArgumentOfPeriapsis, 4);
+            Assert.Equal(6.1235, orbitElements.TrueAnomaly, 4);
+            Assert.Equal(0.1005, orbitElements.EccentricAnomaly, 4);
+            Assert.Equal(0.0570, orbitElements.MeanAnomaly, 4);
+            Assert.Equal(28152.3465, orbitElements.Period!.Value, 4);
+            Assert.Null(orbitElements.Radius);
+            Assert.Equal(398600, orbitElements.GravitationalParameter, 4);
+            Assert.Equal(40467.7087, orbitElements.FirstNode, 4);
+            Assert.Equal(0.0002, orbitElements.MeanMotion, 4);
+            Assert.Equal(0.1312, orbitElements.EccentricityVector.X, 4);
+            Assert.Equal(0.3979, orbitElements.EccentricityVector.Y, 4);
+            Assert.Equal(0.1112, orbitElements.EccentricityVector.Z, 4);
         }
     }
 }

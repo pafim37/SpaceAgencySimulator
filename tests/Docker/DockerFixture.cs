@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Xunit;
 
-namespace Sas.Docker.Tests;
+namespace Sas.Integration.Tests;
 
 [CollectionDefinition("Docker")]
 public sealed class DockerCollection : ICollectionFixture<DockerFixture>
@@ -12,11 +12,17 @@ public sealed class DockerFixture : IAsyncLifetime
 {
     private readonly string repositoryRoot = FindRepositoryRoot();
     private readonly string projectName = $"sas-integ-tests-{Guid.NewGuid():N}";
+    private readonly bool isDebugging = Debugger.IsAttached;
 
     public HttpClient Client { get; } = new() { Timeout = TimeSpan.FromSeconds(5) };
 
     public async Task InitializeAsync()
     {
+        if (isDebugging)
+        {
+            Client.Timeout = Timeout.InfiniteTimeSpan;
+        }
+
         try
         {
             await RunComposeAsync("up", "--build", "--detach");
@@ -54,7 +60,8 @@ public sealed class DockerFixture : IAsyncLifetime
         {
             try
             {
-                using HttpResponseMessage response = await Client.GetAsync("/body");
+                using CancellationTokenSource requestTimeout = new(TimeSpan.FromSeconds(5));
+                using HttpResponseMessage response = await Client.GetAsync("/body", requestTimeout.Token);
                 response.EnsureSuccessStatusCode();
                 return;
             }
@@ -78,6 +85,10 @@ public sealed class DockerFixture : IAsyncLifetime
 
         startInfo.Environment["SAS_BODYSYSTEM_PORT"] = "0";
         startInfo.Environment["SAS_NOTIFICATION_PORT"] = "0";
+        if (isDebugging)
+        {
+            startInfo.Environment["SAS_BODYSYSTEM_BUILD_CONFIGURATION"] = "Debug";
+        }
 
         string composeFile = Path.Combine(repositoryRoot, ".docker", "docker-compose.yaml");
         foreach (string argument in new[] { "compose", "--file", composeFile, "--project-name", projectName }.Concat(arguments))

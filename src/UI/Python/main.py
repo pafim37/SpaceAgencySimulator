@@ -25,12 +25,13 @@ def run_tasks_from_queue():
         except Exception as e:
             print(f"Task from queue failed: {e}")
 
-def update():
+def update(): # app update
     run_tasks_from_queue()
     camera_controller.handle_input()
-    compass.update_directions(camera_controller.pivot)
+    compass.update_directions()
     if not isMovementPaused:
         body_system_controller.update_body_positions()
+        camera_controller.follow_body()
 
 def input(key):
     global camera_controller

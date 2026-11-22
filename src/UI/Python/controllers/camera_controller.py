@@ -25,8 +25,10 @@ class CameraController:
         if self.body_index > len(self.entity_bodies) - 1:
             self.body_index = 0
         self.current_body_view = self.entity_bodies[self.body_index]
+        self.follow_body()
+
+    def follow_body(self):
         self.pivot.position = self.current_body_view.position
-        camera.position = CAMERA_INITIAL_POSITION
         camera.parent = self.pivot
 
     def zoom(self, positive):

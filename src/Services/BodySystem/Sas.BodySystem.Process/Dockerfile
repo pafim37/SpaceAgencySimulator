@@ -5,7 +5,8 @@ COPY src/Services/Body/ src/Services/Body/
 COPY src/Services/BodySystem/Sas.BodySystem.Process/ src/Services/BodySystem/Sas.BodySystem.Process/
 COPY src/Services/Mathematica/ src/Services/Mathematica/
 COPY src/Services/Orbit/Sas.Orbit.Service/ src/Services/Orbit/Sas.Orbit.Service/
-RUN dotnet publish src/Services/BodySystem/Sas.BodySystem.Process/Sas.BodySystem.Process.csproj -c Release -o /publish /p:UseAppHost=false
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish src/Services/BodySystem/Sas.BodySystem.Process/Sas.BodySystem.Process.csproj -c "$BUILD_CONFIGURATION" -o /publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app

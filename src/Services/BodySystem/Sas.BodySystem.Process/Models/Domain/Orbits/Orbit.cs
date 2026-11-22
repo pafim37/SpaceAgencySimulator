@@ -3,17 +3,18 @@ using Sas.Orbit.Service.Orbits.OrbitalElements;
 using Sas.Orbit.Service.Orbits.Points;
 using Sas.Orbit.Service.PointExtensions;
 
-namespace Sas.Orbit.Service.Orbits
+namespace Sas.BodySystem.Process.Models.Domain.Orbits
 {
-    public class PositionedOrbit : IPositionedOrbit
+    public class Orbit : IOrbit
     {
         private List<Point> points;
+        private List<Point>? centeredPoints;
         public string Name { get; init; }
         public IOrbitElements OrbitElements { get; init; }
 
         public List<Point> Points => points;
 
-        public PositionedOrbit(string name, Vector gravitationalSourcePosition, IOrbitElements orbitElements)
+        public Orbit(string name, Vector gravitationalSourcePosition, IOrbitElements orbitElements)
         {
             Name = name;
             OrbitElements = orbitElements;
@@ -21,22 +22,19 @@ namespace Sas.Orbit.Service.Orbits
         }
         public List<Point> UpdateCenterOfPoints(Vector gravitationalSourcePosition)
         {
-            if (points is null || points.Count == 0)
-            {
-                points = GetOrbitPointsFactory.GetPoints(OrbitElements);
-            }
+            centeredPoints ??= GetOrbitPointsFactory.GetPoints(OrbitElements);
 
-            if (points.Count == 0)
+            if (centeredPoints.Count == 0)
             {
-                return points;
+                return centeredPoints;
             }
 
             Vector center = CalculateOrbitCenter(gravitationalSourcePosition);
-            int count = points.Count;
+            int count = centeredPoints.Count;
             List<Point> translatedPoints = new(count);
             for (int i = 0; i < count; i++)
             {
-                translatedPoints.Add(points[i] + center.AsPoint());
+                translatedPoints.Add(centeredPoints[i] + center.AsPoint());
             }
             points = translatedPoints;
             return points;

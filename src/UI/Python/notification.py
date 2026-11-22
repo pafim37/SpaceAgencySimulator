@@ -2,7 +2,7 @@ from signalrcore.hub_connection_builder import HubConnectionBuilder
 
 class Notification:
     def __init__(self):
-        hub_url = "http://localhost:6443/notification"
+        hub_url = "http://localhost:3737/notification"
         self.hub_connection = HubConnectionBuilder()\
             .with_url(hub_url)\
             .build()

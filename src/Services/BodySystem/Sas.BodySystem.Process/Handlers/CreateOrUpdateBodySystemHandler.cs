@@ -29,8 +29,8 @@ public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IOrbitFa
                 BodySystems.BodySystem system = await CreateBodySystem(request, cancellationToken);
                 return MapToBodySystemDto(system);
             }
-            bodySystem!.FindAllOrbits(cancellationToken);
-            return MapToBodySystemDto(bodySystem);
+            bodySystem!.Move(request.AtTime!.Value);
+            return MapToBodySystemDto(bodySystem!);
         }
     }
 

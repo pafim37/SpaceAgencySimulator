@@ -6,15 +6,14 @@ from controllers.body_system_controller import BodySystemController
 from controllers.camera_controller import CameraController
 from controllers.world_controller import WorldController
 
+body_index = 0
 """
 add_get_body_system_function_to_task_queue runs on Thread-1 (SignalR thread) while destroy() involve UI changes and runs on MainThread.
 It causes break get_body_system function so that function should be processes on MainThread
 """
 def add_get_body_system_function_to_task_queue():
     def update_body_system():
-        global entity_bodies
-        entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
-        camera_controller.entity_bodies = entity_bodies
+        camera_controller.update_entities(body_system_controller.create_body_system_entities(transformSOI = True))
     task_queue.put(update_body_system)
 
 def run_tasks_from_queue():
@@ -27,23 +26,17 @@ def run_tasks_from_queue():
 
 def update(): # app update
     run_tasks_from_queue()
-    camera_controller.handle_input()
     compass.update_directions()
     if not isMovementPaused:
-        body_system_controller.update_body_positions()
+        entity_bodies = body_system_controller.update_body_positions()
         camera_controller.follow_body()
 
 def input(key):
-    global camera_controller
     if key == "v":
         camera_controller.change_body_view()
     if key == "n":
         global isMovementPaused
-        isMovementPaused = not isMovementPaused
-    if key == "scroll down":
-        camera_controller.zoom(True)
-    if key == "scroll up":
-        camera_controller.zoom(False)
+        isMovementPaused = not isMovementPaused 
     if key == "m":
         if wc.is_world_axis_on:
             wc.turn_off_world_axis()
@@ -51,8 +44,10 @@ def input(key):
             wc.turn_on_world_axis()
     if key == 'r':
         isMovementPaused = True
-        entity_bodies = body_system_controller.create_body_system_entities(transformSOI = True)
-        camera_controller = CameraController(entity_bodies)
+        camera_controller.update_entities(body_system_controller.create_body_system_entities(transformSOI = True))
+        camera_controller.reset_camera_configuration()
+    if key == 'c':
+        camera_controller.change_axis_rotation()
 
 if __name__ == '__main__':
     isMovementPaused = True

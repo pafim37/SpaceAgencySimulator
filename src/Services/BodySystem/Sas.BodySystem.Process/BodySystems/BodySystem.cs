@@ -15,6 +15,8 @@ namespace Sas.BodySystem.Process.BodySystems
         private readonly List<IOrbit> orbits = [];
         private const string BarycentrumName = "Barycentrum";
         private BodyDomain? barycenter;
+
+        private double scaleFactor;
         #endregion
 
         #region properties
@@ -49,23 +51,19 @@ namespace Sas.BodySystem.Process.BodySystems
             barycenter = FindBarycenter();
             List<string> orbitsToUpdates = EstablishHierarchy(); // body name is also name of the orbit
             CalibrateBarycenterToZero();
-            double scaleFactor = ScaleBodySystem(scale: scale);
+            scaleFactor = ScaleBodySystem(scale: scale);
             FindOrbits(orbitsToUpdates, cancellationToken);
             if (atTime is not null)
             {
-                atTime *= Math.Pow(scaleFactor, 1.5);
                 Move(atTime.Value);
             }
         }
         public void Move(double t)
         {
+            t *= Math.Pow(scaleFactor, 1.5);
             Movement.Move(Orbits, bodies, t);
         }
 
-        public void FindAllOrbits(CancellationToken cancellationToken = default)
-        {
-            FindOrbits(Orbits.Select(o => o.Name).ToList(), cancellationToken = default);
-        }
 
         public void FindOrbits(List<string> orbitsToUpdate, CancellationToken cancellationToken = default)
         {

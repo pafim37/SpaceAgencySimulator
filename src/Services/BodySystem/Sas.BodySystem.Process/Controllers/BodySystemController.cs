@@ -17,7 +17,7 @@ public class BodySystemController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] BodySystemConfigurationDTO config, CancellationToken cancellationToken)
-        => Ok(await mediator.Send(new CreateBodySystemRequest(config.Scale, config.AtTime, config.GravitationalConstant), cancellationToken));
+        => Ok(await mediator.Send(new CreateBodySystemRequest(config.Scale, config.AtTime, IsMovementRequest: false, config.GravitationalConstant), cancellationToken));
 
     [HttpGet("{atTime}")]
     public async Task<IActionResult> GetAtTime(double atTime)

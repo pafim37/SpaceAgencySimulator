@@ -19,17 +19,28 @@ public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IOrbitFa
     {
         if (!memoryCache.TryGetValue(BodySytemCacheKey, out BodySystems.BodySystem? bodySystem))
         {
-            IEnumerable<BodyDomain> enabledBodies = await GetEnabledBodies(cancellationToken);
-            BodySystems.BodySystem system = new(enabledBodies, orbitFactory, request.GravitationalConstant);
-            system.UpdateBodySystem(request.Scale, request.AtTime, cancellationToken);
-            memoryCache.Set(BodySytemCacheKey, system);
+            BodySystems.BodySystem system = await CreateBodySystem(request, cancellationToken);
             return MapToBodySystemDto(system);
         }
         else
         {
+            if (!request.IsMovementRequest)
+            {
+                BodySystems.BodySystem system = await CreateBodySystem(request, cancellationToken);
+                return MapToBodySystemDto(system);
+            }
             bodySystem!.FindAllOrbits(cancellationToken);
             return MapToBodySystemDto(bodySystem);
         }
+    }
+
+    private async Task<BodySystems.BodySystem> CreateBodySystem(CreateBodySystemRequest request, CancellationToken cancellationToken)
+    {
+        IEnumerable<BodyDomain> enabledBodies = await GetEnabledBodies(cancellationToken);
+        BodySystems.BodySystem system = new(enabledBodies, orbitFactory, request.GravitationalConstant);
+        system.UpdateBodySystem(request.Scale, request.AtTime, cancellationToken);
+        memoryCache.Set(BodySytemCacheKey, system);
+        return system;
     }
 
     private static BodySystemDto MapToBodySystemDto(BodySystems.BodySystem bodySystem)

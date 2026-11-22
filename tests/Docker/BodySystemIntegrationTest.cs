@@ -1,5 +1,4 @@
-﻿using Sas.Body.Core.DataTransferObject;
-using Sas.BodySystem.Process.Models.DataTransferObject;
+﻿using Sas.BodySystem.Process.Models.DataTransferObject;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 using System.Net;
@@ -9,21 +8,21 @@ using Xunit;
 namespace Sas.Integration.Tests
 {
     [Collection("Docker")]
-    public class BodySystemIntegrationTest(DockerFixture fixture)
+    public class BodySystemIntegrationTest(DockerFixture fixture) : BodyDatabaseTest(fixture)
     {
         [Fact]
         public async Task BodySystem_ReturnsBodySystem()
         {
             // Arrange
             string[] names = ["Earth", "Moon"];
-            using HttpResponseMessage responseDefaults = await fixture.Client.PostAsJsonAsync("/body/defaults", names);
+            using HttpResponseMessage responseDefaults = await Client.PostAsJsonAsync("/body/defaults", names);
             Assert.Equal(HttpStatusCode.Created, responseDefaults.StatusCode);
 
-            using HttpResponseMessage enableSun = await fixture.Client.PostAsJsonAsync("/body/Sun", true);
+            using HttpResponseMessage enableSun = await Client.PostAsJsonAsync("/body/Sun", true);
             Assert.Equal(HttpStatusCode.OK, enableSun.StatusCode);
 
             // Act
-            using HttpResponseMessage response = await fixture.Client.GetAsync("/body-system");
+            using HttpResponseMessage response = await Client.GetAsync("/body-system");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -59,22 +58,12 @@ namespace Sas.Integration.Tests
                 orbit2 => Assert.Equal("Moon", orbit2.Name)
             );
 
-            // Delete the created bodies
-            await DeleteBodies(names);
+            using HttpResponseMessage disableMoon = await Client.PostAsJsonAsync("/body/Moon", false);
+            Assert.Equal(HttpStatusCode.OK, disableMoon.StatusCode);
+            BodySystemDto? updatedSystem = await Client.GetFromJsonAsync<BodySystemDto>("/body-system");
+            Assert.NotNull(updatedSystem);
+            Assert.DoesNotContain(updatedSystem.Bodies, body => body.Name == "Moon");
+            Assert.Equal("Earth", Assert.Single(updatedSystem.Orbits).Name);
         }
-
-        private async Task DeleteBodies(string[] names)
-        {
-            foreach (string name in names)
-            {
-                using HttpResponseMessage responseDelete = await fixture.Client.DeleteAsync($"/body/{name}");
-                Assert.Equal(HttpStatusCode.OK, responseDelete.StatusCode);
-            }
-            using HttpResponseMessage responseGet = await fixture.Client.GetAsync("/body");
-            List<BodyDto>? bodies = await responseGet.Content.ReadFromJsonAsync<List<BodyDto>>();
-            Assert.NotNull(bodies);
-            Assert.DoesNotContain(bodies, body => names.Contains(body!.Name));
-        }
-
     }
 }

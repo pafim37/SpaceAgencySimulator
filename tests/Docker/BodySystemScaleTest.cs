@@ -1,5 +1,4 @@
-﻿using Sas.Body.Core.DataTransferObject;
-using Sas.BodySystem.Process.Models.DataTransferObject;
+﻿using Sas.BodySystem.Process.Models.DataTransferObject;
 using Sas.Mathematica.Service;
 using Sas.Mathematica.Service.Vectors;
 using System.Net;
@@ -8,7 +7,7 @@ using Xunit;
 namespace Sas.Integration.Tests
 {
     [Collection("Docker")]
-    public class BodySystemScaleTest(DockerFixture fixture)
+    public class BodySystemScaleTest(DockerFixture fixture) : BodyDatabaseTest(fixture)
     {
         [Fact]
         public async Task BodySystem_ScaleDoesntChangeTheOrbitShape()
@@ -16,11 +15,11 @@ namespace Sas.Integration.Tests
             // TODO: Chcek this test
             // Arrange
             string[] names = ["Earth"];
-            using HttpResponseMessage responseDefaults = await fixture.Client.PostAsJsonAsync("/body/defaults", names);
+            using HttpResponseMessage responseDefaults = await Client.PostAsJsonAsync("/body/defaults", names);
             Assert.Equal(HttpStatusCode.Created, responseDefaults.StatusCode);
 
             // Act
-            using HttpResponseMessage response = await fixture.Client.GetAsync("/body-system");
+            using HttpResponseMessage response = await Client.GetAsync("/body-system");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -52,22 +51,6 @@ namespace Sas.Integration.Tests
             Assert.Collection(bodySystem.Orbits,
                 orbit1 => Assert.Equal("Earth", orbit1.Name)
             );
-
-            // Delete the created bodies
-            await DeleteBodies(names);
-        }
-
-        private async Task DeleteBodies(string[] names)
-        {
-            foreach (string name in names)
-            {
-                using HttpResponseMessage responseDelete = await fixture.Client.DeleteAsync($"/body/{name}");
-                Assert.Equal(HttpStatusCode.OK, responseDelete.StatusCode);
-            }
-            using HttpResponseMessage responseGet = await fixture.Client.GetAsync("/body");
-            List<BodyDto>? bodies = await responseGet.Content.ReadFromJsonAsync<List<BodyDto>>();
-            Assert.NotNull(bodies);
-            Assert.DoesNotContain(bodies, body => names.Contains(body!.Name));
         }
     }
 }

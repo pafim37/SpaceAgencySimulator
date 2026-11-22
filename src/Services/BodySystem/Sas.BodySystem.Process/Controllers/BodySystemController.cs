@@ -11,9 +11,6 @@ namespace Sas.BodySystem.Process.Controllers;
 [Route("body-system")]
 public class BodySystemController(IMediator mediator) : ControllerBase
 {
-    // TODO: Use it in memory cache
-    private const string BodySystemCacheKey = "BodySystem";
-
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
         => Ok(await mediator.Send(new CreateBodySystemRequest(AtTime: null), cancellationToken));

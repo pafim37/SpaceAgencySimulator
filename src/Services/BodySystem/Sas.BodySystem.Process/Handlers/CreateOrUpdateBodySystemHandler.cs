@@ -23,35 +23,33 @@ public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IOrbitFa
             BodySystems.BodySystem system = new(enabledBodies, orbitFactory, request.GravitationalConstant);
             system.UpdateBodySystem(request.Scale, request.AtTime, cancellationToken);
             memoryCache.Set(BodySytemCacheKey, system);
-            return new BodySystemDto() // TODO: extract this method
-            {
-                GravitationalConstant = system.GravitationalConstant,
-                Barycentrum = system.Barycentrum,
-                Bodies = system.Bodies,
-                Orbits = [.. system.Orbits.Select(ToOrbitData)]
-            };
+            return MapToBodySystemDto(system);
         }
         else
         {
-            ArgumentNullException.ThrowIfNull(bodySystem); // TODO: catch this one
-            bodySystem.UpdateBodySystem(atTime: request.AtTime, cancellationToken: cancellationToken);
-            return new BodySystemDto() // TODO: extract this
-            {
-                GravitationalConstant = bodySystem.GravitationalConstant,
-                Barycentrum = bodySystem.Barycentrum,
-                Bodies = bodySystem.Bodies,
-                Orbits = [.. bodySystem.Orbits.Select(ToOrbitData)]
-            };
+            bodySystem!.FindAllOrbits(cancellationToken);
+            return MapToBodySystemDto(bodySystem);
         }
     }
 
-    private static OrbitData ToOrbitData(IOrbit orbit)
+    private static BodySystemDto MapToBodySystemDto(BodySystems.BodySystem bodySystem)
+    {
+        return new BodySystemDto()
+        {
+            GravitationalConstant = bodySystem.GravitationalConstant,
+            Barycentrum = bodySystem.Barycentrum,
+            Bodies = bodySystem.Bodies,
+            Orbits = [.. bodySystem.Orbits.Select(ToOrbitData)]
+        };
+    }
+
+    private static OrbitDto ToOrbitData(IOrbit orbit)
     {
         IOrbitElements elements = orbit.OrbitElements;
-        return new OrbitData
+        return new OrbitDto
         {
             Name = orbit.Name,
-            OrbitElements = new OrbitElementsData
+            OrbitElements = new OrbitElementsDto
             {
                 OrbitType = elements.OrbitType,
                 SemiMajorAxis = elements.SemiMajorAxis,
@@ -69,7 +67,7 @@ public sealed class CreateOrUpdateBodySystemHandler(IMediator mediator, IOrbitFa
                 FirstNode = elements.FirstNode,
                 MeanMotion = elements.MeanMotion
             },
-            Points = [.. orbit.Points.Select(point => new OrbitPointData(point.X, point.Y, point.Z))]
+            Points = [.. orbit.Points.Select(point => new OrbitPointDto(point.X, point.Y, point.Z))]
         };
     }
 

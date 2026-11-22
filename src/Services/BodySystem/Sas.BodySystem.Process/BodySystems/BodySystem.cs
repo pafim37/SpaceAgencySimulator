@@ -49,7 +49,7 @@ namespace Sas.BodySystem.Process.BodySystems
             barycenter = FindBarycenter();
             List<string> orbitsToUpdates = EstablishHierarchy(); // body name is also name of the orbit
             CalibrateBarycenterToZero();
-            double scaleFactor = ScaleBodySystem(scale: scale); // TODO: fix it, it scale already scaled body system if getting from Memory Cache
+            double scaleFactor = ScaleBodySystem(scale: scale);
             FindOrbits(orbitsToUpdates, cancellationToken);
             if (atTime is not null)
             {
@@ -57,10 +57,14 @@ namespace Sas.BodySystem.Process.BodySystems
                 Move(atTime.Value);
             }
         }
-
         public void Move(double t)
         {
             Movement.Move(Orbits, bodies, t);
+        }
+
+        public void FindAllOrbits(CancellationToken cancellationToken = default)
+        {
+            FindOrbits(Orbits.Select(o => o.Name).ToList(), cancellationToken = default);
         }
 
         public void FindOrbits(List<string> orbitsToUpdate, CancellationToken cancellationToken = default)

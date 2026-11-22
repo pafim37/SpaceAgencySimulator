@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace Sas.BodySystem.Process.Models.Domain.Orbits;
 
 [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
-public sealed class OrbitElementsData
+public sealed class OrbitElementsDto
 {
     public OrbitType OrbitType { get; init; }
     public double? SemiMajorAxis { get; init; }
